@@ -1,7 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
+Language::load('collections/traitarr/admin/taxonomylinkage');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -99,7 +102,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:1.3em;" />
+									<input type="image" src="../../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php
@@ -123,7 +126,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../images/del.png" style="width:1.3em;" />
+									<input type="image" src="../../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php

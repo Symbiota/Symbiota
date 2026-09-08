@@ -1,14 +1,14 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('ident/chardetails');
+Language::load('collections/traitarr/admin/traitdetails');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php');
+if(!$SYMB_UID) header('Location: ../../../profile/index.php?refurl=../ident/admin/index.php');
 
 $cid = array_key_exists('cid', $_REQUEST) ? Sanitize::int($_REQUEST['cid']) : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['tabindex']) : 0;
@@ -18,81 +18,9 @@ $formSubmit = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : ''
 $isEditor = false;
 if($IS_ADMIN || array_key_exists('KeyAdmin', $USER_RIGHTS)) $isEditor = true;
 
-$charManager = new KeyCharacterAdmin();
+$charManager = new OccurrenceTraitAdmin();
 $charManager->setLangId($langId);
 $charManager->setCid($cid);
-
-$statusStr = '';
-if($formSubmit && $isEditor){
-	if($formSubmit == 'createCharacter'){
-		if($charManager->insertCharacter($_POST)){
-			$cid = $charManager->getCid();
-		}
-		else{
-			$statusStr = 'ERROR adding new taxon character: ' . $charManager->getErrorMessage();
-		}
-	}
-	elseif($formSubmit == 'saveCharacterEdit'){
-		if(!$charManager->updateCharacter($_POST)){
-			$statusStr = 'ERROR editing taxon character: ' . $charManager->getErrorMessage();
-		}
-	}
-	elseif($formSubmit == 'deleteChar'){
-		if($charManager->deleteCharacter()){
-			$cid = 0;
-		}
-		else{
-			$statusStr = 'ERROR deleting taxon character: ' . $charManager->getErrorMessage();
-		}
-	}
-	elseif($formSubmit == 'addState'){
-		if(!$charManager->insertCharacterState($_POST)){
-			$statusStr = 'ERROR adding taxon character state: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'saveState'){
-		if(!$charManager->updateCharacterState($_POST)){
-			$statusStr = 'ERROR edting taxon character state: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'deleteState'){
-		if(!$charManager->deleteCharacterState($_POST['cs'])){
-			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'uploadImage'){
-		if(!$charManager->uploadCharacterStateImage($_POST)){
-			$statusStr = 'ERROR uploading character state image/illustration: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'deleteImage'){
-		if($charManager->removeCharacterStateImage($_POST['csimgid'])){
-			$statusStr = 'SUCCESS: image uploaded successful';
-		}
-		else{
-			$statusStr = 'ERROR deleting character state image/illustration: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 1;
-	}
-	elseif($formSubmit == 'Save Taxonomic Relevance'){
-		if(!empty($_POST['tid'])){
-			if(!$charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
-				$statusStr = 'ERROR saving taxon relationship: ' . $charManager->getErrorMessage();
-			}
-			$tabIndex = 2;
-		}
-	}
-	elseif($formSubmit == 'delaxon'){
-		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
-			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
-		}
-		$tabIndex = 2;
-	}
-}
 
 if(!$cid) header('Location: index.php');
 ?>
@@ -106,7 +34,7 @@ if(!$cid) header('Location: index.php');
 	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../../js/symb/shared.js"></script>
+	<script type="text/javascript" src="../../../js/symb/shared.js"></script>
 	<script type="text/javascript">
 		var tabIndex = <?= $tabIndex ?>;
 
@@ -259,7 +187,7 @@ if(!$cid) header('Location: index.php');
 		}
 
 		function openGlossaryPopup(glossid){
-			var urlStr = "../../glossary/individual.php?glossid="+glossid;
+			var urlStr = "../../../glossary/individual.php?glossid="+glossid;
 			glossWindow = window.open(urlStr,'popup','toolbar=0,status=1,scrollbars=1,width=900,height=450,left=20,top=20');
 			if(glossWindow.opener == null) glossWindow.opener = self;
 			return false;
@@ -277,11 +205,11 @@ if(!$cid) header('Location: index.php');
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href='index.php'><b>Character Management</b></a>
+		<a href='../../../index.php'>Home</a> &gt;&gt;
+		<a href='index.php'><b>Occurrence Trait Management</b></a>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading screen-reader-only">Taxon Character Administration</h1>
+		<h1 class="page-heading screen-reader-only">Occurrence Trait Administration</h1>
 		<?php
 		if($isEditor){
 			if($statusStr){
@@ -347,7 +275,7 @@ if(!$cid) header('Location: index.php');
 										}
 										?>
 									</select>
-									<a href="#" title="Edit Groupings" onclick="openHeadingAdmin(); return false;"><img src="../../images/edit.png" class="icon-img" alt="Edit Icon" /></a>
+									<a href="#" title="Edit Groupings" onclick="openHeadingAdmin(); return false;"><img src="../../../images/edit.png" class="icon-img" alt="Edit Icon" /></a>
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
@@ -355,7 +283,7 @@ if(!$cid) header('Location: index.php');
 								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($charArr['helpUrl']) ?>" />
 								<?php
 								if($charArr['helpUrl'] && substr($charArr['helpUrl'],0,4) == 'http'){
-									echo '<a href="' . Sanitize::outString($charArr['helpUrl']) . '" target="_blank"><img src="../../images/link2.png" class="icon-img" ></a>';
+									echo '<a href="' . Sanitize::outString($charArr['helpUrl']) . '" target="_blank"><img src="../../../images/link2.png" class="icon-img" ></a>';
 								}
 								?>
 							</div>
@@ -378,7 +306,7 @@ if(!$cid) header('Location: index.php');
 									<?php
 									if($charArr['glossID']){
 										?>
-										<a href="#" onclick="openGlossaryPopup(<?= $charArr['glossID'] ?>);return false;"><img src="../../images/link2.png" class="icon-img"></a>
+										<a href="#" onclick="openGlossaryPopup(<?= $charArr['glossID'] ?>);return false;"><img src="../../../images/link2.png" class="icon-img"></a>
 										<?php
 									}
 									?>
@@ -414,7 +342,7 @@ if(!$cid) header('Location: index.php');
 				<div id="charstatediv">
 					<div style="float:right;margin:10px;">
 						<a href="#" title="Create New Character State" onclick="toggle('newstatediv');">
-							<img src="../../images/add.png" class="icon-img" alt="Create New Character State" />
+							<img src="../../../images/add.png" class="icon-img" alt="Create New Character State" />
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?= ($charStateArr?'none':'block') ?>;">
@@ -471,14 +399,14 @@ if(!$cid) header('Location: index.php');
 							<div>
 								<div id="csplus-<?= $cs ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
-										<img src="../../images/plus.png" class="icon-img" >
+										<img src="../../../images/plus.png" class="icon-img" >
 										<?= Sanitize::outString($stateArr['charStateName']) ?>
 									</a>
 								</div>
 								<div id="<?= 'cs-'.$cs.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
-											<img src="../../images/minus.png" class="icon-img" >
+											<img src="../../../images/minus.png" class="icon-img" >
 											<?= Sanitize::outString($stateArr['charStateName']) ?>
 										</a>
 									</div>
@@ -511,7 +439,7 @@ if(!$cid) header('Location: index.php');
 													<?php
 													if($stateArr['glossID']){
 														?>
-														<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../images/link2.png" class="icon-img"></a>
+														<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../../images/link2.png" class="icon-img"></a>
 														<?php
 													}
 													?>

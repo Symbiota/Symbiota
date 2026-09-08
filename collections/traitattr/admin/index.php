@@ -1,22 +1,20 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('ident/admin/index');
+Language::load('collections/traitattr/admin/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../ident/admin/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ../../../profile/index.php?refurl=../ident/admin/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $langId = array_key_exists('langid',$_REQUEST) ? $_REQUEST['langid'] : '';
 
-$charManager = new KeyCharacterAdmin();
-$charManager->setLangId($langId);
+$charManager = new OccurrenceTraitAdmin();
 
-$charList = $charManager->getCharacterList();
-$headingArr = $charManager->getCharacterHeadingArr();
+$traitList = $charManager->getTraitArr();
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
@@ -28,33 +26,15 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 <html lang="<?= $LANG_TAG ?>">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET;?>">
-	<title> <?= $LANG['TAXON_CHARACTERS']; ?> </title>
+	<title>Occurrence Traits</title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script type="text/javascript" src="../../js/symb/shared.js"></script>
+	<script type="text/javascript" src="../../../js/symb/shared.js"></script>
 	<script type="text/javascript">
-		function validateNewCharForm(f){
-			if(f.charname.value == ""){
-				alert("<?= $LANG['ALERT_NAME'] ?>");
-				return false;
-			}
-			if(f.chartype.value == ""){
-				alert("<?= $LANG['ALERT_TYPE'] ?>");
-				return false;
-			}
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("<?= $LANG['ALERT_SORT'] ?>");
-				return false;
-			}
-			return true;
-		}
-
-		function openHeadingAdmin(){
-			newWindow = window.open("headingadmin.php","headingWin","scrollbars=1,toolbar=0,resizable=1,width=800,height=600,left=50,top=50");
-			if (newWindow.opener == null) newWindow.opener = self;
-		}
-
+		document.addEventListener("DOMContentLoaded", () => {
+    		toggle('addtraitdiv');
+		});
 	</script>
 	<style>
 		.icon-img{ width: 1.3em }
@@ -65,66 +45,72 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
+		<a href='../../../index.php'> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
 		<b><?= $LANG['CHAR_MGMT'] ?></b>
 	</div>
 	<div role="main" id="innertext">
 		<div style="float: right;">
-			<a href="#" onclick="toggle('addchardiv');">
-				<img class="icon-img" src="../../images/add.png" alt="<?= $LANG['ADD_BTN'] ?>" />
+			<a href="#" onclick="toggle('addtraitdiv');">
+				<img class="icon-img" src="../../../images/add.png" alt="<?= $LANG['ADD_BTN'] ?>" />
 			</a>
 		</div>
-		<h1 class="page-heading"><?= $LANG['TAXON_CHARACTERS']; ?></h1>
+		<h1 class="page-heading">Occurrence Traits</h1>
 		<?php
 		if($isEditor){
 			?>
 			<div id="addeditchar">
-				<div id="addchardiv" style="display:none;margin-bottom:8px;">
+				<div id="addtraitdiv" style="display:none;margin-bottom:8px;">
 					<form name="newcharform" action="chardetails.php" method="post" onsubmit="return validateNewCharForm(this)">
 						<fieldset>
-							<legend><b><?= $LANG['NEW_CHAR'] ?></b></legend>
+							<legend><b>NEW TRAIT</b></legend>
 							<div>
-							<label for="charname"><?= $LANG['CHAR_NAME'] ?>:</label>
-								<input type="text" id="charname" name="charname" autocomplete="off" maxlength="255" style="width:400px;" />
+							<label for="traitname">TRAIT NAME:</label>
+								<input type="text" id="traitname" name="traitname" autocomplete="off" maxlength="255" style="width:400px;" />
 							</div>
 							<div class="flex-form">
 								<div>
-									<label for="chartype"><?= $LANG['TYPE'] ?>:</label>
-									<select id="chartype" name="chartype">
-										<option value="UM"><?= $LANG['MULTI_STATE'] ?></option>
-									</select>
-								</div>
-								<div>
-								<label for="difficultyrank"><?= $LANG['DIFFICULTY'] ?>:</label>
-									<select id="difficultyrank" name="difficultyrank">
+								<label for="traittype">TRAIT TYPE:</label>
+									<select id="traittype" name="traittype">
 										<option value="">---------------</option>
-										<option value="1"><?= $LANG['EASY'] ?></option>
-										<option value="2"><?= $LANG['INTERMEDIATE'] ?></option>
-										<option value="3"><?= $LANG['ADVANCED'] ?></option>
-										<option value="4"><?= $LANG['HIDDEN'] ?></option>
+										<option value="1">UM</option>
+										<option value="2">TF</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
 									</select>
-								</div>
-								<div>
-									<label for="hid"> <?= $LANG['GROUPING'] ?>: </label>
-									<select id="hid" name="hid" style="max-width:300px;">
-										<option value=""> <?= $LANG['NOT_ASSIGNED'] ?> </option>
-										<option value="">---------------------</option>
-										<?php
-										$hArr = $headingArr;
-										asort($hArr);
-										foreach($hArr as $hid => $unitArr){
-											echo '<option value="' . $hid . '">' . $unitArr['headingName'] . '</option>';
-										}
-										?>
-									</select>
-									<a href="#" onclick="openHeadingAdmin(); return false;"> <img class="icon-img" src="../../images/edit.png" alt="<?= $LANG['EDIT_BTN'] ?>" /></a>
 								</div>
 							</div>
 							<div class="flex-form">
 								<div>
-									<label for="sortsequence"><?= $LANG['SORT_SQNCE'] ?></label>
-									<input type="text" id="sortsequence" name="sortsequence" autocomplete="off" />
+									<label for="traitname">Units:</label>
+									<input type="text" id="units" name="units" autocomplete="off" maxlength="255" />
 								</div>
+								<div>
+									<label for="traitname">Description:</label>
+									<input type="text" id="description" name="description" autocomplete="off" maxlength="255" />
+								</div>
+								<div>
+									<label for="traitname">Reference URL:</label>
+									<input type="text" id="refurl" name="refurl" autocomplete="off" maxlength="255" />
+								</div>
+								<div>
+									<label for="traitname">Notes:</label>
+									<input type="text" id="notes" name="notes" autocomplete="off" maxlength="255" />
+								</div>
+								<div>
+									<label for="traitname">isPublic:</label>
+									<input type="checkbox" id="isPublic" name="isPublic" />
+								</div>
+								<div>
+								<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
+									<select id="dynamicproperties" name="dynamicproperties">
+										<option value="">---------------</option>
+										<option value="1">Radio Button</option>
+										<option value="2">Checkbox</option>
+										<option value="3">3</option>
+										<option value="4">4</option>
+									</select>
+								</div>
+							</div>
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<button name="formsubmit" type="submit" value="createCharacter"><?= $LANG['CREATE_BTN'] ?></button>
@@ -132,42 +118,18 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 						</fieldset>
 					</form>
 				</div>
-				<div id="charlist" style="padding-left:10px;">
+				<div id="traitList" style="padding-left:10px;">
 					<?php
-					if($charList){
-						foreach($headingArr as $hid => $hArr){
-							if(isset($charList[$hid])){
-								?>
-								<h2><?= Sanitize::outString($hArr['headingName']) ?></h2>
-								<div>
-									<ul>
-										<?php
-										foreach($charList[$hid] as $cid => $charName){
-											echo '<li><a href="traitdetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
-										}
-										?>
-									</ul>
-								</div>
-								<?php
-							}
+					if($traitList){
+						echo '<ul>';
+						foreach ($traitList as $trait){
+							echo '<li><a href="traitdetails.php?traitid=' . $trait['traitid'] . '">' . $trait['traitName'] . '</a></li>';
+							var_dump($trait);
 						}
-						if(!empty($charList['UNDEFINED'])){
-							?>
-							<h2> <?= $LANG['NO_GRP_ASSSIGNED'] ?> </h2>
-							<div>
-								<ul>
-									<?php
-									foreach($charList['UNDEFINED'] as $cid => $charName){
-										echo '<li><a href="traitdetails.php?cid=' . $cid . '">' . Sanitize::outString($charName) . '</a></li>';
-									}
-									?>
-								</ul>
-							</div>
-							<?php
-						}
+						echo '</ul>';
 					}
 					else{
-						echo '<div style="font-weight:bold;font-size:120%;">' . $LANG['NO_CHAR'] . '</div>';
+						echo '<div style="font-weight:bold;font-size:120%;">' . 'No Traits' . '</div>';
 					}
 					?>
 				</div>
