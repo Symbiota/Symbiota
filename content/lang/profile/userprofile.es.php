@@ -6,6 +6,11 @@ Language: Español (Spanish)
 */
 
 $LANG['DETAILS'] = 'Detalles del Perfil';
+$LANG['SELECT_FROM_LIST'] = 'Debe seleccionar un taxón de la lista';
+$LANG['PWD_NO_SPACE'] = 'La contraseña no puede comenzar ni terminar con un espacio, pero puede incluir espacios en su interior';
+$LANG['PWD_TOO_SHORT'] = 'La contraseña debe tener 10 caracteres o más';
+$LANG['PWD_DONT_MATCH'] = 'Las contraseñas no coinciden';
+$LANG['PWD_UNALLOWED_CHRS'] = 'El nombre de usuario solo debe contener 0-9A-Za-z_.!@ (no se permiten espacios)';
 $LANG['EDIT_PROFILE'] = 'Editar Perfil';
 $LANG['CHANGE_PASSWORD'] = 'Cambiar Contraseña';
 $LANG['CHANGE_LOGIN'] = 'Cambiar Usuario';

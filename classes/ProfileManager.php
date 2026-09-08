@@ -814,19 +814,8 @@ class ProfileManager extends Manager{
 	}
 
 
-	public function addUserTaxonomy($taxon, $editorStatus, $geographicScope, $notes){
-		$statusStr = 'SUCCESS adding taxonomic relationship';
-
-		$tid = 0;
-		//Get tid for taxon
-		$sql1 = 'SELECT tid FROM taxa WHERE sciname = ?';
-		if($stmt1 = $this->conn->prepare($sql1)){
-			$stmt1->bind_param('s', $taxon);
-			$stmt1->execute();
-			$stmt1->bind_result($tid);
-			$stmt1->fetch();
-			$stmt1->close();
-		}
+	public function addUserTaxonomy($tid, $editorStatus, $geographicScope, $notes){
+		$status = false;
 		if($tid){
 			$sql = 'INSERT INTO usertaxonomy(uid, tid, taxauthid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) VALUES(?,?,?,?,?,?,?,?)';
 			$this->resetConnection();
@@ -834,7 +823,6 @@ class ProfileManager extends Manager{
 				$taxAuthID = 1;
 				$symbUid = $GLOBALS['SYMB_UID'];
 				$modDate = date('Y-m-d H:i:s');
-
 				$stmt->bind_param('iiisssis', $this->uid, $tid, $taxAuthID, $editorStatus, $geographicScope, $notes, $symbUid, $modDate);
 				$stmt->execute();
 				if($stmt->affected_rows && !$stmt->error){
@@ -842,13 +830,14 @@ class ProfileManager extends Manager{
 						$this->userName = $GLOBALS['USERNAME'];
 						$this->authenticate();
 					}
+					$status = true;
 				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR adding taxonomic relationship: '.$stmt->error;
+				elseif($stmt->error) $this->errorMessage = $stmt->error;
 				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for adding taxonomic relationship: '.$this->conn->error;
+			else $this->errorMessage = $this->conn->error;
 		}
-		return $statusStr;
+		return $status;
 	}
 
 	/**
