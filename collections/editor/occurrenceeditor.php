@@ -1079,7 +1079,7 @@ else{
 												</div>
 												<div id="stateProvinceDiv" class="field-div">
 													<?php echo $LANG['STATEPROVINCE']; ?>
-													<a href="#" onclick="return dwcDoc('stateProvince')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
+													<a href="#" onclick="return dwcDoc('stateprovince')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a>
 													<br/>
 													<input type="text" id="ffstate" name="stateprovince" value="<?php echo array_key_exists('stateprovince',$occArr)?$occArr['stateprovince']:''; ?>" onchange="stateProvinceChanged(this.value)" autocomplete="noaction" />
 												</div>
