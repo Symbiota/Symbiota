@@ -1,15 +1,16 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorDeterminations.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('collections/editor/batchdeterminations');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/batchdeterminations.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = filter_var(($_REQUEST['collid'] ?? 0), FILTER_SANITIZE_NUMBER_INT);
+$collid = Sanitize::int($_REQUEST['collid'] ?? 0);
 $formSubmit = array_key_exists('formsubmit',$_POST)?$_POST['formsubmit']:'';
 
 $occManager = new OccurrenceEditorDeterminations();
@@ -25,61 +26,68 @@ elseif(array_key_exists('CollEditor', $USER_RIGHTS) && in_array($collid, $USER_R
 }
 $statusStr = '';
 if($isEditor){
-	if($formSubmit == 'Add New Determinations'){
+	if($formSubmit == 'addNewDeterminations'){
 		$occidArr = $_REQUEST['occid'];
 		foreach($occidArr as $k){
-			$occManager->setOccId(filter_var($k, FILTER_SANITIZE_NUMBER_INT));
-			$occManager->addDetermination($_REQUEST,$isEditor);
+			$occManager->setOccId(Sanitize::int($k));
+			$occManager->addDetermination($_REQUEST, $isEditor);
 		}
 		$statusStr = 'SUCCESS: ' . count($occidArr) . ' annotations submitted';
-	}
-	elseif($formSubmit == 'Adjust Nomenclature'){
-		$occidArr = $_REQUEST['occid'];
-		foreach($occidArr as $k){
-			$occManager->setOccId(filter_var($k, FILTER_SANITIZE_NUMBER_INT));
-			$occManager->addNomAdjustment($_REQUEST,$isEditor);
-		}
 	}
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 	<head>
-	    <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $CHARSET;?>">
-		<title><?php echo $DEFAULT_TITLE.' '.$LANG['BATCH_DETERS']; ?></title>
-		<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	    <meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET;?>">
+		<title><?= $DEFAULT_TITLE.' '.$LANG['BATCH_DETERS'] ?></title>
+		<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 		<script type="text/javascript">
-			function initScinameAutocomplete(f){
-				$( f.sciname ).autocomplete({
-					source: "rpc/getspeciessuggest.php",
-					minLength: 3,
-					change: function(event, ui) {
-					}
-				});
-			}
 
-			function initDetAutocomplete(f){
-				$( f.sciname ).autocomplete({
-					source: "rpc/getspeciessuggest.php",
-					minLength: 3,
-					change: function(event, ui) {
-						if(f.sciname.value){
-							pauseSubmit = true;
-							verifyDetSciName(f);
-						}
-						else{
-							f.scientificnameauthorship.value = "";
-							f.family.value = "";
-							f.tidtoadd.value = "";
-						}
-					}
-				});
-			}
+			$(document).ready(function() {
+
+				const taxonSearchInput = document.querySelector('#nomsciname');
+				if(taxonSearchInput){
+					taxonSearchInput.addEventListener('focus', (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.includeAuthor = false;
+						taxaSuggest.config.includeKingdom = false;
+						taxaSuggest.initiate("nomsciname");
+					});
+				}
+
+				const taxonInput = document.querySelector('#dafsciname');
+				if(taxonInput){
+					taxonInput.addEventListener('focus', (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+						taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+						taxaSuggest.initiate("dafsciname", function(result) {
+							if (result.valid) {
+								document.getElementById("dafsciname").value = result.item.sciname;
+								document.getElementById("daftid").value = result.item.id;
+								document.getElementById("dafauthor").value = result.item.author;
+								document.getElementById("daffamily").value = result.item.family;
+							}
+							else{
+								document.getElementById("daftid").value = "";
+								document.getElementById("dafauthor").value = "";
+								document.getElementById("daffamily").value = "";
+								if(this.value != ""){
+									alert("<?= $LANG['WARNING_TAXON_NOT_FOUND'] ?>");
+								}
+							}
+						});
+					});
+				}
+
+			});
 
 			function submitAccForm(f){
 				var workingObj = document.getElementById("workingcircle");
@@ -102,7 +110,7 @@ if($isEditor){
 						for (var occid in retStr) {
 							var occObj = retStr[occid];
 							if(f.catalognumber.value && checkCatalogNumber(occid, occObj["cn"])){
-								alert("<?php echo $LANG['RECORD_EXISTS']; ?>");
+								alert("<?= $LANG['RECORD_EXISTS'] ?>");
 							}
 							else{
 								var trNode = createNewTableRow(occid, occObj);
@@ -113,7 +121,7 @@ if($isEditor){
 						document.getElementById("accrecordlistdviv").style.display = "block";
 					}
 					else{
-						alert("<?php echo $LANG['NO_RECORDS']; ?>");
+						alert("<?= $LANG['NO_RECORDS'] ?>");
 					}
 				});
 
@@ -165,7 +173,7 @@ if($isEditor){
 			}
 
 			function clearAccForm(f){
-				if(confirm("<?php echo $LANG['CLEAR_FORM_RESETS']; ?>") == true){
+				if(confirm("<?= $LANG['CLEAR_FORM_RESETS'] ?>") == true){
 					document.getElementById("accrecordlistdviv").style.display = "none";
 					document.getElementById("catrecordstbody").innerHTML = '';
 					f.catalognumber.value = '';
@@ -184,20 +192,12 @@ if($isEditor){
 					}
 				}
 				if(specNotSelected){
-					alert("<?php echo $LANG['SELECT_ONE']; ?>");
+					alert("<?= $LANG['SELECT_ONE'] ?>");
 					return false;
 				}
 
-				if(f.sciname.value == ""){
-					alert("<?php echo $LANG['SCINAME_NEEDS_VALUE']; ?>");
-					return false;
-				}
-				if(f.identifiedby.value == ""){
-					alert("<?php echo $LANG['DETERMINER_NEEDS_VALUE']; ?>");
-					return false;
-				}
-				if(f.dateidentified.value == ""){
-					alert("<?php echo $LANG['DET_DATE_NEEDS_VALUE']; ?>");
+				if(f.sciname.value != "" && f.tidtoadd.value == ""){
+					alert("<?= $LANG['WARNING_TAXON_NOT_FOUND'] ?>");
 					return false;
 				}
 				return true;
@@ -245,27 +245,6 @@ if($isEditor){
 				}
 			}
 
-			function verifyDetSciName(f){
-				$.ajax({
-					type: "POST",
-					url: "rpc/verifysciname.php",
-					dataType: "json",
-					data: { term: f.sciname.value }
-				}).done(function( data ) {
-					if(data){
-						f.scientificnameauthorship.value = data.author;
-						f.family.value = data.family;
-						f.tidtoadd.value = data.tid;
-					}
-					else{
-						alert("<?php echo $LANG['WARNING_TAXON_NOT_FOUND']; ?>");
-						f.scientificnameauthorship.value = "";
-						f.family.value = "";
-						f.tidtoadd.value = "";
-					}
-				});
-			}
-
 			function openIndPopup(occid){
 				openPopup('../individual/index.php?occid=' + occid);
 			}
@@ -298,58 +277,58 @@ if($isEditor){
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<a href="../misc/collprofiles.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>&emode=1"><?php echo htmlspecialchars($LANG['COLL_MANAGE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-		<b><?php echo $LANG['BATCH_DETERS']; ?></b>
+		<a href='../../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href="../misc/collprofiles.php?collid=<?= $collid ?>&emode=1"><?= $LANG['COLL_MANAGE'] ?></a> &gt;&gt;
+		<b><?= $LANG['BATCH_DETERS'] ?></b>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= $LANG['BATCH_DETERS']; ?></h1>
+		<h1 class="page-heading"><?= $LANG['BATCH_DETERS'] ?></h1>
 		<?php
 		if($isEditor){
 			echo '<h2>'.$occManager->getCollName().'</h2>';
 			?>
 			<div>
 				<section class="fieldset-like">
-					<h2> <span> <?php echo $LANG['DEFINE_RECORDSET']; ?> </span> </h2>
+					<h2> <span> <?= $LANG['DEFINE_RECORDSET'] ?> </span> </h2>
 					<div>
-						<?php echo $LANG['RECORDSET_EXPLAIN']; ?>
+						<?= $LANG['RECORDSET_EXPLAIN'] ?>
 					</div>
 					<div style="margin-top:15px;">
 						<form name="accqueryform" action="batchdeterminations.php" method="post" onsubmit="return submitAccForm(this);">
 							<section class="flex-form" style="align-items: center; gap:0.5rem; margin-bottom: 1rem">
 								<div style="margin: 0; display:flex; align-items: center; gap:0.25rem">
-									<label for="catalognumber"><?php echo $LANG['CATNUM']; ?>:</label>
+									<label for="catalognumber"><?= $LANG['CATNUM'] ?>:</label>
 									<input style="margin: 0" name="catalognumber" id="catalognumber" type="text" style="border-color:green;width:200px;" />
 								</div>
 								<div style="margin: 0">
-									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?php echo $LANG['TARGET_ALL']; ?></label>
+									<input name="allcatnum" id="allcatnum" type="checkbox" checked /> <label for="allcatnum"><?= $LANG['TARGET_ALL'] ?></label>
 								</div>
 							</section>
 							<div style="margin-bottom: 1rem; display:flex; align-items: center; gap:0.25rem">
-								<label for="nomsciname"><?php echo $LANG['TAXON']; ?>:</label>
-								<input style="margin:0; width:260px;" type="text" id="nomsciname" name="sciname" onfocus="initScinameAutocomplete(this.form)" />
+								<label for="nomsciname"><?= $LANG['TAXON'] ?>:</label>
+								<input type="text" id="nomsciname" name="sciname"  style="margin:0; width:260px;">
 							</div>
 							<section class="flex-form">
 								<div style="margin: 0">
-									<button name="addrecord" type="submit"><?php echo $LANG['ADD_RECORDS']; ?></button>
+									<button name="addrecord" type="submit"><?= $LANG['ADD_RECORDS'] ?></button>
 									<img id="workingcircle" src="../../images/workingcircle.gif" style="display:none;" alt="progress is being made" />
 								</div>
 								<div style="margin: 0">
-									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?php echo $LANG['CLEAR_LIST']; ?></button>
-									<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+									<button name="clearaccform" type="button" onclick='clearAccForm(this.form)'><?= $LANG['CLEAR_LIST'] ?></button>
+									<input name="collid" type="hidden" value="<?= $collid ?>" />
 								</div>
 							</section>
 						</form>
 					</div>
 					<div style="margin-top: 1rem">
-						* <?php echo $LANG['LIST_LIMIT']; ?><br/>
+						* <?= $LANG['LIST_LIMIT'] ?><br/>
 					</div>
 					<?php
 					if($statusStr){
 						echo '<div style="margin:30px 20px;">';
 						echo '<div style="color:orange;font-weight:bold;">'.$statusStr.'</div>';
-						echo '<div style="margin-top:10px;"><a href="../reports/annotationmanager.php?collid=' . htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">' . htmlspecialchars($LANG['DISPLAY_QUEUE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+						echo '<div style="margin-top:10px;"><a href="../reports/annotationmanager.php?collid=' . $collid . '" target="_blank">' . $LANG['DISPLAY_QUEUE'] . '</a></div>';
 						echo '</div>';
 					}
 					?>
@@ -358,82 +337,82 @@ if($isEditor){
 					<form name="accselectform" id="accselectform" action="batchdeterminations.php" method="post" onsubmit="return validateSelectForm(this);">
 						<div style="margin-top: 15px; margin-left: 10px;">
 							<input name="accselectall" value="" type="checkbox" onclick="selectAll(this);" checked />
-							<?php echo $LANG['SELECT_DESELECT']; ?>
+							<?= $LANG['SELECT_DESELECT'] ?>
 						</div>
 						<table class="styledtable">
 							<thead>
 								<tr>
 									<th style="width:25px;text-align:center;">&nbsp;</th>
-									<th style="width:125px;text-align:center;"><?php echo $LANG['CATNUM']; ?></th>
-									<th style="width:300px;text-align:center;"><?php echo $LANG['SCINAME']; ?></th>
-									<th style="text-align:center;"><?php echo $LANG['COLLECTOR_LOCALITY']; ?></th>
+									<th style="width:125px;text-align:center;"><?= $LANG['CATNUM'] ?></th>
+									<th style="width:300px;text-align:center;"><?= $LANG['SCINAME'] ?></th>
+									<th style="text-align:center;"><?= $LANG['COLLECTOR_LOCALITY'] ?></th>
 								</tr>
 							</thead>
 							<tbody id="catrecordstbody"></tbody>
 						</table>
 						<div id="newdetdiv" style="">
 							<fieldset style="margin: 15px 15px 0px 15px;padding:15px;">
-								<legend><b><?php echo $LANG['NEW_DET_DETAILS']; ?></b></legend>
+								<legend><b><?= $LANG['NEW_DET_DETAILS'] ?></b></legend>
 								<div style='margin:3px;position:relative;height:35px'>
 									<div style="float:left;">
-										<b><?php echo $LANG['ANNOTATION_TYPE']; ?>:</b>
+										<b><?= $LANG['ANNOTATION_TYPE'] ?>: </b>
 									</div>
 									<div style="float:left;">
-										<input name="annotype" type="radio" value="id" onchange="annotationTypeChanged(this)" checked /> <?php echo $LANG['ID_ADJUST']; ?><br/>
-										<input name="annotype" type="radio" value="na" onchange="annotationTypeChanged(this)" /> <?php echo $LANG['NOM_ADJUST']; ?>
+										<input name="annotype" type="radio" value="id" onchange="annotationTypeChanged(this)" checked /> <?= $LANG['ID_ADJUST'] ?><br/>
+										<input name="annotype" type="radio" value="na" onchange="annotationTypeChanged(this)" /> <?= $LANG['NOM_ADJUST'] ?>
 									</div>
 								</div>
 								<div style="clear:both;margin:15px 0px"><hr /></div>
 								<div id="idQualifierDiv" style='margin:3px;clear:both'>
-									<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
+									<b><?= $LANG['ID_QUALIFIER'] ?>:</b>
 									<input type="text" name="identificationqualifier" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
-									<label for="dafsciname"><b><?= $LANG['SCINAME']; ?></b></label>:
-									<input type="text" id="dafsciname" name="sciname" required style="width:350px;" onfocus="initDetAutocomplete(this.form)" />
-									<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
-									<input type="hidden" name="family" value="" />
+									<label for="dafsciname"><b><?= $LANG['SCINAME'] ?></b></label>:
+									<input type="text" id="dafsciname" name="sciname" style="width:350px;" required >
+									<input type="hidden" id="daftid" name="tidtoadd" value="" />
+									<input type="hidden" id="daffamily" name="family" value="" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['AUTHOR']; ?>:</b>
-									<input type="text" name="scientificnameauthorship" style="width:200px;" />
+									<b><?= $LANG['AUTHOR'] ?>:</b>
+									<input type="text" id="dafauthor" name="scientificnameauthorship" style="width:200px;" />
 								</div>
 								<div id="codDiv" style='margin:3px;'>
-									<b><?php echo $LANG['CONFIDENCE']; ?>:</b>
+									<b><?= $LANG['CONFIDENCE'] ?>:</b>
 									<select name="confidenceranking">
-										<option value="8"><?php echo $LANG['HIGH']; ?></option>
-										<option value="5" selected><?php echo $LANG['MEDIUM']; ?></option>
-										<option value="2"><?php echo $LANG['LOW']; ?></option>
+										<option value="8"><?= $LANG['HIGH'] ?></option>
+										<option value="5" selected><?= $LANG['MEDIUM'] ?></option>
+										<option value="2"><?= $LANG['LOW'] ?></option>
 									</select>
 								</div>
 								<div id="identifiedByDiv" style='margin:3px;'>
-									<label for="identifiedby"><b><?= $LANG['DETERMINER']; ?></b></label>:
-									<input type="text" name="identifiedby" id="identifiedby" required style="width:200px;" />
+									<label for="identifiedby"><b><?= $LANG['DETERMINER'] ?></b></label>:
+									<input type="text" name="identifiedby" id="identifiedby" style="width:200px;" required />
 								</div>
 								<div id="dateIdentifiedDiv" style='margin:3px;'>
-									<label for="dateidentified"><b><?= $LANG['DATE']; ?></b></label>:
-									<input type="text" name="dateidentified" id="dateidentified" required onchange="detDateChanged(this.form);" />
+									<label for="dateidentified"><b><?= $LANG['DATE'] ?></b></label>:
+									<input type="text" name="dateidentified" id="dateidentified" onchange="detDateChanged(this.form);" required />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['REFERENCE']; ?>:</b>
+									<b><?= $LANG['REFERENCE'] ?>:</b>
 									<input type="text" name="identificationreferences" style="width:350px;" />
 								</div>
 								<div style='margin:3px;'>
-									<b><?php echo $LANG['NOTES']; ?>:</b>
+									<b><?= $LANG['NOTES'] ?>:</b>
 									<input type="text" name="identificationremarks" style="width:350px;" />
 								</div>
 								<div id="makeCurrentDiv" style='margin:3px;'>
-									<input type="checkbox" name="makecurrent" value="1" checked /> <?php echo $LANG['MAKE_CURRENT']; ?>
+									<input type="checkbox" name="makecurrent" value="1" checked /> <?= $LANG['MAKE_CURRENT'] ?>
 								</div>
 								<div style='margin:3px;'>
-									<input type="checkbox" name="printqueue" value="1" checked /> <?php echo $LANG['ADD_PRINT_QUEUE']; ?>
-									<a href="../reports/annotationmanager.php?collid=<?php echo htmlspecialchars($collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" target="_blank"><img src="../../images/list.png" style="width:1.2em" title="<?php echo htmlspecialchars($LANG['DISPLAY_QUEUE'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" /></a>
+									<input type="checkbox" name="printqueue" value="1" checked /> <?= $LANG['ADD_PRINT_QUEUE'] ?>
+									<a href="../reports/annotationmanager.php?collid=<?= $collid ?>" target="_blank"><img src="../../images/list.png" style="width:1.2em" title="<?= $LANG['DISPLAY_QUEUE'] ?>" /></a>
 								</div>
 								<div style='margin:15px;'>
 									<div>
-										<input name="collid" type="hidden" value="<?php echo $collid; ?>" />
+										<input name="collid" type="hidden" value="<?= $collid ?>" />
 										<input name="tabtarget" type="hidden" value="0" />
-										<button type="submit" name="formsubmit" value="Add New Determinations"><?php echo $LANG['ADD_DETERS']; ?></button>
+										<button type="submit" name="formsubmit" value="addNewDeterminations"><?= $LANG['ADD_DETERS'] ?></button>
 									</div>
 									<p><?php include('includes/requiredFieldInstruction.php')?></p>
 								</div>
@@ -447,7 +426,7 @@ if($isEditor){
 		else{
 			?>
 			<div style="font-weight:bold;margin:20px;font-weight:150%;">
-				<?php echo $LANG['NO_PERMISSIONS']; ?>
+				<?= $LANG['NO_PERMISSIONS'] ?>
 			</div>
 			<?php
 		}

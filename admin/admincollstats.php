@@ -257,7 +257,8 @@ if($action != "Update Statistics"){
 			<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
             <script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 			<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					if(!navigator.cookieEnabled){
@@ -265,48 +266,15 @@ if($action != "Update Statistics"){
 					}
 					$("#tabs").tabs({<?php echo ($action == "Run Statistics"?'active: 1':''); ?>});
 
-                    function split( val ) {
-                        return val.split( /,\s*/ );
-                    }
-                    function extractLast( term ) {
-                        return split( term ).pop();
-                    }
+					const taxonInput = document.querySelector('#taxon');
+					if(taxonInput){
+						taxonInput.addEventListener('focus', (event) => {
+							taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+							taxaSuggest.config.minLength = 2;
+							taxaSuggest.initiate("taxon");
+						});
+					}
 
-                    $( "#taxon" )
-                    // don't navigate away from the field on tab when selecting an item
-						.on( "keydown", function( event ) {
-                            if ( event.keyCode === $.ui.keyCode.TAB &&
-                                $( this ).data( "autocomplete" ).menu.active ) {
-                                event.preventDefault();
-                            }
-                        })
-                        .autocomplete({
-                            source: function( request, response ) {
-                                $.getJSON( "rpc/speciessuggest.php", {
-                                    term: extractLast( request.term )
-                                }, response );
-                            },
-                            search: function() {
-                                // custom minLength
-                                var term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                var terms = split( this.value );
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
-                                return false;
-                            }
-                        },{});
 				});
 
 				function toggleDisplayListOfCollectionsAnalyzed(){
@@ -446,6 +414,7 @@ if($action != "Update Statistics"){
 											<div class="record-criteria-inputs">
 												<label for="taxon"><?php echo $LANG['PARENT_CRITERIA']; ?>: </label>
 												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cParentTaxon; ?>" />
+												<input name="tid" type="hidden" value="" >
 											</div>
 											<div class="record-criteria-inputs">
 												<label for="country"><?php echo $LANG['COUNTRY']; ?>: </label>
@@ -857,7 +826,7 @@ if($action != "Update Statistics"){
 									</section>
 									<div class="top-marg">
 										<b><?php echo $LANG['SPEC_W_COUNTRY']; ?>:</b> <?php echo number_format($total); ?><br />
-										<?php 
+										<?php
 										if ($results){
 											echo $LANG['SPEC_WO_COUNTRY']; ?>: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']);
 										}

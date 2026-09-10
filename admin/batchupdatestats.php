@@ -257,7 +257,8 @@ if($action != "Update Statistics"){
 			<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
             <script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 			<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					if(!navigator.cookieEnabled){
@@ -265,48 +266,15 @@ if($action != "Update Statistics"){
 					}
 					$("#tabs").tabs({<?php echo ($action == "Run Statistics"?'active: 1':''); ?>});
 
-                    function split( val ) {
-                        return val.split( /,\s*/ );
-                    }
-                    function extractLast( term ) {
-                        return split( term ).pop();
-                    }
+					const taxonInput = document.querySelector('#taxon');
+					if(taxonInput){
+						taxonInput.addEventListener('focus', (event) => {
+							taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+							taxaSuggest.config.minLength = 2;
+							taxaSuggest.initiate("taxon");
+						});
+					}
 
-                    $( "#taxon" )
-                    // don't navigate away from the field on tab when selecting an item
-						.on( "keydown", function( event ) {
-                            if ( event.keyCode === $.ui.keyCode.TAB &&
-                                $( this ).data( "autocomplete" ).menu.active ) {
-                                event.preventDefault();
-                            }
-                        })
-                        .autocomplete({
-                            source: function( request, response ) {
-                                $.getJSON( "rpc/speciessuggest.php", {
-                                    term: extractLast( request.term )
-                                }, response );
-                            },
-                            search: function() {
-                                // custom minLength
-                                var term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                var terms = split( this.value );
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
-                                return false;
-                            }
-                        },{});
 				});
 
 				function toggleDisplayListOfCollectionsAnalyzed(){
@@ -403,7 +371,7 @@ if($action != "Update Statistics"){
 				?>
 				<div class='navpath'>
 					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?= $LANG['COLLECTIONS'] ?></a> &gt;&gt;
 					<b><?php echo $LANG['BATCH_UPDATE_STATS']; ?></b>
 				</div>
 				<?php
@@ -415,10 +383,10 @@ if($action != "Update Statistics"){
 				<div id="error-msgs" class="errors"></div>
 				<div id="tabs" class="tabby">
 					<ul class="full-tab">
-						<li><a href="#specobsdiv"><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+						<li><a href="#specobsdiv"><?= $LANG['COLLECTIONS'] ?></a></li>
 						<?php
                         if($action == "Run Statistics"){
-							echo '<li><a href="#statsdiv">' . htmlspecialchars($LANG['STATISTICS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+							echo '<li><a href="#statsdiv">' . $LANG['STATISTICS'] . '</a></li>';
 						}
 						?>
 					</ul>

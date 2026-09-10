@@ -367,18 +367,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		return $retArr;
 	}
 
-	public function addNomAdjustment($detArr,$isEditor){
-		$sql = 'SELECT identificationQualifier FROM omoccurrences WHERE occid = '.$this->occid;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			$detArr['identificationqualifier'] = $r->identificationQualifier;
-		}
-		$rs->free();
-		$detArr['identifiedby'] = 'Nomenclatural Adjustment';
-		$detArr['dateidentified'] = date('F').' '.date('j').', '.date('Y');
-		$this->addDetermination($detArr, $isEditor);
-	}
-
 	public function getNewDetItem($catNum, $sciName, $allCatNum = 0){
 		$retArr = array();
 		if($catNum || $sciName){
