@@ -19,6 +19,17 @@ class OmOccurrenceTraits extends DataCore{
 		return $this->getRecordArr('tmtraits', $conditionArr, $orderByArr);
 	}
 
+	public function getTraitArrById(){
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		$this->setTraitFieldMap();
+		$pkArr = array('traitID' => $this->traitID);
+		$traitArr = $this->getRecordArr('tmtraits', $pkArr);
+		return $traitArr[$this->traitID];
+	}
+
 	public function insertTrait($inputArr){
 		$this->setTraitFieldMap();
 		if(empty($inputArr['createdUid'])){
