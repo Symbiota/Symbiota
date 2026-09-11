@@ -123,7 +123,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 					if($traitList){
 						echo '<ul>';
 						foreach ($traitList as $trait){
-							echo '<li><a href="traitdetails.php?traitid=' . $trait['traitid'] . '">' . $trait['traitName'] . '</a></li>';
+							echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
 							var_dump($trait);
 						}
 						echo '</ul>';
