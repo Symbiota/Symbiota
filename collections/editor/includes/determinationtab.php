@@ -124,7 +124,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 			}
 			?>
 			<div id="newdetdiv" style="display:<?php echo ($detArr?'none':''); ?>;">
-				<form name="detaddform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this)">
+				<form name="detaddform" class="det-form" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this)">
 					<fieldset style="margin:15px;padding:15px;">
 						<legend><b><?php echo $LANG['ADD_NEW_DET']; ?></b></legend>
 						<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
@@ -162,13 +162,13 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						</div>
 						<div style='margin:3px;'>
 							<label for="dafsciname"><b><?= $LANG['SCI_NAME']; ?></b></label>:
-							<input type="text" id="dafsciname" name="sciname" required style="width:350px;" onfocus="initDetAutocomplete(this.form)" />
-							<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
-							<input type="hidden" name="family" value="" />
+							<input type="text" id="dafsciname" name="sciname" style="width:350px;" required >
+							<input type="hidden" id="daftid" name="tidtoadd" value="" />
+							<input type="hidden" id="daffamily" name="family" value="" />
 						</div>
 						<div style='margin:3px;'>
-							<label for="add_scientificnameauthorship"><b><?= $LANG['AUTHOR']; ?></b></label>:
-							<input id="add_scientificnameauthorship" type="text" name="scientificnameauthorship" style="width:200px;" />
+							<label for="dafauthor"><b><?= $LANG['AUTHOR']; ?></b></label>:
+							<input id="dafauthor" type="text" name="scientificnameauthorship" style="width:200px;" />
 						</div>
 						<div style='margin:3px;'>
 							<b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b>
@@ -180,11 +180,11 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 						</div>
 						<div style='margin:3px;'>
 							<label for="add_identifiedby"><b><?= $LANG['DETERMINER']; ?></b></label>:
-							<input id="add_identifiedby" type="text" name="identifiedby" required style="width:200px;" />
+							<input id="add_identifiedby" type="text" name="identifiedby" style="width:200px;" required />
 						</div>
 						<div style='margin:3px;'>
 							<label for="add_dateidentified"><b><?= $LANG['DATE']; ?></b></label>:
-							<input id="add_dateidentified" type="text" name="dateidentified" required onchange="detDateChanged(this.form);" />
+							<input id="add_dateidentified" type="text" name="dateidentified" onchange="detDateChanged(this.form);" required />
 						</div>
 						<div style='margin:3px;'>
 							<b><?php echo $LANG['REFERENCE']; ?>:</b>
@@ -284,14 +284,14 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 					<div id="editdetdiv-<?php echo $detId;?>" style="display:none;margin:15px 5px;">
 						<fieldset>
 							<legend><b><?php echo $LANG['EDIT_DET']; ?></b></legend>
-							<form name="deteditform" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this);">
+							<form name="deteditform" class="det-form" action="occurrenceeditor.php" method="post" onsubmit="return verifyDetForm(this);">
 								<div style='margin:3px;'>
 									<b><?php echo $LANG['ID_QUALIFIER']; ?>:</b>
 									<input type="text" name="identificationqualifier" value="<?php echo $detRec['identificationqualifier']; ?>" title="e.g. cf, aff, etc" />
 								</div>
 								<div style='margin:3px;'>
 									<label for="defsciname"><b><?= $LANG['SCI_NAME']; ?></b></label>:
-									<input type="text" id="defsciname-<?php echo $detId;?>" name="sciname" value="<?php echo $detRec['sciname']; ?>" required style="width:350px;" onfocus="initDetAutocomplete(this.form)" />
+									<input type="text" id="defsciname-<?= $detId ?>" name="sciname" value="<?= $detRec['sciname'] ?>" style="width:350px;" required />
 									<input type="hidden" id="deftidtoadd" name="tidtoadd" value="" />
 									<input type="hidden" name="family" value="" />
 								</div>
@@ -301,7 +301,7 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 								</div>
 								<div style='margin:3px;'>
 									<label for="edit_identifiedby"><b><?= $LANG['DETERMINER']; ?></b></label>:
-									<input id="edit_identifiedby" type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" required style="width:200px;" />
+									<input id="edit_identifiedby" type="text" name="identifiedby" value="<?php echo $detRec['identifiedby']; ?>" style="width:200px;" required />
 								</div>
 								<div style='margin:3px;'>
 									<label for="edit_identifiedby"><b><?= $LANG['DATE']; ?></b></label>:

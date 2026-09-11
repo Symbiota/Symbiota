@@ -493,6 +493,29 @@ function pushDwcArrToForm(msg,bgColor){
 	
 }
 
+//Taxonomy validation functions
+function verifyFullFormSciName() {
+	$.ajax({
+		type: "POST",
+		url: "rpc/verifysciname.php",
+		dataType: "json",
+		data: { term: $("#ffsciname").val() },
+	}).done(function (data) {
+		if (data) {
+			$("#tidinterpreted").val(data.tid);
+			$("input[name=family]").val(data.family);
+			$("input[name=tradeName]").val(data.tradename);
+			$("input[name=scientificnameauthorship]").val(data.author);
+			if ( data.status == 1 && !$("input[name=cultivationstatus]").prop("checked")) {
+				$("select[name=recordsecurity]").val(1);
+				securityChanged(document.fullform);
+			} else {
+				securityCheck();
+			}
+		} 
+	});
+}
+
 function getImgRes() {
 	const resRadio = document.querySelector('#imgres input[name="resradio"]:checked');
 	return resRadio? resRadio.value: getCookie("symbimgres");

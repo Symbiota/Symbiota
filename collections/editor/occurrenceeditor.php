@@ -547,11 +547,14 @@ else{
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2" type="text/javascript"></script>
 	<script type="text/javascript">
+		const TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+		const TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+		const CLIENT_ROOT = "<?= $CLIENT_ROOT ?>";
+
 		let collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		let csMode = "<?php echo $crowdSourceMode; ?>";
 		let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
@@ -574,43 +577,6 @@ else{
 			if($CATNUM_DUPE_CHECK) echo '$("#catalognumber").on("change", function(e) { searchCatalogNumber(this.form,true); });'."\n";
 			if($OTHER_CATNUM_DUPE_CHECK) echo '$("input[name=\'idvalue[]\']").on("change", function(e) { searchOtherCatalogNumbers(this); });'."\n";
 			?>
-
-			//Auto-complete for taxon field
-			const taxaInput = document.querySelector("#ffsciname");
-			if(taxaInput){
-				taxaInput.addEventListener("focus", (event) => {
-					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
-					taxaSuggest.config.fullOutput = true;
-					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
-					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
-					taxaSuggest.initiate("ffsciname", function(result) {
-						if(result.valid) {
-							$("#ffsciname").val(result.item.sciname);
-							$("#tidinterpreted").val(result.item.id);
-							$("input[name=scientificnameauthorship]").val(result.item.author);
-							$("input[name=family]").val(result.item.family);
-							if( result.item.securityStatus == 1 && !$("input[name=cultivationstatus]").prop("checked")) {
-								$("select[name=recordsecurity]").val(1);
-								securityChanged(document.fullform);
-							}
-						}
-						else{
-							$("#tidinterpreted").val("");
-							$("input[name=scientificnameauthorship]").val("");
-							$("input[name=family]").val("");
-							if ($("input[name=securityreason]").val() == "") $("select[name=recordsecurity]").val(0);
-							alert("<?= $LANG['TAXON_NOT_FOUND'] ?>");
-						}
-
-						fieldChanged("sciname");
-						fieldChanged("tidinterpreted");
-						fieldChanged("scientificnameauthorship");
-						fieldChanged("family");
-						fieldChanged("recordsecurity");
-					});
-				});
-			}
-
 		});
 
 		function requestImage(){
@@ -624,15 +590,17 @@ else{
             });
         }
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
-	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?v=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.autocomplete.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.main.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+	<script defer src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.query.js?ver=7" type="text/javascript"></script>
 </head>
 <body>
 	<div role="main" id="innertext">
