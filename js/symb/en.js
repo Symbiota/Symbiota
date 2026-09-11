@@ -26,5 +26,6 @@ const translations = {
   INTERVALS_WRONG_ORDER: "The Early Interval must be geologically older than the Late Interval.",
   DOWNLOAD_IN_PROGRESS: "Download in progress...",
   OCCURENCE_EDITOR_COLLISION_WARNING: "Another editor query session has been detected. This could result in off-target results in your current query. Please close all tabs but one and conduct your query anew.",
-  SELECT_FROM_LIST: "Selecting taxon name from list is required"
+  SELECT_FROM_LIST: "Selecting taxon name from list is required",
+  WARNING_TAXON_NOT_FOUND: "WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor. You can continue entering this specimen using this name and the name will be resolved at a later date."
 };

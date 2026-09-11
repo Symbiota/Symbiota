@@ -25,5 +25,6 @@ const translations = {
   // paleo search
   INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
   INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",
-  SELECT_FROM_LIST: "Es obligatorio seleccionar el nombre del taxón de la lista."
+  SELECT_FROM_LIST: "Es obligatorio seleccionar el nombre del taxón de la lista.",
+  WARNING_TAXON_NOT_FOUND: "ADVERTENCIA: Taxón no encontrado. Es posible que esté mal escrito o que deba ser añadido al tesauro taxonómico por un editor taxonómico. Puede continuar registrando este espécimen con este nombre; el nombre se resolverá más adelante."
 };

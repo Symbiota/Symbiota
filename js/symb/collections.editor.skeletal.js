@@ -3,42 +3,12 @@ var count = 0;
 
 $(document).ready(function() {
 
-	$("#fsciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
-		minLength: 3,
-		autoFocus: true,
-		change: function(event, ui) {
-			$( "#ftidinterpreted" ).val("");
-			$( '#fscientificnameauthorship' ).val("");
-			$( '#ffamily' ).val("");
-			$( '#flocalitysecurity' ).prop('checked', false);
-			if($( "#fsciname" ).val()){
-				verifySciName();
-			}
-		}
-	});
-
-	$( "#fexstitle" ).autocomplete({
-		source: "rpc/exsiccatisuggest.php",
-		minLength: 2,
-		autoFocus: true,
-		select: function( event, ui ) {
-			if(ui.item) $( "#fometid" ).val(ui.item.id);
-			else $( "#fometid" ).val("");
-		},
-		change: function( event, ui ) {
-			if(!ui.item){
-				$( "#fometid" ).val("");
-				if($( this ).val()) alert("Please select an exsiccate title from the list");
-			} 
-		}
-	});
-
 	//Initiate timer
 	setInterval( function(){
 		$("#seconds").html(pad(++sec%60));
 		$("#minutes").html(pad(parseInt(sec/60,10)));
 	}, 1000);
+
 });
 
 function showOptions(){
@@ -50,35 +20,6 @@ function hideOptions(){
 }
 
 //Field changed and verification functions
-function verifySciName(){
-	$.ajax({
-		type: "POST",
-		url: "rpc/verifysciname.php",
-		dataType: "json",
-		data: { term: $( "#fsciname" ).val() }
-	}).done(function( data ) {
-		if(data){
-			$( "#ftidinterpreted" ).val(data.tid);
-			$( '#ffamily' ).val(data.family);
-			$( '#fscientificnameauthorship' ).val(data.author);
-			if(data.status == 1){ 
-				$( '#flocalitysecurity' ).prop('checked', true);
-			}
-			else{
-				if(data.tid){
-					var stateVal = $( '#fstateprovince' ).val();
-					if(stateVal != ""){
-						localitySecurityCheck($( "#faultform" ));
-					}
-				}
-			}
-		}
-		else{
-            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-		}
-	});
-}
-
 function localitySecurityCheck(f){
 	var tidIn = $( "#ftidinterpreted" ).val();
 	var stateIn = $( "#stateprovince" ).val();
@@ -117,16 +58,12 @@ function submitDefaultForm(f){
 		catch(ex){
 		}
 	}
-	if($( "#fcatalognumber" ).val() == ""){
-		alert("Catalog number field must have a value!");
-		continueSubmit = false;
-	}
-	if($( "#fexstitle" ).val() && $( "#fometid" ).val() == ""){
+	if($( "#exstitleinput" ).val() && $( "#ometidinput" ).val() == ""){
 		alert("Exsiccate title not matching item from list");
 		continueSubmit = false;
 	}
-	if($( "#fometid" ).val() && !$( "#fexsnumber" ).val()){
-		alert("Exsiccate title (#"+$( "#fometid" ).val()+") defined without a number. Please enter the exsiccate number");
+	if($( "#ometidinput" ).val() && !$( "#fexsnumber" ).val()){
+		alert("Exsiccate title (#"+$( "#ometidinput" ).val()+") defined without a number. Please enter the exsiccate number");
 		continueSubmit = false;
 	}
 	
@@ -135,7 +72,7 @@ function submitDefaultForm(f){
 		url = 'rpc/occurAddData.php?sciname='+$( "#fsciname" ).val()+'&scientificnameauthorship='+$( "#fscientificnameauthorship" ).val()+'&family='+$( "#ffamily" ).val()+'&recordsecurity='+($( "#flocalitysecurity" ).prop('checked')?"1":"0");
 		url = url + '&country='+$( "#fcountry" ).val()+'&stateprovince='+$( "#fstateprovince" ).val()+'&county='+$( "#fcounty" ).val();
 		url = url + '&processingstatus='+$( "#fprocessingstatus" ).val()+'&recordedby='+$( "#frecordedby" ).val()+'&recordnumber='+$( "#frecordnumber" ).val(); 
-		url = url + '&eventdate='+$( "#feventdate" ).val()+'&language='+$( "#flanguage" ).val()+'&ometid='+$( "#fometid" ).val()+'&exsnumber='+$( "#fexsnumber" ).val()+'&othercatalognumbers='+$( "#fothercatalognumbers" ).val();
+		url = url + '&eventdate='+$( "#feventdate" ).val()+'&language='+$( "#flanguage" ).val()+'&ometid='+$( "#ometidinput" ).val()+'&exsnumber='+$( "#fexsnumber" ).val()+'&othercatalognumbers='+$( "#fothercatalognumbers" ).val();
 		url = url + '&catalognumber='+$( "#fcatalognumber" ).val()+'&collid='+$( "#fcollid" ).val()+'&addaction='+$( "input[name=addaction]:checked" ).val();
 		alert(url);
 		*/
@@ -160,7 +97,7 @@ function submitDefaultForm(f){
 				eventdate: $( "#feventdate" ).val(), 
 				labelproject: $( "#flabelproject" ).val(), 
 				language: $( "#flanguage" ).val(), 
-				ometid: $( "#fometid" ).val(),
+				ometid: $( "#ometidinput" ).val(),
 				exsnumber: $( "#fexsnumber" ).val(),
 				othercatalognumbers: $( "#fothercatalognumbers" ).val(),
 				catalognumber: $( "#fcatalognumber" ).val(),
@@ -169,9 +106,9 @@ function submitDefaultForm(f){
 			}
 		}).done(function( retObj ) {
 			if(retObj.status == "true"){
-				var newDiv = createOccurDiv($( "#fcatalognumber" ).val(), retObj.occid, retObj.action);
+				let newDiv = createOccurDiv($( "#fcatalognumber" ).val(), retObj.occid, retObj.action);
 
-				var listElem = document.getElementById("occurlistdiv");
+				let listElem = document.getElementById("occurlistdiv");
 				listElem.insertBefore(newDiv,listElem.childNodes[0]);
 
 				incrementCount();
@@ -201,7 +138,7 @@ function submitDefaultForm(f){
 }
 
 function resetForm(){
-	$( "#fometid" ).val("");
+	$( "#ometidinput" ).val("");
 }
 
 function createOccurDiv(catalogNumber, occid, action){

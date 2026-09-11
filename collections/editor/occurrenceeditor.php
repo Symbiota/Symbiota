@@ -60,8 +60,11 @@ $readOnly = '';
 
 $isEditor = 0;
 $LOCALITY_AUTO_LOOKUP = 1;
+if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP) $LOCALITY_AUTO_LOOKUP = 0;
 $CATNUM_DUPE_CHECK = true;
+if(defined('CATNUMDUPECHECK') && !CATNUMDUPECHECK) $CATNUM_DUPE_CHECK = false;
 $OTHER_CATNUM_DUPE_CHECK = true;
+if(defined('OTHERCATNUMDUPECHECK') && !OTHERCATNUMDUPECHECK) $OTHER_CATNUM_DUPE_CHECK = false;
 if($SYMB_UID){
 	//Set variables
 	if($occId && $collId) {
@@ -118,9 +121,6 @@ if($SYMB_UID){
 			include('includes/config/crowdSourceVar.php');
 		}
 	}
-	if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP) $LOCALITY_AUTO_LOOKUP = LOCALITYAUTOLOOKUP;
-	if(defined('CATNUMDUPECHECK') && !CATNUMDUPECHECK) $CATNUM_DUPE_CHECK = false;
-	if(defined('OTHERCATNUMDUPECHECK') && !OTHERCATNUMDUPECHECK) $OTHER_CATNUM_DUPE_CHECK = false;
 
 	//0 = not editor, 1 = admin, 2 = editor, 3 = taxon editor, 4 = crowdsource editor or collection allows public edits
 	//If not editor, edits will be submitted to omoccuredits table but not applied to omoccurrences
@@ -560,7 +560,7 @@ else{
 		let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
 		let imgArr = [];
 		let imgLgArr = [];
-		let localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		var localityAutoLookup = <?= $LOCALITY_AUTO_LOOKUP ?>;
 		let fullFormErrorMessage = '';
 
 		<?php
@@ -765,7 +765,7 @@ else{
 								?>
 							</ul>
 							<div id="occdiv">
-								<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
+								<form id="fullform" name="fullform" class="det-form" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
 									<fieldset>
 										<legend><?= $LANG['COLLECTOR_INFO'] ?></legend>
 										<?php
