@@ -58,6 +58,7 @@ if($collid){
 		label{  }
 		fieldset{ padding: 15px; }
 		legend{ font-weight: bold; }
+		.fieldset-like{ margin: 25px 0px; }
 		.icon-img{ width: 16px; }
 	</style>
 </head>
@@ -73,7 +74,8 @@ if($collid){
 	</div>
 	<!-- inner text -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= $LANG['OCC_SKEL_SUBMIT'] . ': ' . $collMap['collectionname'] ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['OCC_SKEL_SUBMIT'] ?></h1>
+		<h2><?= $collMap['collectionname'] ?></h2>
 		<?php
 		if($statusStr){
 			echo '<div style="margin:15px;color:red;">'.$statusStr.'</div>';
@@ -270,9 +272,7 @@ if($collid){
 				</form>
 			</section>
 			<section class="fieldset-like">
-				<h2>
-					<span><?= $LANG['RECORDS'] ?></span>
-				</h2>
+				<h3><span><?= $LANG['RECORDS'] ?></span></h3>
 				<div id="occurlistdiv">
 				</div>
 			</section>
