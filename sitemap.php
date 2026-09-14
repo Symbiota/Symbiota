@@ -383,7 +383,7 @@ if(!$schemaVersion){
 							}
 						}
 						else{
-							echo '<li>' . $LANG['NOEDITCOLL'] . '</li>';
+							echo '<ul><li>' . $LANG['NOEDITCOLL'] . '</li></ul>';
 						}
 						?>
 					</div>
