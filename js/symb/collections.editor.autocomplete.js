@@ -61,7 +61,7 @@ $(document).ready(function () {
 		$("#fflocality").autocomplete({
 			source: function (request, response) {
 				$.ajax({
-					url: "rpc/getlocality.php",
+					url: CLIENT_ROOT + "/collections/editor/rpc/getlocality.php",
 					data: {
 						recordedby: $("input[name=recordedby]").val(),
 						eventdate: $("input[name=eventdate]").val(),
@@ -97,7 +97,7 @@ $(document).ready(function () {
 		$(locationIdInput).autocomplete({
 			source: function (request, response) {
 				$.ajax({
-					url: "rpc/getlocality.php",
+					url: CLIENT_ROOT + "/collections/editor/rpc/getlocality.php",
 					data: { locationid: request.term },
 					success: function (data) {
 						response(data);
@@ -146,7 +146,7 @@ $(document).ready(function () {
 	else{
 		$("input[name=country]").autocomplete({
 			source: function( request, response ) {
-				$.getJSON( "rpc/getGeography.php", { term: request.term }, response );
+				$.getJSON( CLIENT_ROOT + "/collections/editor/rpc/getGeography.php", { term: request.term }, response );
 			},
 			minLength: 1,
 			autoFocus: true,
@@ -157,7 +157,7 @@ $(document).ready(function () {
 	
 		$("input[name=stateprovince]").autocomplete({
 			source: function( request, response ) {
-				$.getJSON( "rpc/getGeography.php", { term: request.term, target: "state", parentTerm: $('input[name="country"]').val() }, response );
+				$.getJSON( CLIENT_ROOT + "/collections/editor/rpc/getGeography.php", { term: request.term, target: "state", parentTerm: $('input[name="country"]').val() }, response );
 			},
 			minLength: 1,
 			autoFocus: true,
@@ -168,7 +168,7 @@ $(document).ready(function () {
 	
 		$("input[name=county]").autocomplete({ 
 			source: function( request, response ) {
-				$.getJSON( "rpc/getGeography.php", { term: request.term, target: "county", parentTerm: $('input[name="stateprovince"]').val() }, response );
+				$.getJSON( CLIENT_ROOT + "/collections/editor/rpc/getGeography.php", { term: request.term, target: "county", parentTerm: $('input[name="stateprovince"]').val() }, response );
 			},
 			minLength: 1,
 			autoFocus: true,
@@ -179,7 +179,7 @@ $(document).ready(function () {
 	
 		$("input[name=municipality]").autocomplete({ 
 			source: function( request, response ) {
-				$.getJSON( "rpc/getGeography.php", { term: request.term, target: "municipality", parentTerm: $('input[name="stateprovince"]').val() }, response );
+				$.getJSON( CLIENT_ROOT + "/collections/editor/rpc/getGeography.php", { term: request.term, target: "municipality", parentTerm: $('input[name="stateprovince"]').val() }, response );
 			},
 			minLength: 1,
 			autoFocus: true,
@@ -193,7 +193,7 @@ $(document).ready(function () {
 	const exsiccateInput = document.querySelector('#exstitleinput');
 	if(exsiccateInput){
 		$(exsiccateInput).autocomplete({
-			source: "rpc/exsiccatisuggest.php",
+			source: CLIENT_ROOT + "/collections/editor/rpc/exsiccatisuggest.php",
 			minLength: 2,
 			autoFocus: true,
 			select: function (event, ui) {
@@ -228,20 +228,6 @@ $(document).ready(function () {
 		});
 	}
 
-	if (document.getElementById("hostDiv")) {
-		$("#quickhost").autocomplete({
-			source: function (request, response) {
-				var name = request.term.replace(" ", "+");
-				$.getJSON("rpc/getcolspeciessuggest.php", { term: name }, response);
-			},
-			minLength: 4,
-			autoFocus: true,
-			change: function (event, ui) {
-				fieldChanged("host");
-			},
-		});
-	}
-
 	$(".idNameInput").autocomplete({
 		minLength: 0,
 		autoFocus: true,
@@ -249,7 +235,7 @@ $(document).ready(function () {
 			let collId = document.fullform.collid.value;
 			$.ajax({
 				type: "POST",
-				url: "rpc/tagnamesuggest.php",
+				url: CLIENT_ROOT + "/collections/editor/rpc/tagnamesuggest.php",
 				data: {collid: document.fullform.collid.value, term: request.term},
 				success: function( data ){
 					response(data);
@@ -266,3 +252,38 @@ $(document).ready(function () {
 
 });
 
+function initiateGenericTaxaSuggest(inputID){
+	if (document.getElementById("inputID")) {
+		$("#inputID").autocomplete({
+			source: function (request, response) {
+				var name = request.term.replace(" ", "+");
+				$.getJSON(CLIENT_ROOT + "/rpc/generictaxasuggest", { term: name }, response);
+			},
+			minLength: 4,
+			autoFocus: true,
+			change: function (event, ui) {
+				
+			},
+		});
+	}
+}
+
+function localitySecurityCheck(f){
+	var tidIn = f.tidinterpreted.value;
+	var stateIn = f.stateprovince.value;
+	if(tidIn != "" && stateIn != ""){
+		$.ajax({
+			type: "POST",
+			url: CLIENT_ROOT + "/collections/editor/rpc/securitycheck.php",
+			dataType: "json",
+			data: { tid: tidIn, state: stateIn }
+		}).done(function( data ) {
+			if(data == "1"){
+				if(!f.cultivationstatus || !f.cultivationstatus.checked){
+					f.recordsecurity.checked = true;
+					if(typeof securityChanged === "function") securityChanged(f);
+				}
+			}
+		});
+	}
+}

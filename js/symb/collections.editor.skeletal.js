@@ -20,23 +20,6 @@ function hideOptions(){
 }
 
 //Field changed and verification functions
-function localitySecurityCheck(f){
-	var tidIn = $( "#ftidinterpreted" ).val();
-	var stateIn = $( "#stateprovince" ).val();
-	if(tidIn != "" && stateIn != ""){
-		$.ajax({
-			type: "POST",
-			url: "rpc/securitycheck.php",
-			dataType: "json",
-			data: { tid: tidIn, state: stateIn }
-		}).done(function( data ) {
-			if(data == "1"){
-				$( '#flocalitysecurity' ).prop('checked', true);
-			}
-		});
-	}
-}
-
 function stateProvinceChanged(stateVal){ 
 	var tidVal = $( "#ftidinterpreted" ).val();
 	if(tidVal != "" && stateVal != ""){

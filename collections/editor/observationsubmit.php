@@ -1,14 +1,14 @@
 <?php
 //TODO: add code to automatically select hide locality details when taxon/state match name on list
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-include_once($SERVER_ROOT.'/classes/Media.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/Media.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/editor/observationsubmit');
 
 header("Content-Type: text/html; charset=".$CHARSET);
-if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/editor/observationsubmit.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
 $collId  = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $clid  = array_key_exists('clid', $_REQUEST) ? filter_var($_REQUEST['clid'], FILTER_SANITIZE_NUMBER_INT) : 0;
@@ -59,7 +59,7 @@ if($collMap){
 						'notes' => $_POST['notes' . $i] ?? null,
 						'occid' => $occid
 					],
-					$file, 
+					$file,
 					StorageFactory::make($path)
 				);
 
@@ -88,6 +88,9 @@ $clArr = $occurManager->getUserChecklists();
 		.imgSubmitDiv{ padding:10px; width:700px; border:1px solid grey; background-color:#F5F5F5; }
 	</style>
 	<script type="text/javascript">
+		const TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+		const TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+		const CLIENT_ROOT = "<?= $CLIENT_ROOT ?>";
 		<?php
 		$maxUpload = ini_get('upload_max_filesize');
 		$maxUpload = str_replace("M", "000000", $maxUpload);
@@ -97,8 +100,10 @@ $clArr = $occurManager->getUserChecklists();
 	</script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.observations.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.observations.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.autocomplete.js?v=1" type="text/javascript"></script>
 	<style>
 		#dmsdiv{ display: none; clear: both; padding: 15px; width: 565px; background-color: #f2f2f2; border: 2px outset #E8EEFA; }
 		#dmsButton { margin: 0px 3px; display: inline; }
@@ -122,7 +127,6 @@ $clArr = $occurManager->getUserChecklists();
 			<hr />
 			<div style="margin:15px;font-weight:bold;">
 				<?php
-
 				if($mediaErrors) {
 					echo '<div>';
 					echo $LANG['MEDIA_STATUS'] . ':<ol>';

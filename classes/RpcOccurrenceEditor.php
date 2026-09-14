@@ -171,36 +171,6 @@ class RpcOccurrenceEditor extends RpcBase{
 		return $ometid;
 	}
 
-	//Used by /collections/editor/rpc/getspeciessuggest.php,
-	public function getSpeciesSuggest($term){
-		$retArr = Array();
-		$fullterm = preg_replace('/[^a-zA-Z()\-. ]+/', '', $term);
-		$fullterm = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $fullterm);
-		$fullterm = preg_replace('/\s{1}x{1}\s{1}/i', ' _ ', $fullterm);
-
-		$sql = 'SELECT DISTINCT tid, sciname FROM taxa WHERE sciname LIKE "' . $fullterm . '%" ';
-
-		// Enable scientific name entry shortcuts: 2-3 letter codes separated by spaces, e.g. "pse men"
-		// Split the search string by spaces if there are any.
-		$strArr = explode(' ', $term);
-		if(count($strArr) > 1){
-			$sql .= 'OR (unitname1 LIKE "' . $strArr[0] . '%" AND unitname2 LIKE "' . $strArr[1] . '%" ';
-			if(!empty($strArr[2])){
-				$sql .= 'AND unitname3 LIKE "' . $strArr[2] . '%" ';
-			}
-			$sql .= ') ';
-		}
-
-		$sql .= 'ORDER BY sciname';
-
-		$rs = $this->conn->query($sql);
-		while ($r = $rs->fetch_object()){
-			$retArr[] = array('id' => $r->tid, 'value' => $r->sciname);
-		}
-		$rs->free();
-		return $retArr;
-	}
-
 	public function getTaxonArr($term){
 		$retArr = array();
 		if($term){

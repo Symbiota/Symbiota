@@ -510,7 +510,7 @@ function verifyFullFormSciName() {
 				$("select[name=recordsecurity]").val(1);
 				securityChanged(document.fullform);
 			} else {
-				securityCheck();
+				localitySecurityCheck();
 			}
 		} 
 	});

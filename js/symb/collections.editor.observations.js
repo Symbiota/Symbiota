@@ -1,39 +1,3 @@
-$(document).ready(function() {
-	$("#sciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
-		minLength: 3,
-		autoFocus: true,
-		change: function(event, ui) {
-			var f = document.obsform;
-			if( f.sciname.value ){
-				$.ajax({
-					type: "POST",
-					url: "rpc/verifysciname.php",
-					dataType: "json",
-					data: { term: f.sciname.value },
-					autoFocus: true
-				}).done(function( data ) {
-					if(data){
-						f.scientificnameauthorship.value = data.author;
-						f.family.value = data.family;
-						f.tidinterpreted.value = data.tid;
-					}
-					else{
-						f.scientificnameauthorship.value = "";
-						f.family.value = "";
-						f.tidinterpreted.value = "";
-					}
-				});
-			}
-			else{
-				f.scientificnameauthorship.value = "";
-				f.family.value = "";
-				f.tidinterpreted.value = "";
-			}				
-		}
-	});
-});
-
 function toggle(target){
 	var ele = document.getElementById(target);
 	if(ele){

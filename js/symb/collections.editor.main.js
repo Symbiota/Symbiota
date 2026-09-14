@@ -65,20 +65,6 @@ $(document).ready(function () {
     if (evt.keyCode == 13) return false;
   });
 
-  if (document.getElementById("hostDiv")) {
-    $("#quickhost").autocomplete({
-      source: function (request, response) {
-        var name = request.term.replace(" ", "+");
-        $.getJSON("rpc/getcolspeciessuggest.php", { term: name }, response);
-      },
-      minLength: 4,
-      autoFocus: true,
-      change: function (event, ui) {
-        fieldChanged("host");
-      },
-    });
-  }
-
   //Remember Auto Processing Status
   var apstatus = getCookie("autopstatus");
   if (getCookie("autopstatus")) {
@@ -117,24 +103,6 @@ function deleteIdentifier(identID, occid) {
     }).done(function (response) {
       if (response == 1) $("#idRow-" + identID).remove();
       //else alert("Error deleting identifier");
-    });
-  }
-}
-
-function securityCheck() {
-  var tidIn = $("input[name=tidinterpreted]").val();
-  var stateIn = $("input[name=stateprovince]").val();
-  if (tidIn != "" && stateIn != "") {
-    $.ajax({
-      type: "POST",
-      url: "rpc/securitycheck.php",
-      dataType: "json",
-      data: { tid: tidIn, state: stateIn },
-    }).done(function (data) {
-      if (data == "1" && !$("input[name=cultivationstatus]").prop("checked")) {
-        $("select[name=recordsecurity]").val(1);
-        securityChanged(document.fullform);
-      }
     });
   }
 }
@@ -178,7 +146,7 @@ function recordNumberChanged() {
 
 function stateProvinceChanged(stateVal) {
   fieldChanged("stateprovince");
-  securityCheck();
+  localitySecurityCheck();
 }
 
 function coordinatesChanged(f, client_root) {

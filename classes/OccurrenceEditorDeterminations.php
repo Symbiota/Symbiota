@@ -176,8 +176,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				} catch (mysqli_sql_exception $e) {
 					echo 'Duplicate: '.$this->conn->error;
 				}
-				$tidToAdd = $detArr['tidtoadd'];
-				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
 				$this->updateBaseOccurrence($detId);
 
 				//Add identification confidence

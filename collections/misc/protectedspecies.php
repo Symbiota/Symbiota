@@ -19,7 +19,7 @@ $rsManager = new OccurrenceProtectedSpecies($isEditor?'write':'readonly');
 
 if($isEditor){
 	if($action == 'addspecies'){
-		$rsManager->addSpecies($_POST['tidtoadd']);
+		$rsManager->addSpecies($_POST['tidinterpreted']);
 	}
 	elseif($action == 'deletespecies'){
 		$rsManager->deleteSpecies($_REQUEST['tidtodel']);
@@ -100,7 +100,7 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 				return response.json();
 			})
 			.then(data => {
-				f.tidtoadd.value = Object.keys(data)[0];
+				f.tidinterpreted.value = Object.keys(data)[0];
 				f.submit();
 			})
 			.catch(error => {
@@ -178,7 +178,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<div style="margin:3px;">
 								<label for="speciestoadd"><?= $LANG['SCIENTIFIC_NAME'] ?>:</label>
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
-								<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+								<input type="hidden" id="tidtoadd" name="tidinterpreted" value="" />
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />

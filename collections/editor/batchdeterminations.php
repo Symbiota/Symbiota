@@ -196,7 +196,7 @@ if($isEditor){
 					return false;
 				}
 
-				if(f.sciname.value != "" && f.tidtoadd.value == ""){
+				if(f.sciname.value != "" && f.tidinterpreted.value == ""){
 					alert("<?= $LANG['WARNING_TAXON_NOT_FOUND'] ?>");
 					return false;
 				}
@@ -370,7 +370,7 @@ if($isEditor){
 								<div style='margin:3px;'>
 									<label for="dafsciname"><b><?= $LANG['SCINAME'] ?></b></label>:
 									<input type="text" id="dafsciname" name="sciname" style="width:350px;" required >
-									<input type="hidden" id="daftid" name="tidtoadd" value="" />
+									<input type="hidden" id="daftid" name="tidinterpreted" value="" />
 									<input type="hidden" id="daffamily" name="family" value="" />
 								</div>
 								<div style='margin:3px;'>
