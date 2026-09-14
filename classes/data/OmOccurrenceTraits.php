@@ -14,6 +14,11 @@ class OmOccurrenceTraits extends DataCore{
 	}
 
 	//tmtraits functions
+	private function setTraitFieldMap(){
+		$this->fieldMap = array('traitID' => 'pk', 'traitName' => 's', 'traitType' => 's', 'units' => 's', 'description' => 's', 'refUrl' => 's', 'notes' => 's',
+			'projectGroup' => 's', 'isPublic' => 'i', 'includeInSearch' => 'i', 'dynamicProperties' => 's', 'modifiedUid' => 'i', 'dateLastModified' => 'd', 'createdUid' => 'i');
+	}
+
 	public function getTraitArr($conditionArr = null, $orderByArr = null){
 		$this->setTraitFieldMap();
 		return $this->getRecordArr('tmtraits', $conditionArr, $orderByArr);
@@ -61,14 +66,18 @@ class OmOccurrenceTraits extends DataCore{
 		return $this->deleteRecord('tmtraits', $pkArr);
 	}
 
-	private function setTraitFieldMap(){
-		$this->fieldMap = array('traitID' => 'pk', 'traitName' => 's', 'traitType' => 's', 'units' => 's', 'description' => 's', 'refUrl' => 's', 'notes' => 's',
-			'projectGroup' => 's', 'isPublic' => 'i', 'includeInSearch' => 'i', 'dynamicProperties' => 's', 'modifiedUid' => 'i', 'dateLastModified' => 'd', 'createdUid' => 'i');
-	}
-
 	//tmstates functions
 
+	private function setTraitStateMap(){
+		$this->fieldMap = array('stateid' => 'pk', 'traitid' => 'i', 'statecode' => 's', 'statename' => 's', 'description' => 's', 'refUrl' => 's', 'notes' => 's',
+			'sortseq' => 'i', 'modifiedUid' => 'i', 'datelastmodified' => 'd', 'createdUid' => 'i');
+	}
 
+	public function getTraitStateArr(){
+		$this->setTraitStateMap();
+		$pkArr = array('stateid' => $this->stateid);
+		return $this->getRecordArr('tmstates', $pkArr);
+	}
 
 	//tmattributes functions
 

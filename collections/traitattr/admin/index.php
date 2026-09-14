@@ -73,9 +73,9 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 									<select id="traittype" name="traittype">
 										<option value="">---------------</option>
 										<option value="1">UM</option>
-										<option value="2">TF</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
+										<option value="2">OM</option>
+										<option value="3">TF</option>
+										<option value="4">NU</option>
 									</select>
 								</div>
 							</div>

@@ -27,7 +27,7 @@ $traitManager->setTraitID($traitID);
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title>Character Admin</title>
+	<title>Trait Admin</title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -47,9 +47,9 @@ $traitManager->setTraitID($traitID);
 			});
 		});
 
-		function toggleCharState(csId){
-			toggle('cs-'+csId+'Div');
-			toggle('csplus-'+csId);
+		function toggleCharState(statecodeId){
+			toggle('statecode-'+statecodeId+'Div');
+			toggle('statecodeplus-'+statecodeId);
 		}
 
 		function updateUnits(obj){
@@ -64,11 +64,11 @@ $traitManager->setTraitID($traitID);
 
 		function validateCharEditForm(f){
 			if(f.traitname.value == ""){
-				alert("Character name must not be null");
+				alert("Trait name must not be null");
 				return false;
 			}
-			if(f.chartype.value == ""){
-				alert("Character type must not be null");
+			if(f.traittype.value == ""){
+				alert("Trait type must not be null");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
@@ -80,7 +80,7 @@ $traitManager->setTraitID($traitID);
 
 		function validateStateAddForm(f){
 			if(f.charstatename.value == ""){
-				alert("Character state must not be null");
+				alert("Trait state must not be null");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
@@ -98,82 +98,6 @@ $traitManager->setTraitID($traitID);
 			return true;
 		}
 
-		function verifyStateIllustForm(f){
-			if(!f.urlupload.files[0]){
-				alert("Select a file to upload");
-				return false;
-			}
-			return true;
-		}
-
-		function verifyCharStateDeletion(f){
-			var cid = f.cid.value;
-			var cs = f.cs.value;
-			var stateid = f.stateid.value;
-
-			//Restriction when images are linked
-			document.getElementById("delvercsimgspan-"+stateid).style.display = "block";
-			verifyCharStateImages(cid,cs,stateid);
-
-			//Restriction when language definitions are linked
-			document.getElementById("delvercslangspan-"+stateid).style.display = "block";
-			verifyCharStateLang(cid,cs,stateid);
-
-			//Restriction when descriptions are linked
-			document.getElementById("delverdescrspan-"+stateid).style.display = "block";
-			verifyDescr(cid,cs,stateid);
-
-			f.formsubmit.disabled = false;
-		}
-
-		function verifyCharStateImages(cid,cs,stateid){
-			$.ajax({
-				type: "POST",
-				url: 'rpc/getcharstateimgcnt.php',
-				data: { cidinput: cid, csinput: cs }
-			}).done(function( msg ) {
-				document.getElementById("delvercsimgspan-"+stateid).style.display = "none";
-				if(msg > 0){
-					document.getElementById("delcsimgfaildiv-"+stateid).style.display = "block";
-				}
-				else{
-					document.getElementById("delcsimgappdiv-"+stateid).style.display = "block";
-				}
-			});
-		}
-
-		function verifyCharStateLang(cid,cs,stateid){
-			$.ajax({
-				type: "POST",
-				url: 'rpc/getcharstatelangcnt.php',
-				data: { cidinput: cid, csinput: cs }
-			}).done(function( msg ) {
-				document.getElementById("delvercslangspan-"+stateid).style.display = "none";
-				if(msg > 0){
-					document.getElementById("delcslangfaildiv-"+stateid).style.display = "block";
-				}
-				else{
-					document.getElementById("delcslangappdiv-"+stateid).style.display = "block";
-				}
-			});
-		}
-
-		function verifyDescr(cid,cs,stateid){
-			$.ajax({
-				type: "POST",
-				url: 'rpc/getdescrcnt.php',
-				data: { cidinput: cid, csinput: cs }
-			}).done(function( msg ) {
-				document.getElementById("delverdescrspan-"+stateid).style.display = "none";
-				if(msg > 0){
-					document.getElementById("deldescrfaildiv-"+stateid).style.display = "block";
-				}
-				else{
-					document.getElementById("deldescrappdiv-"+stateid).style.display = "block";
-				}
-			});
-		}
-
 		function validateTaxonAddForm(f){
 			if(f.tid.value == ''){
 				alert("Please select a taxonomic name!");
@@ -185,13 +109,6 @@ $traitManager->setTraitID($traitID);
 		function openHeadingAdmin(){
 			newWindow = window.open("headingadmin.php","headingWin","scrollbars=1,toolbar=0,resizable=1,width=800,height=600,left=50,top=50");
 			if (newWindow.opener == null) newWindow.opener = self;
-		}
-
-		function openGlossaryPopup(glossid){
-			var urlStr = "../../../glossary/individual.php?glossid="+glossid;
-			glossWindow = window.open(urlStr,'popup','toolbar=0,status=1,scrollbars=1,width=900,height=450,left=20,top=20');
-			if(glossWindow.opener == null) glossWindow.opener = self;
-			return false;
 		}
 	</script>
 	<style>
@@ -222,17 +139,17 @@ $traitManager->setTraitID($traitID);
 				<hr/>
 				<?php
 			}
-			$charStateArr = $traitManager->getTraitArr();
 			$traitArr = $traitManager->getTraitArrById();
-			//var_dump($charStateArr);
 			var_dump($traitArr);
+			$charStateArr = $traitManager->getTraitArr();
+			//var_dump($charStateArr);
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
 				<ul>
 					<li><a href="#chardetaildiv"><span>Details</span></a></li>
-					<li><a href="#charstatediv"><span>Character States</span></a></li>
-					<li><a href="taxonomylinkage.php?cid=<?= $traitID ?>"><span>Taxonomic Linkages</span></a></li>
+					<li><a href="#charstatediv"><span>Trait States</span></a></li>
+					<li><a href="taxonomylinkage.php?traitid=<?= $traitID ?>"><span>Taxonomic Linkages</span></a></li>
 					<li><a href="#chardeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="chardetaildiv">
@@ -246,24 +163,18 @@ $traitManager->setTraitID($traitID);
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
 									<label for="type">Type</label><br />
-									<select id="type" name="chartype" style="width:180px;" onchange="updateUnits(this);">
+									<select id="type" name="traittype" style="width:180px;" onchange="updateUnits(this);">
 										<option value="UM">Multi-state</option>
-										<option value="IN" <?= ($traitArr['charType']=='IN'?'SELECTED':'') ?>>Integer</option>
-										<option value="RN" <?= ($traitArr['charType']=='RN'?'SELECTED':'') ?>>Real Number</option>
+										<option value="OM">One State</option>
+										<option value="TF">True False</option>
+										<option value="NU">Number</option>
+										<option value="IN" <?= ($traitArr['traitType']=='IN'?'SELECTED':'') ?>>Integer</option>
+										<option value="RN" <?= ($traitArr['traitType']=='RN'?'SELECTED':'') ?>>Real Number</option>
 									</select>
 								</div>
-								<div id="units" style="display:<?= ((($traitArr['charType']=='IN')||($traitArr['charType']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
+								<div id="units" style="display:<?= ((($traitArr['traitType']=='IN')||($traitArr['traitType']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
 									<label for="units">Units</label><br />
 									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($traitArr['units']) ?>" title="" />
-								</div>
-								<div style="margin-left:15px;float:left;">
-									<label for="difficultyrank">Difficulty</label><br />
-									<select id="difficultyrank" name="difficultyrank" style="width:100px;">
-										<option value="1">Easy</option>
-										<option value="2" <?= ($traitArr['difficultyRank']=='2'?'SELECTED':'') ?>>Intermediate</option>
-										<option value="3" <?= ($traitArr['difficultyRank']=='3'?'SELECTED':'') ?>>Advanced</option>
-										<option value="4" <?= ($traitArr['difficultyRank']=='4'?'SELECTED':'') ?>>Hidden</option>
-									</select>
 								</div>
 								<div style="float:left;margin-left:15px;">
 									<label for="hid">Grouping</label><br />
@@ -271,7 +182,7 @@ $traitManager->setTraitID($traitID);
 										<option value="">Not Assigned</option>
 										<option value="">---------------------</option>
 										<?php
-										$headingArr = $traitManager->getCharacterHeadingArr();
+										$headingArr = []; //$traitManager->getCharacterHeadingArr();
 										asort($headingArr);
 										foreach($headingArr as $k => $v){
 											echo '<option value="' . $k . '" ' . ($k==$traitArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['name']) . '</option>';
@@ -282,41 +193,14 @@ $traitManager->setTraitID($traitID);
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
-								<label for="helpurl">Help URL</label><br />
-								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($traitArr['helpUrl']) ?>" />
+								<label for="refurl">Reference URL</label><br />
+								<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($traitArr['refUrl']) ?>" />
 								<?php
-								if($traitArr['helpUrl'] && substr($traitArr['helpUrl'],0,4) == 'http'){
-									echo '<a href="' . Sanitize::outString($traitArr['helpUrl']) . '" target="_blank"><img src="../../../images/link2.png" class="icon-img" ></a>';
+								if($traitArr['refUrl'] && substr($traitArr['refUrl'],0,4) == 'http'){
+									echo '<a href="' . Sanitize::outString($traitArr['refUrl']) . '" target="_blank"><img src="../../../images/link2.png" class="icon-img" ></a>';
 								}
 								?>
 							</div>
-							<?php
-							$glossaryArr = $traitManager->getGlossaryList();
-							if($glossaryArr){
-								?>
-								<div style="padding-top:8px;clear:both;">
-									<label for="glossid">Glossary link</label><br />
-									<select id="glossid" name="glossid" style="max-width: 90%">
-										<option value="">------------------------</option>
-										<?php
-										foreach($glossaryArr as $glossArr){
-											foreach($glossArr as $glossID => $gArr){
-												echo '<option value="'.$glossID.'" '.($traitArr['glossID']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
-											}
-										}
-										?>
-									</select>
-									<?php
-									if($traitArr['glossID']){
-										?>
-										<a href="#" onclick="openGlossaryPopup(<?= $traitArr['glossID'] ?>);return false;"><img src="../../../images/link2.png" class="icon-img"></a>
-										<?php
-									}
-									?>
-								</div>
-								<?php
-							}
-							?>
 							<div style="padding-top:8px;">
 								<label for="description">Description</label><br />
 								<input type="text" id="description" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['description']) ?>" />
@@ -325,18 +209,10 @@ $traitManager->setTraitID($traitID);
 								<label for="notes">Notes</label><br />
 								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['notes']) ?>" />
 							</div>
-							<div style="padding-top:8px;">
-								<label for="sortsequence">Sort Sequence</label><br />
-								<input type="text" id="sortsequence" name="sortsequence" style="width:80px;" value="<?= $traitArr['sortSequence'] ?>" />
-							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
-									<input name="cid" type="hidden" value="<?= $traitID ?>" />
+									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 									<button name="formsubmit" type="submit" value="saveCharacterEdit">Save</button>
-								</div>
-								<div style="float:right;">
-									<label for="enteredby">Entered By:</label>
-									<input type="text" id="enteredby" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?= Sanitize::outString($traitArr['enteredBy']) ?>" disabled />
 								</div>
 							</div>
 						</fieldset>
@@ -344,41 +220,22 @@ $traitManager->setTraitID($traitID);
 				</div>
 				<div id="charstatediv">
 					<div style="float:right;margin:10px;">
-						<a href="#" title="Create New Character State" onclick="toggle('newstatediv');">
-							<img src="../../../images/add.png" class="icon-img" alt="Create New Character State" />
+						<a href="#" title="Create New Trait State" onclick="toggle('newstatediv');">
+							<img src="../../../images/add.png" class="icon-img" alt="Create New Trait State" />
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?= ($charStateArr?'none':'block') ?>;">
 						<form name="stateaddform" action="chardetails.php" method="post" onsubmit="return validateStateAddForm(this)">
 							<fieldset>
-								<legend>Add Character State</legend>
+								<legend>Add Trait State</legend>
 								<div style="padding-top:4px;">
-									<label for="charstatename">Character State Name</label><br />
+									<label for="charstatename">Trait State Name</label><br />
 									<input type="text" id="charstatename" name="charstatename" maxlength="255" style="width:400px;" />
 								</div>
 								<div style="padding-top:4px;">
 									<label for="add_description">Description</label><br />
 									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
-								<?php
-								if($glossaryArr){
-									?>
-									<div style="padding-top:8px;clear:both;">
-										<label for="glossid">Glossary link</label><br />
-										<select id="glossid" name="glossid">
-											<option value="">------------------------</option>
-											<?php
-											foreach($glossaryArr as $glossArr){
-												foreach($glossArr as $glossID => $gArr){
-													echo '<option value="'.$glossID.'">'.$gArr['term'].' ('.$gArr['lang'].')</option>';
-												}
-											}
-											?>
-										</select>
-									</div>
-									<?php
-								}
-								?>
 								<div style="padding-top:4px;">
 									<label for="add_notes">Notes</label><br />
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
@@ -388,25 +245,25 @@ $traitManager->setTraitID($traitID);
 									<input type="text" id="add_sortsequence" name="sortsequence" style="width:80px" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
-									<input name="cid" type="hidden" value="<?= $traitID ?>" />
-									<button name="formsubmit" type="submit" value="addState">Add Character State</button>
+									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
+									<button name="formsubmit" type="submit" value="addState">Add Trait State</button>
 								</div>
 							</fieldset>
 						</form>
 					</div>
 					<?php
 					if($charStateArr){
-						echo '<h3>Character States</h3>';
+						echo '<h3>Trait States</h3>';
 						foreach($charStateArr as $stateID => $stateArr){
 							?>
 							<div>
-								<div id="csplus-<?= $stateID ?>" style="margin:5px;">
+								<div id="statecodeplus-<?= $stateID ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 										<img src="../../../images/plus.png" class="icon-img" >
 										<?= Sanitize::outString($stateArr['charStateName']) ?>
 									</a>
 								</div>
-								<div id="<?= 'cs-'.$stateID.'Div' ?>" style="display:none;">
+								<div id="<?= 'statecode-'.$stateID.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 											<img src="../../../images/minus.png" class="icon-img" >
@@ -415,41 +272,15 @@ $traitManager->setTraitID($traitID);
 									</div>
 									<form name="stateeditform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
-											<legend>Character State Details</legend>
+											<legend>Trait State Details</legend>
 											<div>
-												<label for="charstatename-<?= $stateID ?>">Character State Name</label><br />
+												<label for="charstatename-<?= $stateID ?>">Trait State Name</label><br />
 												<input type="text" id="charstatename-<?= $stateID ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<label for="description-<?= $stateID ?>">Description</label><br />
 												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
-											<?php
-											if($glossaryArr){
-												?>
-												<div style="padding-top:8px;clear:both;">
-													<label for="glossid-<?= $stateID ?>">Glossary link</label><br />
-													<select id="glossid-<?= $stateID ?>" name="glossid" style="max-width: 90%">
-														<option value="">------------------------</option>
-														<?php
-														foreach($glossaryArr as $glossArr){
-															foreach($glossArr as $glossID => $gArr){
-																echo '<option value="'.$glossID.'" '.($stateArr['glossID']==$glossID?'selected':'').'>'.$gArr['term'].' ('.$gArr['lang'].')</option>';
-															}
-														}
-														?>
-													</select>
-													<?php
-													if($stateArr['glossID']){
-														?>
-														<a href="#" onclick="openGlossaryPopup('.$stateArr['glossid'].');return false;"><img src="../../../images/link2.png" class="icon-img"></a>
-														<?php
-													}
-													?>
-												</div>
-												<?php
-											}
-											?>
 											<div style="padding-top:2px;">
 												<label for="notes-<?= $stateID ?>">Notes</label><br />
 												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
@@ -465,111 +296,19 @@ $traitManager->setTraitID($traitID);
 												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
-												<input name="cid" type="hidden" value="<?= $traitID ?>" />
-												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
+												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
+												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
 												<button name="formsubmit" type="submit" value="saveState">Save</button>
 											</div>
 										</fieldset>
 									</form>
-									<fieldset>
-										<legend>Illustration</legend>
-										<?php
-										$imgArr = $traitManager->getCharacterStateImageArr();
-										if($imgArr['cs'] === $stateArr['cs']){
-											?>
-											<div style="padding-top:2px;">
-												<a href="<?= Sanitize::outString($imgArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($imgArr['url']) ?>" style="width:200px;" /></a>
-											</div>
-											<form name="stateillustdelform-<?= $imgArr['csImgID'] ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
-												<div style="margin:10px;">
-													<input name="cid" type="hidden" value="<?= $traitID ?>" />
-													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
-													<input name="csimgid" type="hidden" value="<?= $imgArr['csImgID'] ?>" />
-													<button name="formsubmit" type="submit" value="deleteImage">Delete Image</button>
-												</div>
-											</form>
-											<?php
-										}
-										else{
-											?>
-											<form name="stateillustform-<?= $stateID ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
-												<div style="padding-top:2px;">
-													<label for="urlupload-<?= $stateID ?>">File Upload:</label>
-													<input id="urlupload-<?= $stateID ?>" name="urlupload" type="file" size="50" />
-													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
-												</div>
-												<div style="padding-top:2px;">
-													<label for="imgnotes-<?= $stateID ?>">Notes:</label>
-													<input id="imgnotes-<?= $stateID ?>" name="notes" type="text" style="width:90%" />
-												</div>
-												<div style="padding-top:2px;">
-													<label for="imgsortsequence-<?= $stateID ?>">Sort:</label>
-													<input id="imgsortsequence-<?= $stateID ?>" name="sortsequence" type="text" />
-												</div>
-												<div style="padding-top:2px;">
-													<input name="cid" type="hidden" value="<?= $traitID ?>" />
-													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
-													<button name="formsubmit" type="submit" value="uploadImage">Upload Image</button>
-												</div>
-											</form>
-											<?php
-										}
-										?>
-									</fieldset>
 									<form name="statedelform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
 										<fieldset>
-											<legend>Delete Character State</legend>
-											<div>
-												Record first needs to be evaluated before it can be deleted from the system.
-												The evaluation ensures that the deletion will not interfer with
-												the integrity of linked data.
-											</div>
-											<div style="margin:15px;">
-												<button name="verifycsdelete" type="button" onclick="verifyCharStateDeletion(this.form);return false;">Evaluate record for deletion</button>
-											</div>
-											<div id="delverimgdiv" style="margin:15px;">
-												<b>Image Links: </b>
-												<span id="delvercsimgspan-<?= $stateID ?>" style="color:orange;display:none;">checking image links...</span>
-												<div id="delcsimgfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													One or more images are linked to this charcter state.
-													Deleting this character state will also permanently remove these images.
-												</div>
-												<div id="delcsimgappdiv-<?= $stateID ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No images are directly associated with this character state.
-												</div>
-											</div>
-											<div id="delverlangdiv" style="margin:15px;">
-												<b>Language Links: </b>
-												<span id="delvercslangspan-<?= $stateID ?>" style="color:orange;display:none;">checking language links...</span>
-												<div id="delcslangfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													Charcter state has links to langauge records.
-													Deleting this character state will also permanently remove this data.
-												</div>
-												<div id="delcslangappdiv-<?= $stateID ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No langage mappings are directly associated with this character state.
-												</div>
-											</div>
-											<div id="delverdescrdiv" style="margin:15px;">
-												<b>Description Links: </b>
-												<span id="delverdescrspan-<?= $stateID ?>" style="color:orange;display:none;">checking description links...</span>
-												<div id="deldescrfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													One or more descriptions are linked to this charcter state.
-													Delete this character state will also permanently remove these descriptions.
-												</div>
-												<div id="deldescrappdiv-<?= $stateID ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No descriptions are directly associated with this character state.
-												</div>
-											</div>
+											<legend>Delete Trait State</legend>
 											<div style="margin:15px;">
 												<input id="stateid" name="stateid" type="hidden" value="<?= $stateID ?>">
-												<input name="cid" type="hidden" value="<?= $traitID ?>" />
-												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
+												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
+												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
 												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>
 											</div>
 										</fieldset>
@@ -584,17 +323,17 @@ $traitManager->setTraitID($traitID);
 				<div id="chardeldiv">
 					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
 						<fieldset style="width:700px;">
-							<legend><b>Delete Character</b></legend>
+							<legend><b>Delete Trait</b></legend>
 							<?php
 							if($charStateArr){
 								?>
 								<div style="margin-bottom:15px;">
-									Character cannot be deleted until all character states are removed
+									Trait cannot be deleted until all character states are removed
 								</div>
 								<?php
 							}
 							?>
-							<input name="cid" type="hidden" value="<?= $traitID ?>" />
+							<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 							<button name="formsubmit" type="submit" value="deleteChar" <?php if($charStateArr) echo 'DISABLED' ?>>Delete</button>
 						</fieldset>
 					</form>
