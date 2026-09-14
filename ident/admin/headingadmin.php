@@ -1,7 +1,10 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
+Language::load('ident/admin/headingadmin');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -22,13 +25,13 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 $statusStr = '';
 if($isEditor && $action){
 	if($action == 'Create'){
-		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading created' : 'Error creating heading';
+		$statusStr = $charManager->insertCharacterHeading($_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? $LANG['SUCCESS_CREATE'] : $LANG['FAIL_CREATE'];
 	}
 	elseif($action == 'Save'){
-		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? 'SUCCESS: Heading edited' : 'Error editing heading';
+		$statusStr = $charManager->updateCharacterHeading($hid,$_POST['headingname'],$_POST['notes'],$_POST['sortsequence']) ? $LANG['SUCCESS_EDIT'] : $LANG['FAIL_EDIT'];
 	}
 	elseif($action == 'Delete'){
-		$statusStr = $charManager->deleteHeading($hid) ? 'SUCCESS: Heading deleted' : 'Error deleting heading';
+		$statusStr = $charManager->deleteHeading($hid) ? $LANG['SUCCESS_DELETE'] : $LANG['FAIL_DELETE'];
 	}
 }
 $headingArr = $charManager->getCharacterHeadingArr();
@@ -37,7 +40,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 <html lang="<?= $LANG_TAG ?>">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET;?>">
-	<title>Heading Administration</title>
+	<title><?= $LANG['HEADING_ADMIN'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -45,7 +48,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 	<script type="text/javascript">
 		function validateHeadingForm(f){
 			if(f.headingname.value == ""){
-				alert("Please enter a grouping title");
+				alert("<?= $LANG['ALERT_GROUP_TITLE'] ?>");
 				return false;
 			}
 			return true;
@@ -61,12 +64,12 @@ $headingArr = $charManager->getCharacterHeadingArr();
 <body>
 	<!-- This is inner text! -->
 	<div  id="innertext" style="width:700px;padding:15px">
-		<h1 class="page-heading">Heading Administration</h1>
+		<h1 class="page-heading"><?= $LANG['HEADING_ADMIN'] ?></h1>
 		<?php
 		if($statusStr){
 			?>
 			<hr/>
-			<div style="margin:15px;color:<?= (strpos($statusStr,'SUCCESS')===0?'green':'red'); ?>;">
+			<div style="margin:15px;color:<?= (strpos($statusStr,'SUCC')===0 || strpos($statusStr,'ÉXITO')===0 ? 'green':'red'); ?>;">
 				<?= $statusStr; ?>
 			</div>
 			<hr/>
@@ -77,21 +80,21 @@ $headingArr = $charManager->getCharacterHeadingArr();
 			<div id="addheadingdiv">
 				<form name="newheadingform" action="headingadmin.php" method="post" onsubmit="return validateHeadingForm(this)">
 					<fieldset>
-						<legend>New Group</legend>
+						<legend><?= $LANG['NEW_GROUP'] ?></legend>
 						<div>
-							<label for="headingname">Group Title</label><br />
+							<label for="headingname"><?= $LANG['GROUP_TITLE'] ?></label><br />
 							<input type="text" id="headingname" name="headingname" maxlength="255" style="width:400px;" />
 						</div>
 						<div style="padding-top:6px;">
-							<label for="notes">Notes</label><br />
+							<label for="notes"><?= $LANG['NOTES'] ?></label><br />
 							<input type="text" id="notes" name="notes" style="width:500px;" />
 						</div>
 						<div style="padding-top:6px;">
-							<label for="sortsequence">Sort Sequence</label><br />
+							<label for="sortsequence"><?= $LANG['SORT_SQNCE'] ?></label><br />
 							<input type="text" id="sortsequence" name="sortsequence" style="width:80px" />
 						</div>
 						<div style="width:100%;padding-top:6px;">
-							<button name="action" type="submit" value="Create">Create Group</button>
+							<button name="action" type="submit" value="Create"><?= $LANG['CREATE_GROUP'] ?></button>
 						</div>
 					</fieldset>
 				</form>
@@ -101,7 +104,7 @@ $headingArr = $charManager->getCharacterHeadingArr();
 				if($headingArr){
 					?>
 					<fieldset>
-						<legend>Existing Groups</legend>
+						<legend><?= $LANG['EXISTING_GROUPS'] ?></legend>
 						<ul>
 							<?php
 							foreach($headingArr as $headingId => $headArr){
@@ -112,28 +115,28 @@ $headingArr = $charManager->getCharacterHeadingArr();
 										<legend>Editor</legend>
 										<form name="headingeditform" action="headingadmin.php" method="post" onsubmit="return validateHeadingForm(this)">
 											<div style="margin:2px;">
-												<label for="headingname-<?= $headingId; ?>"">Group Title<br/>
+												<label for="headingname-<?= $headingId; ?>"><?= $LANG['GROUP_TITLE'] ?><br/>
 												<input id="headingname" name="headingname" type="text" value="<?= $headArr['headingName']; ?>" style="width:400px;" />
 											</div>
 											<div style="margin:2px;">
-												<label for="notes-<?= $headingId; ?>"">Notes<br/>
+												<label for="notes-<?= $headingId; ?>"><?= $LANG['NOTES'] ?><br/>
 												<input id="notes" name="notes" type="text" value="<?= $headArr['notes']; ?>" style="width:500px;" />
 											</div>
 											<div style="margin:2px;">
-												<label for="sortsequence-<?= $headingId; ?>">Sort Sequence<br/>
+												<label for="sortsequence-<?= $headingId; ?>"><?= $LANG['SORT_SQNCE'] ?><br/>
 												<input id="sortsequence" name="sortsequence" type="text" value="<?= $headArr['sortSequence']; ?>" style="width:80px" />
 											</div>
 											<div>
 												<input name="hid" type="hidden" value="<?= $headingId; ?>" />
-												<button name="action" type="submit" value="Save">Save Edits</button>
+												<button name="action" type="submit" value="Save"><?= $LANG['SAVE_EDITS'] ?></button>
 											</div>
 										</form>
 									</fieldset>
 									<fieldset>
-										<legend>Delete Group</legend>
+										<legend><?= $LANG['DELETE_GROUP'] ?></legend>
 										<form name="headingdeleteform" action="headingadmin.php" method="post">
 											<input name="hid" type="hidden" value="<?= $headingId; ?>" />
-											<button name="action" type="submit" value="Delete">Delete</button>
+											<button name="action" type="submit" value="Delete"><?= $LANG['DELETE'] ?></button>
 										</form>
 									</fieldset>
 								</div>
@@ -145,14 +148,14 @@ $headingArr = $charManager->getCharacterHeadingArr();
 					<?php
 				}
 				else{
-					echo '<div style="font-weight:bold;font-size:120%;">There are no existing character groupings</div>';
+					echo '<div style="font-weight:bold;font-size:120%;">' . $LANG['NO_GROUPS'] . '</div>';
 				}
 				?>
 			</div>
 			<?php
 		}
 		else{
-			echo '<h2>You are not authorized to access page</h2>';
+			echo '<h2>' . $LANG['NOT_AUTH'] . '</h2>';
 		}
 		?>
 	</div>

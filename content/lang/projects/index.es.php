@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: Espa�ol (Spanish)
+Language: Español (Spanish)
 ------------------
 */
 $LANG['VIEW_INVETORY_PROJECTS'] = 'Ver Proyecto de Inventario';

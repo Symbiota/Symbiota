@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('ident/chardetails');
+Language::load('ident/admin/chardetails');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -29,12 +29,12 @@ if($formSubmit && $isEditor){
 			$cid = $charManager->getCid();
 		}
 		else{
-			$statusStr = 'ERROR adding new taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'saveCharacterEdit'){
 		if(!$charManager->updateCharacter($_POST)){
-			$statusStr = 'ERROR editing taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_EDIT_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'deleteChar'){
@@ -42,53 +42,53 @@ if($formSubmit && $isEditor){
 			$cid = 0;
 		}
 		else{
-			$statusStr = 'ERROR deleting taxon character: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_TAXON'] . $charManager->getErrorMessage();
 		}
 	}
 	elseif($formSubmit == 'addState'){
 		if(!$charManager->insertCharacterState($_POST)){
-			$statusStr = 'ERROR adding taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_STATE']  . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'saveState'){
 		if(!$charManager->updateCharacterState($_POST)){
-			$statusStr = 'ERROR edting taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_EDIT_STATE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteState'){
 		if(!$charManager->deleteCharacterState($_POST['cs'])){
-			$statusStr = 'ERROR deleting taxon character state: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_STATE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'uploadImage'){
 		if(!$charManager->uploadCharacterStateImage($_POST)){
-			$statusStr = 'ERROR uploading character state image/illustration: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_ADD_IMAGE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteImage'){
 		if($charManager->removeCharacterStateImage($_POST['csimgid'])){
-			$statusStr = 'SUCCESS: image uploaded successful';
+			$statusStr = $LANG['SUCCESS_DELETE_IMAGE'];
 		}
 		else{
-			$statusStr = 'ERROR deleting character state image/illustration: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_IMAGE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'Save Taxonomic Relevance'){
 		if(!empty($_POST['tid'])){
 			if(!$charManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'], $_POST['notes'])){
-				$statusStr = 'ERROR saving taxon relationship: ' . $charManager->getErrorMessage();
+				$statusStr = $LANG['ERROR_ADD_REL'] . $charManager->getErrorMessage();
 			}
 			$tabIndex = 2;
 		}
 	}
-	elseif($formSubmit == 'delaxon'){
+	elseif($formSubmit == 'deltaxon'){
 		if(!$charManager->deleteTaxonRelevance($_POST['tid'])){
-			$statusStr = 'ERROR deleting taxon relationship: ' . $charManager->getErrorMessage();
+			$statusStr = $LANG['ERROR_DELETE_REL'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 2;
 	}
@@ -99,7 +99,7 @@ if(!$cid) header('Location: index.php');
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title>Character Admin</title>
+	<title><?= $LANG['CHAR_ADMIN'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -136,15 +136,15 @@ if(!$cid) header('Location: index.php');
 
 		function validateCharEditForm(f){
 			if(f.charname.value == ""){
-				alert("Character name must not be null");
+				alert("<?= $LANG['ALERT_NAME_NULL'] ?>");
 				return false;
 			}
 			if(f.chartype.value == ""){
-				alert("Character type must not be null");
+				alert("<?= $LANG['ALERT_TYPE_NULL'] ?>");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort Sequence can only be a numeric value");
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -152,11 +152,11 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateAddForm(f){
 			if(f.charstatename.value == ""){
-				alert("Character state must not be null");
+				alert("<?= $LANG['ALERT_STATE_NULL'] ?>");
 				return false;
 			}
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort sequence can only be a numeric value");
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -164,7 +164,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateStateEditForm(f){
 			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort Sequence field must be numeric");
+				alert("<?= $LANG['ALERT_SS_NUM'] ?>");
 				return false;
 			}
 			return true;
@@ -172,7 +172,7 @@ if(!$cid) header('Location: index.php');
 
 		function verifyStateIllustForm(f){
 			if(!f.urlupload.files[0]){
-				alert("Select a file to upload");
+				alert("<?= $LANG['ALERT_FILE_UPLOAD'] ?>");
 				return false;
 			}
 			return true;
@@ -247,7 +247,7 @@ if(!$cid) header('Location: index.php');
 
 		function validateTaxonAddForm(f){
 			if(f.tid.value == ''){
-				alert("Please select a taxonomic name!");
+				alert("<?= $LANG['ALERT_SELECT_TAXON'] ?>");
 				return false;
 			}
 			return true;
@@ -277,11 +277,11 @@ if(!$cid) header('Location: index.php');
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../index.php'>Home</a> &gt;&gt;
-		<a href='index.php'><b>Character Management</b></a>
+		<a href='../../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href='index.php'><b><?= $LANG['CHAR_MANAGE'] ?></b></a>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading screen-reader-only">Taxon Character Administration</h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['TAXON_CHAR_ADMIN'] ?></h1>
 		<?php
 		if($isEditor){
 			if($statusStr){
@@ -299,45 +299,45 @@ if(!$cid) header('Location: index.php');
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($charArr['charName']) ?></div>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#chardetaildiv"><span>Details</span></a></li>
-					<li><a href="#charstatediv"><span>Character States</span></a></li>
-					<li><a href="taxonomylinkage.php?cid=<?= $cid ?>"><span>Taxonomic Linkages</span></a></li>
-					<li><a href="#chardeldiv"><span>Admin</span></a></li>
+					<li><a href="#chardetaildiv"><span><?= $LANG['DETAILS'] ?></span></a></li>
+					<li><a href="#charstatediv"><span><?= $LANG['CHAR_STATES'] ?></span></a></li>
+					<li><a href="taxonomylinkage.php?cid=<?= $cid ?>"><span><?= $LANG['TAXON_LINKAGES'] ?></span></a></li>
+					<li><a href="#chardeldiv"><span><?= $LANG['ADMIN'] ?></span></a></li>
 				</ul>
 				<div id="chardetaildiv">
 					<form name="chareditform" action="chardetails.php" method="post" onsubmit="return validateCharEditForm(this)">
 						<fieldset>
-							<legend>Character Details</legend>
+							<legend><?= $LANG['CHAR_DETAILS'] ?></legend>
 							<div style="padding-top:4px;">
-								<label for="charname">Character Name</label><br />
+								<label for="charname"><?= $LANG['CHAR_NAME'] ?></label><br />
 								<input type="text" id="charname" name="charname" maxlength="150" style="width:400px;" value="<?= Sanitize::outString($charArr['charName']) ?>" />
 							</div>
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
-									<label for="type">Type</label><br />
+									<label for="type"><?= $LANG['TYPE'] ?></label><br />
 									<select id="type" name="chartype" style="width:180px;" onchange="updateUnits(this);">
-										<option value="UM">Multi-state</option>
-										<option value="IN" <?= ($charArr['charType']=='IN'?'SELECTED':'') ?>>Integer</option>
-										<option value="RN" <?= ($charArr['charType']=='RN'?'SELECTED':'') ?>>Real Number</option>
+										<option value="UM"><?= $LANG['MULTI_STATE'] ?></option>
+										<option value="IN" <?= ($charArr['charType']=='IN'?'SELECTED':'') ?>><?= $LANG['INTEGER'] ?></option>
+										<option value="RN" <?= ($charArr['charType']=='RN'?'SELECTED':'') ?>><?= $LANG['REAL_NUMBER'] ?></option>
 									</select>
 								</div>
 								<div id="units" style="display:<?= ((($charArr['charType']=='IN')||($charArr['charType']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
-									<label for="units">Units</label><br />
+									<label for="units"><?= $LANG['UNITS'] ?></label><br />
 									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($charArr['units']) ?>" title="" />
 								</div>
 								<div style="margin-left:15px;float:left;">
-									<label for="difficultyrank">Difficulty</label><br />
+									<label for="difficultyrank"><?= $LANG['DIFFICULTY'] ?></label><br />
 									<select id="difficultyrank" name="difficultyrank" style="width:100px;">
-										<option value="1">Easy</option>
-										<option value="2" <?= ($charArr['difficultyRank']=='2'?'SELECTED':'') ?>>Intermediate</option>
-										<option value="3" <?= ($charArr['difficultyRank']=='3'?'SELECTED':'') ?>>Advanced</option>
-										<option value="4" <?= ($charArr['difficultyRank']=='4'?'SELECTED':'') ?>>Hidden</option>
+										<option value="1"><?= $LANG['EASY'] ?></option>
+										<option value="2" <?= ($charArr['difficultyRank']=='2'?'SELECTED':'') ?>><?= $LANG['INTERMEDIATE'] ?></option>
+										<option value="3" <?= ($charArr['difficultyRank']=='3'?'SELECTED':'') ?>><?= $LANG['ADVANCED'] ?></option>
+										<option value="4" <?= ($charArr['difficultyRank']=='4'?'SELECTED':'') ?>><?= $LANG['HIDDEN'] ?></option>
 									</select>
 								</div>
 								<div style="float:left;margin-left:15px;">
-									<label for="hid">Grouping</label><br />
+									<label for="hid"><?= $LANG['GROUPING'] ?></label><br />
 									<select id="hid" name="hid">
-										<option value="">Not Assigned</option>
+										<option value=""><?= $LANG['NOT_ASSIGNED'] ?></option>
 										<option value="">---------------------</option>
 										<?php
 										$headingArr = $charManager->getCharacterHeadingArr();
@@ -351,7 +351,7 @@ if(!$cid) header('Location: index.php');
 								</div>
 							</div>
 							<div style="padding-top:8px;clear:both;">
-								<label for="helpurl">Help URL</label><br />
+								<label for="helpurl"><?= $LANG['HELP_URL'] ?></label><br />
 								<input type="text" id="helpurl" name="helpurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($charArr['helpUrl']) ?>" />
 								<?php
 								if($charArr['helpUrl'] && substr($charArr['helpUrl'],0,4) == 'http'){
@@ -363,8 +363,8 @@ if(!$cid) header('Location: index.php');
 							$glossaryArr = $charManager->getGlossaryList();
 							if($glossaryArr){
 								?>
-								<div style="padding-top:8px;clear:both;">
-									<label for="glossid">Glossary link</label><br />
+								<div style="padding-top:8px;padding-bottom:8px;clear:both;">
+									<label for="glossid"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
 									<select id="glossid" name="glossid" style="max-width: 90%">
 										<option value="">------------------------</option>
 										<?php
@@ -387,24 +387,24 @@ if(!$cid) header('Location: index.php');
 							}
 							?>
 							<div style="padding-top:8px;">
-								<label for="description">Description</label><br />
+								<label for="description"><?= $LANG['DIFFICULTY'] ?></label><br />
 								<input type="text" id="description" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($charArr['description']) ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<label for="notes">Notes</label><br />
+								<label for="notes"><?= $LANG['NOTES'] ?></label><br />
 								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($charArr['notes']) ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<label for="sortsequence">Sort Sequence</label><br />
+								<label for="sortsequence"><?= $LANG['SORT_SQNCE'] ?></label><br />
 								<input type="text" id="sortsequence" name="sortsequence" style="width:80px;" value="<?= $charArr['sortSequence'] ?>" />
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
-									<button name="formsubmit" type="submit" value="saveCharacterEdit">Save</button>
+									<button name="formsubmit" type="submit" value="saveCharacterEdit"><?= $LANG['SAVE'] ?></button>
 								</div>
 								<div style="float:right;">
-									<label for="enteredby">Entered By:</label>
+									<label for="enteredby"><?= $LANG['ENTERED_BY'] ?>:</label>
 									<input type="text" id="enteredby" name="enteredby" tabindex="96" maxlength="32" style="width:100px;" value="<?= Sanitize::outString($charArr['enteredBy']) ?>" disabled />
 								</div>
 							</div>
@@ -413,28 +413,28 @@ if(!$cid) header('Location: index.php');
 				</div>
 				<div id="charstatediv">
 					<div style="float:right;margin:10px;">
-						<a href="#" title="Create New Character State" onclick="toggle('newstatediv');">
-							<img src="../../images/add.png" class="icon-img" alt="Create New Character State" />
+						<a href="#" title="<?= $LANG['CREATE_CHAR_STATE'] ?>" onclick="toggle('newstatediv');">
+							<img src="../../images/add.png" class="icon-img" alt="<?= $LANG['CREATE_CHAR_STATE'] ?>" />
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?= ($charStateArr?'none':'block') ?>;">
 						<form name="stateaddform" action="chardetails.php" method="post" onsubmit="return validateStateAddForm(this)">
 							<fieldset>
-								<legend>Add Character State</legend>
+								<legend><?= $LANG['ADD_CHAR_STATE'] ?></legend>
 								<div style="padding-top:4px;">
-									<label for="charstatename">Character State Name</label><br />
+									<label for="charstatename"><?= $LANG['CHAR_STATE_NAME'] ?></label><br />
 									<input type="text" id="charstatename" name="charstatename" maxlength="255" style="width:400px;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_description">Description</label><br />
+									<label for="add_description"><?= $LANG['DESCRIPTION'] ?></label><br />
 									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<?php
 								if($glossaryArr){
 									?>
-									<div style="padding-top:8px;clear:both;">
-										<label for="glossid">Glossary link</label><br />
-										<select id="glossid" name="glossid">
+									<div style="padding-top:8px;padding-bottom:8px;clear:both;">
+										<label for="glossid-state"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
+										<select id="glossid-state" name="glossid">
 											<option value="">------------------------</option>
 											<?php
 											foreach($glossaryArr as $glossArr){
@@ -449,23 +449,23 @@ if(!$cid) header('Location: index.php');
 								}
 								?>
 								<div style="padding-top:4px;">
-									<label for="add_notes">Notes</label><br />
+									<label for="add_notes"><?= $LANG['NOTES'] ?></label><br />
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_sortsequence">Sort Sequence</label><br />
+									<label for="add_sortsequence"><?= $LANG['SORT_SQNCE'] ?></label><br />
 									<input type="text" id="add_sortsequence" name="sortsequence" style="width:80px" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
-									<button name="formsubmit" type="submit" value="addState">Add Character State</button>
+									<button name="formsubmit" type="submit" value="addState"><?= $LANG['ADD_CHAR_STATE'] ?></button>
 								</div>
 							</fieldset>
 						</form>
 					</div>
 					<?php
 					if($charStateArr){
-						echo '<h3>Character States</h3>';
+						echo '<h3>' . $LANG['CHAR_STATES'] . '</h3>';
 						foreach($charStateArr as $cs => $stateArr){
 							?>
 							<div>
@@ -484,20 +484,20 @@ if(!$cid) header('Location: index.php');
 									</div>
 									<form name="stateeditform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
-											<legend>Character State Details</legend>
+											<legend><?= $LANG['CHAR_STATE_DETAILS'] ?></legend>
 											<div>
-												<label for="charstatename-<?= $cs ?>">Character State Name</label><br />
+												<label for="charstatename-<?= $cs ?>"><?= $LANG['CHAR_STATE_NAME'] ?></label><br />
 												<input type="text" id="charstatename-<?= $cs ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
-												<label for="description-<?= $cs ?>">Description</label><br />
+												<label for="description-<?= $cs ?>"><?= $LANG['DESCRIPTION'] ?></label><br />
 												<input type="text" id="description-<?= $cs ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<?php
 											if($glossaryArr){
 												?>
-												<div style="padding-top:8px;clear:both;">
-													<label for="glossid-<?= $cs ?>">Glossary link</label><br />
+												<div style="padding-top:8px;padding-bottom:8px;clear:both;">
+													<label for="glossid-<?= $cs ?>"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
 													<select id="glossid-<?= $cs ?>" name="glossid" style="max-width: 90%">
 														<option value="">------------------------</option>
 														<?php
@@ -520,23 +520,23 @@ if(!$cid) header('Location: index.php');
 											}
 											?>
 											<div style="padding-top:2px;">
-												<label for="notes-<?= $cs ?>">Notes</label><br />
+												<label for="notes-<?= $cs ?>"><?= $LANG['NOTES'] ?></label><br />
 												<input type="text" id="notes-<?= $cs ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<div style="float:right;">
-													<label for="enteredby-<?= $cs ?>">Entered By:</label><br/>
+													<label for="enteredby-<?= $cs ?>"><?= $LANG['ENTERED_BY'] ?>:</label><br/>
 													<input type="text" id="enteredby-<?= $cs ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
 												</div>
 												<div>
-													<label for="sortsequence-<?= $cs ?>">Sort Sequence</label><br />
+													<label for="sortsequence-<?= $cs ?>"><?= $LANG['SORT_SQNCE'] ?></label><br />
 													<input type="text" id="sortsequence-<?= $cs ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
 												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
 												<input name="cs" type="hidden" value="<?= $cs ?>" />
-												<button name="formsubmit" type="submit" value="saveState">Save</button>
+												<button name="formsubmit" type="submit" value="saveState"><?= $LANG['SAVE'] ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -553,7 +553,7 @@ if(!$cid) header('Location: index.php');
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
 													<input name="cs" type="hidden" value="<?= $cs ?>" />
 													<input name="csimgid" type="hidden" value="<?= $imgArr['csImgID'] ?>" />
-													<button name="formsubmit" type="submit" value="deleteImage">Delete Image</button>
+													<button name="formsubmit" type="submit" value="deleteImage"><?= $LANG['DELETE_IMAGE'] ?></button>
 												</div>
 											</form>
 											<?php
@@ -562,82 +562,77 @@ if(!$cid) header('Location: index.php');
 											?>
 											<form name="stateillustform-<?= $cs ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
 												<div style="padding-top:2px;">
-													<label for="urlupload-<?= $cs ?>">File Upload:</label>
+													<label for="urlupload-<?= $cs ?>"><?= $LANG['FILE_UPLOAD'] ?>:</label>
 													<input id="urlupload-<?= $cs ?>" name="urlupload" type="file" size="50" />
 													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgnotes-<?= $cs ?>">Notes:</label>
+													<label for="imgnotes-<?= $cs ?>"><?= $LANG['NOTES'] ?>:</label>
 													<input id="imgnotes-<?= $cs ?>" name="notes" type="text" style="width:90%" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgsortsequence-<?= $cs ?>">Sort:</label>
+													<label for="imgsortsequence-<?= $cs ?>"><?= $LANG['SORT'] ?>:</label>
 													<input id="imgsortsequence-<?= $cs ?>" name="sortsequence" type="text" />
 												</div>
 												<div style="padding-top:2px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
 													<input name="cs" type="hidden" value="<?= $cs ?>" />
-													<button name="formsubmit" type="submit" value="uploadImage">Upload Image</button>
+													<button name="formsubmit" type="submit" value="uploadImage"><?= $LANG['UPLOAD_IMAGE'] ?></button>
 												</div>
 											</form>
 											<?php
 										}
 										?>
 									</fieldset>
-									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
+									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_STATE'] ?>')">
 										<fieldset>
-											<legend>Delete Character State</legend>
+											<legend><?= $LANG['DELETE_CHAR_STATE'] ?></legend>
 											<div>
-												Record first needs to be evaluated before it can be deleted from the system.
-												The evaluation ensures that the deletion will not interfer with
-												the integrity of linked data.
+												<?= $LANG['NOTE_RECORD_DELETE'] ?>
 											</div>
 											<div style="margin:15px;">
-												<button name="verifycsdelete" type="button" onclick="verifyCharStateDeletion(this.form);return false;">Evaluate record for deletion</button>
+												<button name="verifycsdelete" type="button" onclick="verifyCharStateDeletion(this.form);return false;"><?= $LANG['EVAL_DELETE'] ?></button>
 											</div>
 											<div id="delverimgdiv" style="margin:15px;">
-												<b>Image Links: </b>
-												<span id="delvercsimgspan-<?= $cs ?>" style="color:orange;display:none;">checking image links...</span>
+												<b><?= $LANG['IMAGE_LINKS'] ?>: </b>
+												<span id="delvercsimgspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_IMAGE_LINKS'] ?></span>
 												<div id="delcsimgfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													One or more images are linked to this charcter state.
-													Deleting this character state will also permanently remove these images.
+													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
+													<?= $LANG['DELETE_WARN_IMAGE'] ?>
 												</div>
 												<div id="delcsimgappdiv-<?= $cs ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No images are directly associated with this character state.
+													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
+													<?= $LANG['NO_ASSOC_IMAGE'] ?>
 												</div>
 											</div>
 											<div id="delverlangdiv" style="margin:15px;">
-												<b>Language Links: </b>
-												<span id="delvercslangspan-<?= $cs ?>" style="color:orange;display:none;">checking language links...</span>
+												<b><?= $LANG['LANG_LINKS'] ?>: </b>
+												<span id="delvercslangspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_LANG_LINKS'] ?></span>
 												<div id="delcslangfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													Charcter state has links to langauge records.
-													Deleting this character state will also permanently remove this data.
+													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
+													<?= $LANG['DELETE_WARN_LANG'] ?>
 												</div>
 												<div id="delcslangappdiv-<?= $cs ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No langage mappings are directly associated with this character state.
+													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
+													<?= $LANG['NO_ASSOC_LANG'] ?>
 												</div>
 											</div>
 											<div id="delverdescrdiv" style="margin:15px;">
-												<b>Description Links: </b>
-												<span id="delverdescrspan-<?= $cs ?>" style="color:orange;display:none;">checking description links...</span>
+												<b><?= $LANG['DESC_LINKS'] ?>: </b>
+												<span id="delverdescrspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_DESC_LINKS'] ?></span>
 												<div id="deldescrfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
-													<span style="color:red;">Warning:</span>
-													One or more descriptions are linked to this charcter state.
-													Delete this character state will also permanently remove these descriptions.
+													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
+													<?= $LANG['DELETE_WARN_DESC'] ?>
 												</div>
 												<div id="deldescrappdiv-<?= $cs ?>" style="display:none;">
-													<span style="color:green;">Approved for deletion.</span>
-													No descriptions are directly associated with this character state.
+													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
+													<?= $LANG['NO_ASSOC_DESC'] ?>
 												</div>
 											</div>
 											<div style="margin:15px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
 												<input name="cs" type="hidden" value="<?= $cs ?>" />
-												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>
+												<button name="formsubmit" type="submit" value="deleteState" disabled><?= $LANG['DELETE_STATE'] ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -649,20 +644,20 @@ if(!$cid) header('Location: index.php');
 					?>
 				</div>
 				<div id="chardeldiv">
-					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
+					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_CHAR'] ?>')">
 						<fieldset style="width:700px;">
-							<legend><b>Delete Character</b></legend>
+							<legend><b><?= $LANG['DELETE_CHAR'] ?></b></legend>
 							<?php
 							if($charStateArr){
 								?>
 								<div style="margin-bottom:15px;">
-									Character cannot be deleted until all character states are removed
+									<?= $LANG['NOTE_CHAR_DELETE'] ?>
 								</div>
 								<?php
 							}
 							?>
 							<input name="cid" type="hidden" value="<?= $cid ?>" />
-							<button name="formsubmit" type="submit" value="deleteChar" <?php if($charStateArr) echo 'DISABLED' ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="deleteChar" <?php if($charStateArr) echo 'DISABLED' ?>><?= $LANG['DELETE'] ?></button>
 						</fieldset>
 					</form>
 				</div>
@@ -671,10 +666,10 @@ if(!$cid) header('Location: index.php');
 		}
 		else{
 			if(!$isEditor){
-				echo '<h2>You are not authorized to add characters</h2>';
+				echo '<h2>' . $LANG['NO_AUTH_ADD_CHAR'] . '</h2>';
 			}
 			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+				echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 			}
 		}
 		?>
