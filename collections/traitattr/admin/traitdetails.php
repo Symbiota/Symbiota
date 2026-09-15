@@ -88,20 +88,12 @@ if($formSubmit && $isEditor){
 				alert("Trait type must not be null");
 				return false;
 			}
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort Sequence can only be a numeric value");
-				return false;
-			}
 			return true;
 		}
 
 		function validateStateAddForm(f){
 			if(f.statename.value == ""){
 				alert("Trait state must not be null");
-				return false;
-			}
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
-				alert("Sort sequence can only be a numeric value");
 				return false;
 			}
 			return true;
@@ -169,7 +161,7 @@ if($formSubmit && $isEditor){
 					<li><a href="#chardeldiv"><span>Admin</span></a></li>
 				</ul>
 				<div id="chardetaildiv">
-					<form name="chareditform" action="chardetails.php" method="post" onsubmit="return validateCharEditForm(this)">
+					<form name="traiteditform" action="traitdetails.php" method="post" onsubmit="return validateCharEditForm(this)">
 						<fieldset>
 							<legend>Trait Details</legend>
 							<div style="padding-top:4px;">
@@ -225,10 +217,23 @@ if($formSubmit && $isEditor){
 								<label for="notes">Notes</label><br />
 								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['notes']) ?>" />
 							</div>
+							<div style="padding-top:8px;">
+								<label for="traitname">isPublic:</label>
+								<input type="checkbox" id="isPublic" name="isPublic" />
+							</div>
+							<div style="padding-top:8px;">
+							<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
+								<select id="dynamicproperties" name="dynamicproperties">
+									<option value="">---------------</option>
+									<option value="radio">Radio Button</option>
+									<option value="checkbox">Checkbox</option>
+									<option value="select">Select</option>
+								</select>
+							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
 									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-									<button name="formsubmit" type="submit" value="saveCharacterEdit">Save</button>
+									<button name="formsubmit" type="submit" value="saveTraitEdit">Save</button>
 								</div>
 							</div>
 						</fieldset>
