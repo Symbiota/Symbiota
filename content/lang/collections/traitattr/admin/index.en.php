@@ -7,9 +7,8 @@ Language: English
 
 $LANG['NAV_HOME'] = 'Home';
 $LANG['TAXON_CHARACTERS'] = 'Taxon Characters';
-$LANG['ALERT_NAME'] = 'Character name must have a value';
-$LANG['ALERT_TYPE'] = 'A character type must be selected';
-$LANG['ALERT_SORT'] = 'Sort Sequence must be a numeric value only';
+$LANG['ALERT_NAME'] = 'Trait name must have a value';
+$LANG['ALERT_TYPE'] = 'A trait type must be selected';
 $LANG['CHAR_MGMT'] = 'Character Management';
 $LANG['NEW_CHAR'] = 'New Character';
 $LANG['CHAR_NAME'] = 'Character Name';

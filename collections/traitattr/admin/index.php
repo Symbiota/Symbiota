@@ -35,6 +35,18 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 		document.addEventListener("DOMContentLoaded", () => {
     		toggle('addtraitdiv');
 		});
+
+		function validateNewTraitForm(f){
+			if(f.traitname.value == ""){
+				alert("<?= $LANG['ALERT_NAME'] ?>");
+				return false;
+			}
+			if(f.traittype.value == ""){
+				alert("<?= $LANG['ALERT_TYPE'] ?>");
+				return false;
+			}
+			return true;
+		}
 	</script>
 	<style>
 		.icon-img{ width: 1.3em }
@@ -46,7 +58,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	?>
 	<div class='navpath'>
 		<a href='../../../index.php'> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
-		<b><?= $LANG['CHAR_MGMT'] ?></b>
+		<b>Trait Management</b>
 	</div>
 	<div role="main" id="innertext">
 		<div style="float: right;">
@@ -60,7 +72,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 			?>
 			<div id="addeditchar">
 				<div id="addtraitdiv" style="display:none;margin-bottom:8px;">
-					<form name="newcharform" action="chardetails.php" method="post" onsubmit="return validateNewCharForm(this)">
+					<form name="newtraitform" action="traitdetails.php" method="post" onsubmit="return validateNewTraitForm(this)">
 						<fieldset>
 							<legend><b>NEW TRAIT</b></legend>
 							<div>
@@ -70,7 +82,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							<div class="flex-form">
 								<div>
 								<label for="traittype">TRAIT TYPE:</label>
-									<select id="traittype" name="traittype">
+									<select id="traittype" name="traittype" >
 										<option value="">---------------</option>
 										<option value="1">UM</option>
 										<option value="2">OM</option>
@@ -104,16 +116,15 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
 									<select id="dynamicproperties" name="dynamicproperties">
 										<option value="">---------------</option>
-										<option value="1">Radio Button</option>
-										<option value="2">Checkbox</option>
-										<option value="3">3</option>
-										<option value="4">4</option>
+										<option value="radio">Radio Button</option>
+										<option value="checkbox">Checkbox</option>
+										<option value="select">Select</option>
 									</select>
 								</div>
 							</div>
 							</div>
 							<div style="width:100%;padding-top:6px;">
-								<button name="formsubmit" type="submit" value="createCharacter"><?= $LANG['CREATE_BTN'] ?></button>
+								<button name="formsubmit" type="submit" value="createTrait"><?= $LANG['CREATE_BTN'] ?></button>
 							</div>
 						</fieldset>
 					</form>
@@ -124,7 +135,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 						echo '<ul>';
 						foreach ($traitList as $trait){
 							echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
-							var_dump($trait);
+							//var_dump($trait);
 						}
 						echo '</ul>';
 					}

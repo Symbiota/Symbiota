@@ -22,6 +22,18 @@ $traitManager = new OccurrenceTraitAdmin();
 //$traitManager->setLangId($langId);
 $traitManager->setTraitID($traitID);
 
+$statusStr = '';
+if($formSubmit && $isEditor){
+	if($formSubmit == 'createTrait'){
+		if($traitManager->insertTrait($_POST)){
+			$traitID = $traitManager->getTraitID();
+		}
+		else{
+			$statusStr = "Error Creating Trait";
+		}
+	}
+}
+
 //if(!$traitID) header('Location: index.php');
 ?>
 <!DOCTYPE html>
@@ -141,8 +153,6 @@ $traitManager->setTraitID($traitID);
 			}
 			$traitArr = $traitManager->getTraitArrById();
 			var_dump($traitArr);
-			$charStateArr = $traitManager->getTraitArr();
-			//var_dump($charStateArr);
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
