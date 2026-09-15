@@ -2,6 +2,7 @@
 include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
+include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
 
 class GeographicThesaurus extends Manager {
 	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
@@ -218,6 +219,8 @@ class GeographicThesaurus extends Manager {
 			$this->deletePolygon($postArr['geoThesID']);
 		}
 
+		$this->updatePolygonIndexState($postArr);
+
 		return true;
 	}
 
@@ -259,6 +262,18 @@ class GeographicThesaurus extends Manager {
 		} catch (\Throwable $e) {
 			$this->errorMessage = 'ERROR deletePolygon on ' . $geoThesID . ':' . $e->getMessage();
 			return false;
+		}
+	}
+
+	private function updatePolygonIndexState($postArr) {
+		if(empty($postArr['geoThesID'])) return;
+
+		$polygonIndex = new OccurrencePolygonIndex($this->conn);
+		if(empty($postArr['polygon']) || empty($postArr['isSearchable'])) {
+			$polygonIndex->deleteGeographicPolygonIndex($postArr['geoThesID']);
+		}
+		else {
+			$polygonIndex->markGeographicPolygonPending($postArr['geoThesID']);
 		}
 	}
 
