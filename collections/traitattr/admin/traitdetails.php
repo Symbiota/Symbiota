@@ -32,6 +32,11 @@ if($formSubmit && $isEditor){
 			$statusStr = "Error Creating Trait";
 		}
 	}
+	elseif($formSubmit == 'saveTraitEdit'){
+		if(!$traitManager->updateTrait($_POST)){
+			$statusStr = "Error Editing Trait";
+		}
+	}
 }
 
 //if(!$traitID) header('Location: index.php');
@@ -91,7 +96,7 @@ if($formSubmit && $isEditor){
 		}
 
 		function validateStateAddForm(f){
-			if(f.charstatename.value == ""){
+			if(f.statename.value == ""){
 				alert("Trait state must not be null");
 				return false;
 			}
@@ -152,7 +157,8 @@ if($formSubmit && $isEditor){
 				<?php
 			}
 			$traitArr = $traitManager->getTraitArrById();
-			var_dump($traitArr);
+			$traitStateArr = $traitManager->getTraitStateArr();
+			//var_dump($traitArr);
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
@@ -234,13 +240,13 @@ if($formSubmit && $isEditor){
 							<img src="../../../images/add.png" class="icon-img" alt="Create New Trait State" />
 						</a>
 					</div>
-					<div id="newstatediv" style="display:<?= ($charStateArr?'none':'block') ?>;">
+					<div id="newstatediv" style="display:<?= ($traitStateArr?'none':'block') ?>;">
 						<form name="stateaddform" action="chardetails.php" method="post" onsubmit="return validateStateAddForm(this)">
 							<fieldset>
 								<legend>Add Trait State</legend>
 								<div style="padding-top:4px;">
-									<label for="charstatename">Trait State Name</label><br />
-									<input type="text" id="charstatename" name="charstatename" maxlength="255" style="width:400px;" />
+									<label for="statename">Trait State Name</label><br />
+									<input type="text" id="statename" name="statename" maxlength="255" style="width:400px;" />
 								</div>
 								<div style="padding-top:4px;">
 									<label for="add_description">Description</label><br />
@@ -262,30 +268,30 @@ if($formSubmit && $isEditor){
 						</form>
 					</div>
 					<?php
-					if($charStateArr){
+					if($traitStateArr){
 						echo '<h3>Trait States</h3>';
-						foreach($charStateArr as $stateID => $stateArr){
+						foreach($traitStateArr as $stateID => $stateArr){
 							?>
 							<div>
 								<div id="statecodeplus-<?= $stateID ?>" style="margin:5px;">
 									<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 										<img src="../../../images/plus.png" class="icon-img" >
-										<?= Sanitize::outString($stateArr['charStateName']) ?>
+										<?= Sanitize::outString($stateArr['statename']) ?>
 									</a>
 								</div>
 								<div id="<?= 'statecode-'.$stateID.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 											<img src="../../../images/minus.png" class="icon-img" >
-											<?= Sanitize::outString($stateArr['charStateName']) ?>
+											<?= Sanitize::outString($stateArr['statename']) ?>
 										</a>
 									</div>
 									<form name="stateeditform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
 											<legend>Trait State Details</legend>
 											<div>
-												<label for="charstatename-<?= $stateID ?>">Trait State Name</label><br />
-												<input type="text" id="charstatename-<?= $stateID ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
+												<label for="statename-<?= $stateID ?>">Trait State Name</label><br />
+												<input type="text" id="statename-<?= $stateID ?>" name="statename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['statename']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<label for="description-<?= $stateID ?>">Description</label><br />
@@ -335,7 +341,7 @@ if($formSubmit && $isEditor){
 						<fieldset style="width:700px;">
 							<legend><b>Delete Trait</b></legend>
 							<?php
-							if($charStateArr){
+							if($traitStateArr){
 								?>
 								<div style="margin-bottom:15px;">
 									Trait cannot be deleted until all character states are removed
@@ -344,7 +350,7 @@ if($formSubmit && $isEditor){
 							}
 							?>
 							<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-							<button name="formsubmit" type="submit" value="deleteChar" <?php if($charStateArr) echo 'DISABLED' ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="deleteChar" <?php if($traitStateArr) echo 'DISABLED' ?>>Delete</button>
 						</fieldset>
 					</form>
 				</div>

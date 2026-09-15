@@ -75,7 +75,7 @@ class OmOccurrenceTraits extends DataCore{
 
 	public function getTraitStateArr(){
 		$this->setTraitStateMap();
-		$pkArr = array('stateid' => $this->stateid);
+		$pkArr = array('traitid' => $this->traitID);
 		return $this->getRecordArr('tmstates', $pkArr);
 	}
 

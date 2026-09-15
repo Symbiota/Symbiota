@@ -84,10 +84,10 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<label for="traittype">TRAIT TYPE:</label>
 									<select id="traittype" name="traittype" >
 										<option value="">---------------</option>
-										<option value="1">UM</option>
-										<option value="2">OM</option>
-										<option value="3">TF</option>
-										<option value="4">NU</option>
+										<option value="UM">Multi-state</option>
+										<option value="OM">OM</option>
+										<option value="TF">TF</option>
+										<option value="NU">NU</option>
 									</select>
 								</div>
 							</div>
