@@ -74,25 +74,25 @@ function matchPath(array $pathhaystack, string $path): bool {
 }
 
 $PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
-// TODO - implement above matchPath function for this code block
 if (!$SYMB_UID && $PORTAL_PRIVATE){
 	$PRIVATE_VIEWING_OVERRIDES = $PRIVATE_VIEWING_OVERRIDES ?? [];
-	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/newprofile.php', '/profile/index.php']];
+	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/*']];
 	if(!empty($CLIENT_ROOT)){
 		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	}
 	else $requested_url = $_SERVER['PHP_SELF'];
-	if (!in_array($requested_url, $public_pages)){
+	if (!matchPath($public_pages, $requested_url)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
+		exit;
 	}
 }
 
 //Global CAPTCHA verification
 $GLOBAL_CAPTCHA = $ENABLE_GLOBAL_CAPTCHA ?? false;
-if ($GLOBAL_CAPTCHA){
+if (!$SYMB_UID && $GLOBAL_CAPTCHA){
 	$CAPTCHA_VIEWING_OVERRIDES = $CAPTCHA_VIEWING_OVERRIDES ?? [];
-	$captchafree_pages = [...$CAPTCHA_VIEWING_OVERRIDES, ...['/security/human.php', '/rpc/captcha.php/*']];
+	$captchafree_pages = [...$CAPTCHA_VIEWING_OVERRIDES, ...['/profile/*','/security/human.php', '/rpc/captcha.php/*']];
 	if(!empty($CLIENT_ROOT)){
 		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	}
@@ -101,8 +101,13 @@ if ($GLOBAL_CAPTCHA){
 		// This page is permitted.  Do nothing and continue
 	}
 	else if (empty($_SESSION['captchaverified'])) {
-		http_response_code(403);
-		exit('CAPTCHA verification required.');
+		// Redirect user to CAPTCHA validation
+		//http_response_code(403);
+		//exit('CAPTCHA verification required.');
+		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
+		$_SESSION['captcha_return_url'] = $referringUrl;
+		header('Location: ' . $CLIENT_ROOT . '/profile/index.php');
+		exit;
 	}
 }
 

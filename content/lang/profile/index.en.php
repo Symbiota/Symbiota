@@ -27,4 +27,7 @@ $LANG['RETRIEVE'] = 'Retrieve Login';
 $LANG['YOUR_EMAIL'] = 'Your Email';
 $LANG['OID_LOGIN'] = 'Login with OID';
 $LANG['THIRD_PARTY_LOGIN'] = 'Login using third-party authentication';
+$LANG['CAPTCHA_INFO'] = 'Alternativly - to browse public content anonymously, please verify you are human using the form below.';
+$LANG['IM_HUMAN'] = "I am human";
+$LANG['CHECK_CAPTCHA'] = 'You must first check the CAPTCHA checkbox (to prove you are a human)';
 ?>

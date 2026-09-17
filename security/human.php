@@ -12,16 +12,27 @@ use Capito\CapPhpServer\Storage\FileStorage;
 
 Language::load('security/human');
 
+unset($_SESSION['captchaverified']);
+
 if(!empty($_POST['cap-token'])){
 
     $capServer = new Cap(['storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) ]);
     $response = $capServer->validateToken($_POST['cap-token']);
+    //TODO: Implement time horizon on validated session
     if($response['success'] == false){
         echo '<h2>'.(isset($LANG['CAPTCHA_FAILED'])?$LANG['CAPTCHA_FAILED']:'Captcha verification failed').'</h2>';
-        $okToCreateLogin = false;
     }
     else{
         $_SESSION['captchaverified'] = $_POST['cap-token'];
+        if (!empty($_SESSION['captcha_return_url'])){
+            $ref_url = $_SESSION['captcha_return_url'];
+            unset($_SESSION['captcha_return_url']);
+            header('Location: ' . $ref_url);
+            exit;
+        }
+
+        header('Location: ' . $CLIENT_ROOT);
+        exit;
     }
 }
 
@@ -30,42 +41,14 @@ else{
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?= $DEFAULT_TITLE . ' - ' . $LANG['NEW_USER']; ?></title>
+	<title><?= $DEFAULT_TITLE . ' - CAPTCHA'; ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
+    include_once($SERVER_ROOT.'/includes/globalcaptchahead.php');
 	?>
-    <script src="<?=$CLIENT_ROOT?>/js/cap.js/widget/cap.min.js"></script>
-	<script type="text/javascript">
-		function validateform(f){
-			
-            let capToken = document.querySelector('input[name="cap-token"]');
-            if (!(capToken && capToken.value !== '')){
-                alert("<?php echo (isset($LANG['CHECK_CAPTCHA'])?$LANG['CHECK_CAPTCHA']:"You must first check the CAPTCHA checkbox (to prove you are a human)"); ?>");
-                return false;
-            }
-			
-            return true;
-		}
-	</script>
 </head>
 <body>
-    <form action="human.php" method="post" onsubmit="return validateform(this);">
-        <cap-widget data-cap-api-endpoint='<?=$CAPTCHA_ENDPOINT?>'></cap-widget>
-		<button id="submit" name="submit" type="submit" value="Validate Human"><?php echo (isset($LANG['IM_HUMAN']) ? $LANG['IM_HUMAN'] : "I'm HUman"); ?></button>					
-	</form>
-
-    <script>
-			const widget = document.querySelector("cap-widget");
-			widget.addEventListener("solve", function (e) {
-				const verificationToken = e.detail.token;
-			});
-			
-			widget.addEventListener("error", function (e) {
-				console.error('❌ Cap validation failed:', e.detail);
-			});
-		</script>
-		<?php
-	?>
+    <?php include_once($SERVER_ROOT.'/includes/globalcaptchabody.php');?>
 </body>
 </html>
 

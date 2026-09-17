@@ -27,4 +27,7 @@ $LANG['RETRIEVE'] = 'Récupérer le nom d\'utilisateur';
 $LANG['YOUR_EMAIL'] = 'Votre E-mail';
 $LANG['OID_LOGIN'] = 'Connectez-vous avec l\'OID';
 $LANG['THIRD_PARTY_LOGIN'] = 'Connectez-vous à l\'aide d\'une authentification tierce';
+$LANG['CAPTCHA_INFO'] = "Sinon, pour parcourir le contenu public de manière anonyme, veuillez confirmer que vous êtes un humain à l'aide du formulaire ci-dessous.";
+$LANG['IM_HUMAN'] = "Je suis un être humain";
+$LANG['CHECK_CAPTCHA'] = "Vous devez d'abord cocher la case du CAPTCHA (pour prouver que vous êtes un humain).";
 ?>
