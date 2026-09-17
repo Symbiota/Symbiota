@@ -5,6 +5,8 @@ include_once($SERVER_ROOT.'/classes/OccurrenceChecklistManager.php');
 
 Language::load('collections/checklist');
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/list.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $taxonFilter = array_key_exists('taxonfilter',$_REQUEST) ? filter_var($_REQUEST['taxonfilter'], FILTER_SANITIZE_NUMBER_INT) : '';
 
 $checklistManager = new OccurrenceChecklistManager();

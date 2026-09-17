@@ -16,6 +16,8 @@ header("Accept-Encoding: gzip, deflate, br");
 ob_start('ob_gzhandler');
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/map/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $distFromMe = array_key_exists('distFromMe', $_REQUEST) ? filter_var($_REQUEST['distFromMe'], FILTER_SANITIZE_NUMBER_FLOAT) : '';
 $menuClosed = array_key_exists('menuClosed',$_REQUEST)? true: false;
 $catId = array_key_exists('catid',$_REQUEST) ? filter_var($_REQUEST['catid'], FILTER_SANITIZE_NUMBER_INT) : 0;

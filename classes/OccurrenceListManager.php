@@ -46,10 +46,10 @@ class OccurrenceListManager extends OccurrenceManager{
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
 		if($this->sortArr){
-			$sql .= 'ORDER BY ' . implode(',', $this->sortArr) . ', o.collid ';
+			//$sql .= 'ORDER BY ' . implode(',', $this->sortArr) . ', o.collid ';
 		}
 		else{
-			$sql .= 'ORDER BY o.collid ';
+			//$sql .= 'ORDER BY o.collid ';
 		}
 		if($pageRequest > 0) $pageRequest = ($pageRequest - 1) * $cntPerPage;
 		$sql .= ' LIMIT ' . $pageRequest . ',' . $cntPerPage;

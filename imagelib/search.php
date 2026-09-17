@@ -9,6 +9,8 @@ Language::load(['imagelib/search', 'collections/search/index']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/imagelib/search.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $taxonType = isset($_REQUEST['taxontype']) ? filter_var($_REQUEST['taxontype'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $useThes = !empty($_REQUEST['usethes']) ? filter_var($_REQUEST['usethes'], FILTER_SANITIZE_NUMBER_INT) : 0;
 $taxaStr = isset($_REQUEST['taxa']) ? $_REQUEST['taxa'] : '';

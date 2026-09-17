@@ -7,6 +7,8 @@ Language::load('collections/listtabledisplay');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/listtabledisplay.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $page = array_key_exists('page',$_REQUEST) ? filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT) : 1;
 $tableCount= array_key_exists('tablecount',$_REQUEST) ? filter_var($_REQUEST['tablecount'], FILTER_SANITIZE_NUMBER_INT) : 1000;
 $sortField1 = array_key_exists('sortfield1',$_REQUEST) ? $_REQUEST['sortfield1'] : '';

@@ -14,6 +14,8 @@ Language::load('collections/search/index');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/search/index.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $JS_LANG_FILENAME = file_exists($SERVER_ROOT . '/js/symb/' . $LANG_TAG . '.js') ? $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js' : $CLIENT_ROOT . '/js/symb/en.js';
 
 $dbsWithBracketsRemoved = array_key_exists("db", $_GET) ?  str_replace(array('[', ']'), '', $_GET["db"]) : '';

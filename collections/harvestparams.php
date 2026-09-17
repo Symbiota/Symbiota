@@ -5,6 +5,8 @@ include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
+if(!$SYMB_UID) header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $CLIENT_ROOT . '/collections/harvestparams.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
+
 $collManager = new OccurrenceManager();
 $paleoTimes = $collManager->getPaleoTimes();
 $searchVar = $collManager->getQueryTermStr();
