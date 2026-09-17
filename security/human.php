@@ -16,7 +16,22 @@ unset($_SESSION['captchaverified']);
 
 if(!empty($_POST['cap-token'])){
 
-    $capServer = new Cap(['storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) ]);
+    $capServer = new Cap([
+        //Todo - consider moving this into a config file
+        'challengeCount' => 3,          // 3 challenges (1–3 seconds to solve)   [== 5 higher sec]
+        'challengeSize' => 16,          // 16-byte salt    
+        'bruteForceLimit' => 3,         // 3 requests max per window              [==5 default limit]
+        'bruteForceWindow' => 60,       // 60 second time window                  [==30 shorter window]
+        'bruteForcePenalty' => 60,      // 60 second penalty when blocked         [==120 longer penalty]
+        'challengeDifficulty' => 2,     // Difficulty 2 (balanced optimization)  [==3 hard]                     
+        'difficultyModerate'=>3,      	// Difficulty level when moderate rate limiting pressure detected
+        'difficultyAggressive'=>5,      // Difficulty level when high limiting pressure detected
+        'tokenVerifyOnce' => true,      // One-time validation
+        'challengeExpires' => 300,      // Expires in 5 minutes
+        'tokenExpires' => 600,          // Token expires in 10 minutes  
+        'storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) 
+    ]);    
+    
     $response = $capServer->validateToken($_POST['cap-token']);
     //TODO: Implement time horizon on validated session
     if($response['success'] == false){
