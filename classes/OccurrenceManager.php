@@ -280,7 +280,8 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$this->displaySearchArr[] = $pointArr[0] . ' ' . $pointArr[1] . ' +- ' . $pointArr[2] . $pointArr[3];
 		}
 		elseif(!empty($this->searchTermArr['footprintGeoJson'])){
-			$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('".$this->searchTermArr['footprintGeoJson']."'))) ";
+			$sqlWhere .= "AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $this->searchTermArr['footprintGeoJson'] . "'), p.lngLatPoint))
+				AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('" . $this->searchTermArr['footprintGeoJson'] . "'))) ";
 			$this->displaySearchArr[] = $this->LANG['POLYGON_SEARCH'];
 		}
 		if(array_key_exists('collector',$this->searchTermArr)){
@@ -642,15 +643,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 	}
 
-	protected function getGeoJsonBoundingBoxWhere() {
-		if(!empty($this->searchTermArr['footprintGeoJson'])) {
-			$geoJson = $this->searchTermArr['footprintGeoJson'];
-			return " AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $geoJson . "'), p.lngLatPoint)) ";
-		}
-
-		return '';
-	}
-
 	protected function setPaleoSqlWith() {
 		$paleoSqlWith = '';
 		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
@@ -739,7 +731,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
 			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
-				$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+				$sqlJoin .= 'INNER JOIN omoccurpoints p FORCE INDEX (IX_omoccurpoints_latLngPoint) ON o.occid = p.occid ';
 			}
 			if(array_key_exists('polygons',$this->searchTermArr)){
 				$polygonIDs = $this->searchTermArr['polygons'];
