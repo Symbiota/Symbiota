@@ -92,7 +92,7 @@ if (!$SYMB_UID && $PORTAL_PRIVATE){
 $GLOBAL_CAPTCHA = $ENABLE_GLOBAL_CAPTCHA ?? false;
 if (!$SYMB_UID && $GLOBAL_CAPTCHA){
 	$CAPTCHA_VIEWING_OVERRIDES = $CAPTCHA_VIEWING_OVERRIDES ?? [];
-	$captchafree_pages = [...$CAPTCHA_VIEWING_OVERRIDES, ...['/profile/*','/security/human.php', '/rpc/captcha.php/*']];
+	$captchafree_pages = [...$CAPTCHA_VIEWING_OVERRIDES, ...['/profile/*','/security/human.php', '/rpc/captcha.php/*', '/rpc/captcha/*']];
 	if(!empty($CLIENT_ROOT)){
 		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	}
