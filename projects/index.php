@@ -196,7 +196,7 @@ if(!$researchList && !$editMode){
 		fieldset.form-color { background-color:#f2f2f2; margin:15px; padding:20px; }
 		fieldset.form-color legend { font-weight: bold; }
 		li { margin-top: 3px }
-		.icon-img { width: 1em; }
+		.icon-img { width: 1.1em; }
 		.gridlike-form-row-label {
 			width: 100px;
 		}
@@ -252,8 +252,8 @@ if(!$researchList && !$editMode){
 				?>
 				<div style="float:right;" title="<?= $LANG['TOGGLEEDIT'] ?>">
 					<a href="#" onclick="toggleById('tabs');return false;">
-							<?= $LANG['EDIT'] ?>
-							<img src="../images/edit.png" class="icon-img" alt="<?= $LANG['PENCIL_ALT'] ?>" />
+						<?= $LANG['EDIT'] ?>
+						<img src="../images/edit.png" class="icon-img" alt="<?= $LANG['PENCIL_ALT'] ?>" />
 					</a>
 				</div>
 				<?php
@@ -325,7 +325,7 @@ if(!$researchList && !$editMode){
 										<?php
 										if($newProj){
 											?>
-											<button name="projsubmit" type="submit" value="addNewProject"><?= $LANG['ADDNEWPR'] ?></button>
+											<button name="projsubmit" type="submit" value="addNewProject"><?= $LANG['ADD_NEW'] ?></button>
 											<?php
 										}
 										else{
@@ -457,7 +457,18 @@ if(!$researchList && !$editMode){
 			}
 		}
 		else{
-			echo '<h2>' . $LANG['INVPROJ'] . '</h2>';
+			if($IS_ADMIN){
+				?>
+				<div style="float:right;" title="<?= $LANG['ADD_NEW'] ?>">
+					<a href="index.php?newproj=1">
+						<img src="../images/add.png" class="icon-img" alt="<?= $LANG['ADD_NEW'] ?>" />
+					</a>
+				</div>
+				<?php
+			}
+			?>
+			<h2><?= $LANG['INVPROJ'] ?></h2>
+			<?php
 			$projectArr = $projManager->getProjectList();
 			foreach($projectArr as $pid => $projList){
 				?>
