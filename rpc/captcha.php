@@ -8,21 +8,16 @@ if(empty($CAPTCHA_ENDPOINT)){
 
 require_once $SERVER_ROOT . '/vendor/capito/src/Cap.php';
 require_once $SERVER_ROOT . '/vendor/capito/src/Interfaces/StorageInterface.php';
-//require_once $SERVER_ROOT . '/vendor/capito/src/Storage/MysqlStorage.php';
-//require_once $SERVER_ROOT . '/vendor/capito/src/Storage/SqliteStorage.php';
 require_once $SERVER_ROOT . '/vendor/capito/src/Storage/FileStorage.php';
-//require_once $SERVER_ROOT . '/vendor/capito/src/Storage/RedisStorage.php';
 require_once $SERVER_ROOT . '/vendor/capito/src/RateLimiter.php';
 require_once $SERVER_ROOT . '/vendor/capito/src/Exceptions/CapException.php';
 
 use Capito\CapPhpServer\Cap;
-//use Capito\CapPhpServer\Storage\MysqlStorage;
-//use Capito\CapPhpServer\Storage\SqliteStorage;
 use Capito\CapPhpServer\Storage\FileStorage;
-//use Capito\CapPhpServer\Storage\RedisStorage;
 use Capito\CapPhpServer\Exceptions\CapException;
 
 $capServer = new Cap([
+    //Todo - consider moving this into a config file
     'challengeCount' => 3,          // 3 challenges (1–3 seconds to solve)   [== 5 higher sec]
     'challengeSize' => 16,          // 16-byte salt    
     'bruteForceLimit' => 3,         // 3 requests max per window              [==5 default limit]
@@ -35,18 +30,13 @@ $capServer = new Cap([
     'challengeExpires' => 300,      // Expires in 5 minutes
     'tokenExpires' => 600,          // Token expires in 10 minutes  
     'storage' => new FileStorage(['path' => $TEMP_DIR_ROOT . '/cap_storage.json']) 
-    //'storage' => new SqliteStorage(['path' => __DIR__ . '/../.data/cap_data.sqlite'])
-    //'storage' => new MysqlStorage([
-    //    'host'     => 'localhost',
-    //    'dbname'   => 'your_database_name',
-    //    'username' => 'your_username',
-    //    'password' => 'your_password',
-        // Optional: table name, defaults to 'cap_tokens'
-    //    'table'    => 'cap_tokens'
-    //])
 ]);
 // Get request path and client IP
-$requestPath = $_SERVER['PATH_INFO'];    
+if(!empty($_SERVER['PATH_INFO'])) $requestPath = $_SERVER['PATH_INFO'];
+// if PATH_INFO is not being set properly, fall back to below logic by configuring 
+// server to re-write /rpc/captcha/validate to /rpc/captcha.php?ACTION=validate, etc. (via virtualhost or .htaccess directives)
+// end setting CAPTCHA_ENDPOINT to ../rpc/captcha
+else if (!empty($_GET['ACTION'])) $requestPath = '/' . $_GET['ACTION']; 
 $clientIP = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')[0]
          ?: $_SERVER['HTTP_X_REAL_IP'] 
          ?? $_SERVER['REMOTE_ADDR'] 
