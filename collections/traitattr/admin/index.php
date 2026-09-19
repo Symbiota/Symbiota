@@ -84,7 +84,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<label for="traittype">Trait Type:</label>
 									<select id="traittype" name="traittype" >
 										<option value="">---------------</option>
-										<option value="UM">Multi-state</option>
+										<option value="UM">UM</option>
 										<option value="OM">OM</option>
 										<option value="TF">TF</option>
 										<option value="NU">NU</option>
@@ -116,7 +116,6 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								<div>
 								<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
 									<select id="dynamicproperties" name="dynamicproperties">
-										<option value="">---------------</option>
 										<option value="radio">Radio Button</option>
 										<option value="checkbox">Checkbox</option>
 										<option value="select">Select</option>

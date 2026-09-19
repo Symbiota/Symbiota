@@ -40,6 +40,8 @@ class OmOccurrenceTraits extends DataCore{
 		if(empty($inputArr['createdUid'])){
 			$inputArr['createdUid'] = $GLOBALS['SYMB_UID'];
 		}
+		$controlType = '[{"controlType":"' . $inputArr['dynamicproperties'] .'"}]';
+		$inputArr['dynamicproperties'] = $controlType;
 		return $this->insertRecord('tmtraits', $inputArr);
 	}
 
@@ -52,6 +54,8 @@ class OmOccurrenceTraits extends DataCore{
 		if(empty($inputArr['modifiedUid'])){
 			$inputArr['modifiedUid'] = $GLOBALS['SYMB_UID'];
 		}
+		$controlType = '[{"controlType":"' . $inputArr['dynamicproperties'] .'"}]';
+		$inputArr['dynamicproperties'] = $controlType;
 		$pkArr = array('traitID' => $this->traitID);
 		return $this->updateRecord('tmtraits', $pkArr, $inputArr);
 	}
@@ -154,7 +158,15 @@ class OmOccurrenceTraits extends DataCore{
 
 	//tmattributes functions
 
+	private function setTraitAttributeMap(){
+		$this->fieldMap = array('stateid' => 'pk', 'occid' => 'pk', 'modifier' => 's', 'xvalue' => 'd', 'mediaID' => 'i', 'imagecoordinates' => 's', 'source' => 's',
+			'notes' => 's', 'statuscode' => 'i', 'modifiedUid' => 'i', 'datelastmodified' => 'd', 'createdUid' => 'i');
+	}
 
+	public function insertAttribute($inputArr){
+		$this->setTraitAttributeMap();
+		return $this->insertRecord('tmattributes', $inputArr);
+	}
 
 	public function batchUpdateAttribute($statusCode, $notes, $sourceStr, $occid, $traitIdArr){
 		$status = false;
@@ -177,15 +189,6 @@ class OmOccurrenceTraits extends DataCore{
 
 	//tmtraitdependencies functions
 
-	private function setTraitOccurrenceMap(){
-		$this->fieldMap = array('stateid' => 'pk', 'occid' => 'pk', 'modifier' => 's', 'xvalue' => 'd', 'mediaID' => 'i', 'imagecoordinates' => 's', 'source' => 's',
-			'notes' => 's', 'statuscode' => 'i', 'modifiedUid' => 'i', 'datelastmodified' => 'd', 'createdUid' => 'i');
-	}
-
-	public function insertAttribute($inputArr){
-		$this->setTraitOccurrenceMap();
-		return $this->insertRecord('tmattributes', $inputArr);
-	}
 
 	//tmtraittaxalink functions
 

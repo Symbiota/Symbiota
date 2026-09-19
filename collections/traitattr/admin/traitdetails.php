@@ -190,18 +190,16 @@ if($formSubmit && $isEditor){
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
 									<label for="type">Type</label><br />
-									<select id="type" name="traittype" style="width:180px;" onchange="updateUnits(this);">
-										<option value="UM">Multi-state</option>
-										<option value="OM">One State</option>
-										<option value="TF">True False</option>
-										<option value="NU">Number</option>
-										<option value="IN" <?= ($traitArr['traitType']=='IN'?'SELECTED':'') ?>>Integer</option>
-										<option value="RN" <?= ($traitArr['traitType']=='RN'?'SELECTED':'') ?>>Real Number</option>
+									<select id="type" name="traittype" style="width:180px;">
+										<option value="UM">UM</option>
+										<option value="OM">OM</option>
+										<option value="TF">TF</option>
+										<option value="NU">NU</option>
 									</select>
 								</div>
-								<div id="units" style="display:<?= ((($traitArr['traitType']=='IN')||($traitArr['traitType']=='RN'))?'block':'none') ?>;margin-left:15px;float:left;">
+								<div id="units" style="margin-left:15px;float:left;">
 									<label for="units">Units</label><br />
-									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($traitArr['units']) ?>" title="" />
+									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($traitArr['units']) ?>" />
 								</div>
 								<div style="float:left;margin-left:15px;">
 									<label for="hid">Grouping</label><br />
@@ -244,10 +242,9 @@ if($formSubmit && $isEditor){
 							<div style="padding-top:8px;">
 							<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
 								<select id="dynamicproperties" name="dynamicproperties">
-									<option value="">---------------</option>
-									<option value="radio">Radio Button</option>
-									<option value="checkbox">Checkbox</option>
-									<option value="select">Select</option>
+									<option value="radio" <?= $traitArr['dynamicProperties'] == '[{"controlType":"radio"}]' ? 'selected' : ''; ?> >Radio Button</option>
+									<option value="checkbox" <?= $traitArr['dynamicProperties'] == '[{"controlType":"checkbox"}]' ? 'selected' : ''; ?> >Checkbox</option>
+									<option value="select" <?= $traitArr['dynamicProperties'] == '[{"controlType":"select"}]' ? 'selected' : ''; ?> >Select</option>
 								</select>
 							</div>
 							<div style="width:100%;padding-top:6px;">
