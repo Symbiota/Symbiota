@@ -19,7 +19,6 @@ $isEditor = false;
 if($IS_ADMIN || array_key_exists('KeyAdmin', $USER_RIGHTS)) $isEditor = true;
 
 $traitManager = new OccurrenceTraitAdmin();
-//$traitManager->setLangId($langId);
 $traitManager->setTraitID($traitID);
 
 $statusStr = '';
@@ -219,7 +218,8 @@ if($formSubmit && $isEditor){
 							</div>
 							<div style="padding-top:8px;">
 								<label for="traitname">isPublic:</label>
-								<input type="checkbox" id="isPublic" name="isPublic" />
+								<input type="hidden" name="isPublic" value="0"/>
+								<input type="checkbox" id="isPublic" name="isPublic" value="1" <?= $traitArr['isPublic'] === 1 ? 'checked' : '' ?> />
 							</div>
 							<div style="padding-top:8px;">
 							<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
@@ -261,10 +261,6 @@ if($formSubmit && $isEditor){
 									<label for="add_notes">Notes</label><br />
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
 								</div>
-								<div style="padding-top:4px;">
-									<label for="add_sortsequence">Sort Sequence</label><br />
-									<input type="text" id="add_sortsequence" name="sortsequence" style="width:80px" />
-								</div>
 								<div style="width:100%;padding-top:6px;">
 									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 									<button name="formsubmit" type="submit" value="addState">Add Trait State</button>
@@ -305,16 +301,6 @@ if($formSubmit && $isEditor){
 											<div style="padding-top:2px;">
 												<label for="notes-<?= $stateID ?>">Notes</label><br />
 												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
-											</div>
-											<div style="padding-top:2px;">
-												<div style="float:right;">
-													<label for="enteredby-<?= $stateID ?>">Entered By:</label><br/>
-													<input type="text" id="enteredby-<?= $stateID ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
-												</div>
-												<div>
-													<label for="sortsequence-<?= $stateID ?>">Sort Sequence</label><br />
-													<input type="text" id="sortsequence-<?= $stateID ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
-												</div>
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />

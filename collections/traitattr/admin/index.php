@@ -110,7 +110,8 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 								</div>
 								<div>
 									<label for="traitname">isPublic:</label>
-									<input type="checkbox" id="isPublic" name="isPublic" />
+									<input type="hidden" name="isPublic" value="0"/>
+									<input type="checkbox" id="isPublic" name="isPublic" value="1"/>
 								</div>
 								<div>
 								<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
