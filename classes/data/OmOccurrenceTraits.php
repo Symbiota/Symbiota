@@ -79,6 +79,79 @@ class OmOccurrenceTraits extends DataCore{
 		return $this->getRecordArr('tmstates', $pkArr);
 	}
 
+	public function insertTraitState($inputArr){
+		if(!isset($inputArr['traitid'])){
+			if($this->traitID){
+				$inputArr['traitid'] = $this->traitID;
+			}
+			else{
+				$this->errorMessage = 'TRAITID_NOT_SET';
+				return false;
+			}
+		}
+		$this->setTraitStateMap();
+		if(empty($inputArr['statecode'])){
+			$inputArr['statecode'] = $this->getTraitStateKeyIncrement();
+		}
+		if(empty($inputArr['enteredby']) && empty($inputArr['enteredBy'])){
+			$inputArr['enteredBy'] = $GLOBALS['PARAMS_ARR']['un'];
+		}
+		return $this->insertRecord('tmstates', $inputArr);
+	}
+
+	private function getTraitStateKeyIncrement(){
+		$statecodeValue = 1;
+		//Get highest character set ID value (statecode) and increase by 1
+		$sql = 'SELECT statecode FROM tmstates WHERE traitid = ? ORDER BY (statecode+1) DESC ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->traitID);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			if($r = $rs->fetch_object()){
+				if(is_numeric($r->statecode)){
+					$statecodeValue = $r->statecode + 1;
+				}
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $statecodeValue;
+	}
+
+	public function updateTraitState($inputArr){
+		$this->setTraitStateMap();
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		if(empty($inputArr['statecode'])){
+			$this->errorMessage = 'ERROR_STATECODE_IS_NULL';
+			return false;
+		}
+		$statecode = $inputArr['statecode'];
+		$pkArr = array('traitid' => $this->traitID, 'statecode' => $statecode);
+		return $this->updateRecord('tmstates', $pkArr, $inputArr);
+	}
+
+	public function deleteTraitState($stateID){
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		if(!$stateID){
+			$this->errorMessage = 'ERROR_STATEID_IS_NULL';
+			return false;
+		}
+		if(!is_numeric($stateID)){
+			$this->errorMessage = 'ERROR_STATEID_IS_NOT_NUMERIC';
+			return false;
+		}
+		$this->setTraitStateMap();
+		$pkArrStateID = array('stateid' => $stateID);
+		
+		return $this->deleteRecord('tmstates', $pkArrStateID);
+	}
+
 	//tmattributes functions
 
 

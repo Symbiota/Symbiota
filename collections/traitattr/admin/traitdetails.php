@@ -21,6 +21,8 @@ if($IS_ADMIN || array_key_exists('KeyAdmin', $USER_RIGHTS)) $isEditor = true;
 $traitManager = new OccurrenceTraitAdmin();
 $traitManager->setTraitID($traitID);
 
+var_dump($_POST);
+
 $statusStr = '';
 if($formSubmit && $isEditor){
 	if($formSubmit == 'createTrait'){
@@ -35,6 +37,24 @@ if($formSubmit && $isEditor){
 		if(!$traitManager->updateTrait($_POST)){
 			$statusStr = "Error Editing Trait";
 		}
+	}
+	elseif($formSubmit == 'addState'){
+		if(!$traitManager->insertTraitState($_POST)){
+			$statusStr = $LANG['ERROR_ADD_STATE']  . $traitManager->getErrorMessage();
+		}
+		$tabIndex = 1;
+	}
+	elseif($formSubmit == 'saveState'){
+		if(!$traitManager->updateTraitState($_POST)){
+			$statusStr = $LANG['ERROR_EDIT_STATE'] . $traitManager->getErrorMessage();
+		}
+		$tabIndex = 1;
+	}
+	elseif($formSubmit == 'deleteState'){
+		if(!$traitManager->deleteTraitState($_POST['stateid'])){
+			$statusStr = $LANG['ERROR_DELETE_STATE'] . $traitManager->getErrorMessage();
+		}
+		$tabIndex = 1;
 	}
 }
 
@@ -99,7 +119,7 @@ if($formSubmit && $isEditor){
 		}
 
 		function validateStateEditForm(f){
-			if(f.sortsequence.value && !isNumeric(f.sortsequence.value)){
+			if(f.sortseq.value && !isNumeric(f.sortseq.value)){
 				alert("Sort Sequence field must be numeric");
 				return false;
 			}
@@ -154,12 +174,12 @@ if($formSubmit && $isEditor){
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#chardetaildiv"><span>Details</span></a></li>
-					<li><a href="#charstatediv"><span>Trait States</span></a></li>
+					<li><a href="#traitdetaildev"><span>Details</span></a></li>
+					<li><a href="#traitstatediv"><span>Trait States</span></a></li>
 					<li><a href="taxonomylinkage.php?traitid=<?= $traitID ?>"><span>Taxonomic Linkages</span></a></li>
-					<li><a href="#chardeldiv"><span>Admin</span></a></li>
+					<li><a href="#traitdeldiv"><span>Admin</span></a></li>
 				</ul>
-				<div id="chardetaildiv">
+				<div id="traitdetaildev">
 					<form name="traiteditform" action="traitdetails.php" method="post" onsubmit="return validateCharEditForm(this)">
 						<fieldset>
 							<legend>Trait Details</legend>
@@ -239,14 +259,14 @@ if($formSubmit && $isEditor){
 						</fieldset>
 					</form>
 				</div>
-				<div id="charstatediv">
+				<div id="traitstatediv">
 					<div style="float:right;margin:10px;">
 						<a href="#" title="Create New Trait State" onclick="toggle('newstatediv');">
 							<img src="../../../images/add.png" class="icon-img" alt="Create New Trait State" />
 						</a>
 					</div>
 					<div id="newstatediv" style="display:<?= ($traitStateArr?'none':'block') ?>;">
-						<form name="stateaddform" action="chardetails.php" method="post" onsubmit="return validateStateAddForm(this)">
+						<form name="stateaddform" action="traitdetails.php" method="post" onsubmit="return validateStateAddForm(this)">
 							<fieldset>
 								<legend>Add Trait State</legend>
 								<div style="padding-top:4px;">
@@ -258,8 +278,16 @@ if($formSubmit && $isEditor){
 									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
+									<label for="add_description">Reference URL</label><br />
+									<input type="text" id="add_refurl" name="refurl" maxlength="255" style="width:90%;" />
+								</div>
+								<div style="padding-top:4px;">
 									<label for="add_notes">Notes</label><br />
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
+								</div>
+								<div style="padding-top:4px;">
+									<label for="sortseq">Sort Sequence</label><br />
+									<input type="number" id="sortseq" name="sortseq" style="width:80px;" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
 									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
@@ -287,7 +315,7 @@ if($formSubmit && $isEditor){
 											<?= Sanitize::outString($stateArr['statename']) ?>
 										</a>
 									</div>
-									<form name="stateeditform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
+									<form name="stateeditform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
 											<legend>Trait State Details</legend>
 											<div>
@@ -299,8 +327,21 @@ if($formSubmit && $isEditor){
 												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<div style="padding-top:2px;">
+												<label for="refurl">Reference URL</label><br />
+												<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($stateArr['refUrl']) ?>" />
+												<?php
+												if($stateArr['refUrl'] && substr($stateArr['refUrl'],0,4) == 'http'){
+													echo '<a href="' . Sanitize::outString($stateArr['refUrl']) . '" target="_blank"><img src="../../../images/link2.png" class="icon-img" ></a>';
+												}
+												?>
+											</div>
+											<div style="padding-top:2px;">
 												<label for="notes-<?= $stateID ?>">Notes</label><br />
 												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
+											</div>
+											<div style="padding-top:2px;">
+												<label for="sortseq-<?= $stateID ?>">Sort Sequence</label><br />
+												<input type="number" id="sortseq-<?= $stateID ?>" name="sortseq" style="width:80px;" value="<?= Sanitize::outString($stateArr['sortseq']) ?>" />
 											</div>
 											<div style="width:100%;margin:20px 0px 10px 20px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
@@ -309,14 +350,14 @@ if($formSubmit && $isEditor){
 											</div>
 										</fieldset>
 									</form>
-									<form name="statedelform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
+									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
 										<fieldset>
 											<legend>Delete Trait State</legend>
 											<div style="margin:15px;">
 												<input id="stateid" name="stateid" type="hidden" value="<?= $stateID ?>">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
-												<button name="formsubmit" type="submit" value="deleteState" disabled>Delete State</button>
+												<button name="formsubmit" type="submit" value="deleteState">Delete State</button>
 											</div>
 										</fieldset>
 									</form>
@@ -327,8 +368,8 @@ if($formSubmit && $isEditor){
 					}
 					?>
 				</div>
-				<div id="chardeldiv">
-					<form name="delcharform" action="chardetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
+				<div id="traitdeldiv">
+					<form name="delcharform" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
 						<fieldset style="width:700px;">
 							<legend><b>Delete Trait</b></legend>
 							<?php

@@ -74,14 +74,14 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 				<div id="addtraitdiv" style="display:none;margin-bottom:8px;">
 					<form name="newtraitform" action="traitdetails.php" method="post" onsubmit="return validateNewTraitForm(this)">
 						<fieldset>
-							<legend><b>NEW TRAIT</b></legend>
+							<legend><b>New Trait</b></legend>
 							<div>
-							<label for="traitname">TRAIT NAME:</label>
+							<label for="traitname">Trait Name:</label>
 								<input type="text" id="traitname" name="traitname" autocomplete="off" maxlength="255" style="width:400px;" />
 							</div>
 							<div class="flex-form">
 								<div>
-								<label for="traittype">TRAIT TYPE:</label>
+								<label for="traittype">Trait Type:</label>
 									<select id="traittype" name="traittype" >
 										<option value="">---------------</option>
 										<option value="UM">Multi-state</option>
