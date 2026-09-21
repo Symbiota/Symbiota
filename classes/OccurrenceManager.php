@@ -710,7 +710,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		return $retDate;
 	}
 
-	protected function getTableJoins($sqlWhere){
+	protected function getTableJoins($sqlWhere, $pageRequest = 0){
 		$sqlJoin = '';
 		if($sqlWhere){
 			if(array_key_exists('clid',$this->searchTermArr) && $this->searchTermArr['clid']){
@@ -731,7 +731,13 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 				$sqlJoin .= 'INNER JOIN omoccurdatasetlink ds ON o.occid = ds.occid ';
 			}
 			if(array_key_exists('footprintGeoJson',$this->searchTermArr) || strpos($sqlWhere,'p.lngLatPoint') || array_key_exists('polygons',$this->searchTermArr)){
-				$sqlJoin .= 'INNER JOIN omoccurpoints p FORCE INDEX (IX_omoccurpoints_latLngPoint) ON o.occid = p.occid ';
+				if($pageRequest > 50){
+					//Pagination with a high page number significantly beneftis from forcing polygon spatial index
+					$sqlJoin .= 'INNER JOIN omoccurpoints p FORCE INDEX (IX_omoccurpoints_latLngPoint) ON o.occid = p.occid ';
+				}
+				else{
+					$sqlJoin .= 'INNER JOIN omoccurpoints p ON o.occid = p.occid ';
+				}
 			}
 			if(array_key_exists('polygons',$this->searchTermArr)){
 				$polygonIDs = $this->searchTermArr['polygons'];
