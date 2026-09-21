@@ -56,9 +56,17 @@ if($formSubmit && $isEditor){
 		}
 		$tabIndex = 1;
 	}
+	elseif($formSubmit == 'deleteTrait'){
+		if($traitManager->deleteTrait()){
+			$traitID = 0;
+		}
+		else{
+			$statusStr = $LANG['ERROR_DELETE_TAXON'] . $traitManager->getErrorMessage();
+		}
+	}
 }
 
-//if(!$traitID) header('Location: index.php');
+if(!$traitID) header('Location: index.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -169,7 +177,6 @@ if($formSubmit && $isEditor){
 			}
 			$traitArr = $traitManager->getTraitArrById();
 			$traitStateArr = $traitManager->getTraitStateArr();
-			//var_dump($traitArr);
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
@@ -366,7 +373,7 @@ if($formSubmit && $isEditor){
 					?>
 				</div>
 				<div id="traitdeldiv">
-					<form name="delcharform" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
+					<form name="deltraitform" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
 						<fieldset style="width:700px;">
 							<legend><b>Delete Trait</b></legend>
 							<?php
@@ -379,7 +386,7 @@ if($formSubmit && $isEditor){
 							}
 							?>
 							<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-							<button name="formsubmit" type="submit" value="deleteChar" <?php if($traitStateArr) echo 'DISABLED' ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="deleteTrait" <?php if($traitStateArr) echo 'DISABLED' ?>>Delete</button>
 						</fieldset>
 					</form>
 				</div>
