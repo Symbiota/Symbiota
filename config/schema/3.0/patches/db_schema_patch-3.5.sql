@@ -56,7 +56,7 @@ INSERT INTO `ctcontrolvocabterm` (`cvID`, `term`)
 
 
 #Convert occurrence points spatial indexing table from MyISAM to InnoDB
-DROP TABLES omoccurpoints;
+DROP TABLE omoccurpoints;
 
 CREATE TABLE `omoccurpoints` (
   `geoID` int(11) NOT NULL AUTO_INCREMENT,
@@ -97,10 +97,16 @@ DROP FUNCTION `swap_wkt_coords`;
 
 #Trigger adjustments to omoccurrences table to adjust to InnoDB omoccurpoints table change
 DELIMITER $$
+
+DROP TRIGGER IF EXISTS `omoccurrences_insert` $$
+DROP TRIGGER IF EXISTS `omoccurrences_update` $$
+DROP TRIGGER IF EXISTS `omoccurrences_delete` $$
+
 CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrences_insert` 
   AFTER INSERT ON `omoccurrences` FOR EACH ROW BEGIN IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL 
   THEN INSERT INTO omoccurpoints (`occid`, `lngLatPoint`) VALUES (NEW.`occid`, Point(NEW.`decimalLongitude`, NEW.`decimalLatitude`)); 
   END IF; END$$
+
 CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrences_update` 
   AFTER UPDATE ON `omoccurrences` FOR EACH ROW BEGIN 
   IF NEW.`decimalLatitude` IS NOT NULL AND NEW.`decimalLongitude` IS NOT NULL 
@@ -111,9 +117,7 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrences_update`
   END IF; END IF; 
   ELSE IF OLD.`decimalLatitude` IS NOT NULL THEN DELETE FROM omoccurpoints WHERE `occid` = NEW.`occid`; 
   END IF; END IF; END$$
-DROP TRIGGER IF EXISTS `omoccurrences_delete` $$
+
 DELIMITER ;
-
-
 
 
