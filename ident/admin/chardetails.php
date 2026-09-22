@@ -534,7 +534,7 @@ if(!$cid) header('Location: index.php');
 													<input type="text" id="sortsequence-<?= $stateID ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
 												</div>
 											</div>
-											<div style="width:100%;margin:20px 0px 10px 20px;">
+											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
 												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="saveState"><?= $LANG['SAVE'] ?></button>

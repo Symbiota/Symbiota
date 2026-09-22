@@ -326,11 +326,11 @@ if(!$traitID) header('Location: index.php');
 												<label for="statename-<?= $stateID ?>">Trait State Name</label><br />
 												<input type="text" id="statename-<?= $stateID ?>" name="statename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['statename']) ?>" />
 											</div>
-											<div style="padding-top:2px;">
+											<div style="padding-top:4px;">
 												<label for="description-<?= $stateID ?>">Description</label><br />
 												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
-											<div style="padding-top:2px;">
+											<div style="padding-top:4px;">
 												<label for="refurl">Reference URL</label><br />
 												<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($stateArr['refUrl']) ?>" />
 												<?php
@@ -339,15 +339,34 @@ if(!$traitID) header('Location: index.php');
 												}
 												?>
 											</div>
-											<div style="padding-top:2px;">
+											<div style="padding-top:4px;">
 												<label for="notes-<?= $stateID ?>">Notes</label><br />
 												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
 											</div>
-											<div style="padding-top:2px;">
+											<div style="padding-top:4px;">
 												<label for="sortseq-<?= $stateID ?>">Sort Sequence</label><br />
 												<input type="number" id="sortseq-<?= $stateID ?>" name="sortseq" style="width:80px;" value="<?= Sanitize::outString($stateArr['sortseq']) ?>" />
 											</div>
-											<div style="width:100%;margin:20px 0px 10px 20px;">
+											<?php 
+												$stateDepArr = $traitManager->getStateDepArr($stateID);
+												if($stateDepArr){
+											?>
+												<div>
+													<fieldset>
+													<legend>Dependencies (Trait and States that Appear when this Trait is Selected):</legend>
+													<?php
+														echo '<ul>';
+														foreach ($stateDepArr as $trait){
+															echo '<li><a href="traitdetails.php?traitid=' . $trait['traitid'] . '">' . $trait['traitid'] . '</a></li>';
+														}
+													echo '</ul>';
+													?>
+													</fieldset>
+												</div>
+											<?php
+											}
+											?>
+											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
 												<button name="formsubmit" type="submit" value="saveState">Save</button>
