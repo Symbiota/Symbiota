@@ -22,12 +22,11 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		right: 10px;
 		left: 50%;
 		background-color: #fafafa;
-		border: #b31b1b;
-		color: #1b3d2f;
+		border-color: #e60000;
 		padding: 15px 20px;
 		border-radius: 8px;
 		border-style: solid;
-		border-width: 10px;
+		border-width: 6px;
 		z-index: 9999;
 		animation: slideUp 0.6s ease-out forwards;
 	}
@@ -77,11 +76,10 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		?>
 	</main>
 	<div id="ask" class="ask" style="<?php echo isset($_COOKIE['hide_donate']) ? 'display: none;' : ''; ?>">
-		<div style="position: absolute; top: 8px; right: 12px; display: flex; gap:10px;">
-			<a href="https://tinyurl.com/supportsymbiota" target="_blank" class="button" style="background-color:#b9d432;" onclick="hideDonation(30*30*24*31);">
+		<div style="position:absolute; top:12px; right:10px; display:flex; gap:10px;">
+			<a href="https://tinyurl.com/supportsymbiota" target="_blank" class="button" style="background-color:#b9d432; text-decoration:none;" onclick="hideDonation(30*30*24*31);">
 				<?= $LANG['DONATE'] ?>
 			</a>
-			<button class="button" onclick="hideDonation(30*30*24*7);">Close</button>
 		</div>
 		<p>Hello Portal User!
 		<br><br>
@@ -93,9 +91,13 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 		<br><br>
 		Please support this portal through a donation to the SSH.  Doing so helps each collection that shares data here.
 		<br><br>
-		Thank you very much.  <br>
+		Thank you very much.
+		<br>
 		-The CCH, & Nico, Ed, Jenn, Katie, Greg
-	</p>
+		<div style="position:absolute; bottom:12px; right:10px; display:flex; gap:10px;">
+			<button class="button" onclick="hideDonation(30*30*24*7);">Close</button>
+		</div>
+		</p>
 	</div>
 
 	<script>
