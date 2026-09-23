@@ -21,8 +21,6 @@ if($IS_ADMIN || array_key_exists('KeyAdmin', $USER_RIGHTS)) $isEditor = true;
 $traitManager = new OccurrenceTraitAdmin();
 $traitManager->setTraitID($traitID);
 
-var_dump($_POST);
-
 $statusStr = '';
 if($formSubmit && $isEditor){
 	if($formSubmit == 'createTrait'){
@@ -356,8 +354,9 @@ if(!$traitID) header('Location: index.php');
 													<legend>Dependencies (Trait and States that Appear when this Trait is Selected):</legend>
 													<?php
 														echo '<ul>';
-														foreach ($stateDepArr as $trait){
-															echo '<li><a href="traitdetails.php?traitid=' . $trait['traitid'] . '">' . $trait['traitid'] . '</a></li>';
+														foreach ($stateDepArr as $dependency){
+															$trait = $traitManager->getTraitArrById2($dependency['traitid']);
+															echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
 														}
 													echo '</ul>';
 													?>

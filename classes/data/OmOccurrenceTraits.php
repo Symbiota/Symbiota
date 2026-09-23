@@ -199,6 +199,13 @@ class OmOccurrenceTraits extends DataCore{
 		return $this->getRecordArr('tmtraitdependencies', $pkArr);
 	}
 
+	public function getTraitArrById2($traitID){
+		$this->setTraitFieldMap();
+		$pkArr = array('traitID' => $traitID);
+		$traitArr = $this->getRecordArr('tmtraits', $pkArr);
+		return $traitArr[$traitID];
+	}
+
 	//tmtraittaxalink functions
 
 
