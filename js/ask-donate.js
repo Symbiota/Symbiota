@@ -42,6 +42,8 @@ banner_div.innerHTML = `
 		Thank you very much.
 		<br>
 		-The CCH, & Nico, Ed, Jenn, Katie, Greg
+		<br><br>
+		<a href="https://symbiota.org/donate/" target="_blank" onclick="hideDonation(30*30*24*31);">More Ways to Support the Portal</a> 
 		<div style="position:absolute; bottom:12px; right:10px; display:flex; gap:10px;">
 			<button class="button" onclick="hideDonation(30*30*24*7);">Close</button>
 		</div>
