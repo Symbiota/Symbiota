@@ -5,6 +5,7 @@ Language::load('templates/header');
 
 $collectionSearchPage = !empty($SHOULD_USE_HARVESTPARAMS) ? '/collections/index.php' : '/collections/search/index.php';
 ?>
+<script src="<?= $CLIENT_ROOT ?>/js/ask-donate.js" defer></script> 
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">
@@ -99,6 +100,11 @@ $collectionSearchPage = !empty($SHOULD_USE_HARVESTPARAMS) ? '/collections/index.
 					<li>
 						<a href='<?= $CLIENT_ROOT ?>/sitemap.php'>
 							<?= $LANG['H_SITEMAP'] ?>
+						</a>
+					</li>
+					<li>
+						<a href="https://tinyurl.com/supportsymbiota" style="background-color:#b9d432; color:#1b3d2f; padding:6px 12px; border-radius:8px;">
+							<?= $LANG['DONATE'] ?>
 						</a>
 					</li>
 					<li>
