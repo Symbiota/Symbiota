@@ -5,6 +5,7 @@ Language::load('templates/header');
 
 $collectionSearchPage = !empty($SHOULD_USE_HARVESTPARAMS) ? '/collections/index.php' : '/collections/search/index.php';
 ?>
+<script src="<?= $CLIENT_ROOT ?>/js/ask-donate.js" defer></script> 
 <div class="header-wrapper">
 	<header>
 		<div class="top-wrapper">

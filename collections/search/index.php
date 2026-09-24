@@ -56,7 +56,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	?>
-	<script src="<?= $CLIENT_ROOT ?>/js/ask-donate.js" defer></script>
 	<link href="<?= $CSS_BASE_PATH ?>/searchStyles.css?ver=1" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/searchStylesInner.css" type="text/css" rel="stylesheet">
 	<link href="<?= $CSS_BASE_PATH ?>/tables.css" type="text/css" rel="stylesheet">

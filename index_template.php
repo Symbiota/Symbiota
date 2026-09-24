@@ -14,7 +14,6 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
-	<script src="<?= $CLIENT_ROOT ?>/js/ask-donate.js" defer></script> 
 </head>
 <body>
 	<?php
