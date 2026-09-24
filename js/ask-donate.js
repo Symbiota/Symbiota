@@ -4,9 +4,9 @@ banner_style.textContent = `
 		position: fixed;
 		bottom: 10px;
 		right: 10px;
-		left: 50%;
+		max-width: 50%;
 		background-color: #fafafa;
-		border-color: #e60000;
+		border-color: var(--bright-color);
 		padding: 15px 20px;
 		border-radius: 8px;
 		border-style: solid;
@@ -18,10 +18,19 @@ banner_style.textContent = `
 		0% { opacity: 0; transform: translateY(70%); }
 		100% { opacity: 1; transform: translateY(0); }
 	}
+	@media (max-width: 768px) {
+		.ask{
+			top: 10px;
+			right: 10px;
+			left: 10px;
+			max-width: none;
+  	}
+}
 `;
 document.head.appendChild(banner_style);
 
 const banner_div = document.createElement('div');
+const portal_domain = window.location.hostname.toUpperCase();
 banner_div.innerHTML = `
   <div id="ask" class="ask">
 		<div style="position:absolute; top:12px; right:10px; display:flex; gap:10px;">
@@ -31,7 +40,7 @@ banner_div.innerHTML = `
 		</div>
 		<p>Hello Portal User!
 		<br><br>
-		Do you use and love the CCH Portal and its collections?
+		Do you use and love ${portal_domain} and its collections?
 		<br><br>
 		This portal, and others like it, relies on a small, dedicated group of people, the Symbiota Support Hub (SSH) for website support.  
 		<br><br>
@@ -41,7 +50,7 @@ banner_div.innerHTML = `
 		<br><br>
 		Thank you very much.
 		<br>
-		-The CCH, & Nico, Ed, Jenn, Katie, Greg
+		-${portal_domain}, Nico, Ed, Jenn, Katie, Greg
 		<br><br>
 		<a href="https://symbiota.org/donate/" target="_blank" onclick="hideDonation(30*30*24*31);">More Ways to Support the Portal</a> 
 		<div style="position:absolute; bottom:12px; right:10px; display:flex; gap:10px;">
