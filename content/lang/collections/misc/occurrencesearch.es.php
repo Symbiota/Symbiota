@@ -16,7 +16,7 @@ $LANG['UNABLE_TO_CREATE_NEW_RECORD'] = 'No se puede crear un nuevo registro debi
 $LANG['CONTACT_PORTAL_ADMIN'] = 'Contactar al administrador del portal';
 
 $LANG['SEARCH_OCCUR'] = 'Buscar Ocurrencias';
-$LANG['VOUCHER_SEARCH_PANEL'] = 'Panel de Búsqueda de Vales';
+$LANG['VOUCHER_SEARCH_PANEL'] = 'Panel de Búsqueda de Vouchers';
 $LANG['TARGET_COLLECTION'] = 'Colección de Destino';
 $LANG['SELECT_COLLECTION'] = 'Seleccionar Colección';
 
@@ -28,7 +28,7 @@ $LANG['COLLECTOR_NUMBER'] = 'Número de Coleccionista';
 $LANG['SELECT_OCCUR_RECORD'] = 'Seleccionar registro de Ocurrencia';
 $LANG['NO_RECORDS_RETURNED'] = 'No se devolvieron registros. Por favor modifica tu búsqueda y vuelve a intentarlo';
 $LANG['LINK_TO_NEW_OCCUR_RECORD'] = 'Enlace al nuevo registro de ocurrencia';
-$LANG['CREATE_NEW_RECORD'] = 'Crear Nueva Aparición';
+$LANG['CREATE_NEW_RECORD'] = 'Crear Nuevo Registro';
 $LANG['NOT_AUTHORIZED'] = 'No estás autorizado a vincular ninguna colección';
 
 ?>
