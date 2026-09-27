@@ -10,20 +10,20 @@ Language: Español (Spanish)
 $LANG['H_HOME'] = 'Inicio';
 
 $LANG['H_SEARCH'] = 'Buscar';
-$LANG['H_COLLECTIONS'] = 'Buscar Colecciones';
+$LANG['H_COLLECTIONS'] = 'Buscar en Colecciones';
 $LANG['H_MAP'] = 'Mapa';
-$LANG['H_MAP_SEARCH'] = 'Buscar Mapa';
+$LANG['H_MAP_SEARCH'] = 'Buscar en Mapa';
 $LANG['H_TAXONOMIC_EXPLORER'] = 'Explorador Taxonómico';
 
 $LANG['H_IMAGES'] = 'Multimedia';
 $LANG['H_IMAGE_BROWSER'] = 'Explorador Multimedia';
 $LANG['H_IMAGE_SEARCH'] = 'Búsqueda Multimedia';
 
-$LANG['H_INVENTORIES'] = 'Lista de Especies';
+$LANG['H_INVENTORIES'] = 'Listados de Especies';
 $LANG['H_PROJECT_1'] = 'Proyecto 1';
 $LANG['H_PROJECT_2'] = 'Proyecto 2';
 
-$LANG['H_DYN_LISTS'] = 'Lista dinámica de especies';
+$LANG['H_DYN_LISTS'] = 'Listados dinámicos de especies';
 $LANG['H_DYN_KEYS'] = 'Claves de identificación';
 $LANG['H_AMPHIBIA'] = 'Anfibios';
 $LANG['H_AVES'] = 'Aves';
@@ -34,7 +34,7 @@ $LANG['H_PLANTA'] = 'Plantas';
 $LANG['H_REPTILIA'] = 'Reptiles';
 
 $LANG['H_GLOSSARY'] = 'Glosario';
-$LANG['H_GLOSSARY_SEARCH'] = 'Buscar Glosario';
+$LANG['H_GLOSSARY_SEARCH'] = 'Buscar en Glosario';
 
 $LANG['H_MORE_INFO'] = 'Más información';
 $LANG['H_ABOUT_PROJECT'] = 'Información sobre el Proyecto';
@@ -73,7 +73,7 @@ $LANG['F_MORE_INFO'] = 'Para más información sobre Symbiota';
 $LANG['F_READ_DOCS'] = 'lee los documentos';
 $LANG['F_CONTACT'] = 'o contacta el';
 $LANG['F_SSH'] = 'Symbiota Support Hub (SSH)';
-$LANG['F_POWERED_BY'] = 'Energizado por';
+$LANG['F_POWERED_BY'] = 'Desarrollado por';
 
 include('header.es.override.php');
 ?>
