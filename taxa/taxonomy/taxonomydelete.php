@@ -41,8 +41,12 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	});
 
 	function validateRemapTaxonForm(f){
-		if(f.remaptid.value == ""){
+		if(f.remapvalue.value != "" && f.remaptid.value == ""){
 			alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+			return false;
+		}
+		if(f.remaptid.value == f.tid.value){
+			alert("<?= $LANG['CANT_LINK_TO_SELF'] ?>");
 			return false;
 		}
 		return true;
@@ -281,12 +285,12 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 	<div style="margin:15px;">
 		<fieldset style="padding:15px;">
 			<legend><b><?= $LANG['REMAP_RESOURCES'] ?></b></legend>
-			<form name="remaptaxonform" method="post" action="taxoneditor.php" onsubmit="return validateRemapTaxonForm(this.form)">
+			<form name="remaptaxonform" method="post" action="taxoneditor.php" onsubmit="return validateRemapTaxonForm(this)">
 				<span style="color:red;"><?= $LANG['WARNING_REMAP'] ?></span>
 				<div style="margin-top:5px;margin-bottom:5px;">
 					<?= $LANG['TARGET_TAXON'] ?>:
 					<input id="remapvalue" name="remapvalue" type="text" value="" style="width:550px;" required />
-					<input id="remaptid" name="remaptid" type="text" value="" />
+					<input id="remaptid" name="remaptid" type="hidden" value="" />
 				</div>
 				<div>
 					<button name="submitaction" type="submit" value="remapTaxon"><?= $LANG['REMAP_TAXON'] ?></button>

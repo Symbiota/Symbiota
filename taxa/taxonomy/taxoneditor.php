@@ -32,7 +32,13 @@ if ($isEditor) {
 		$statusStr = $taxonEditorObj->submitSynonymEdits($_POST['tidsyn'], $tid, $_POST['unacceptabilityreason'], $_POST['notes'], $_POST['sortsequence']);
 	} elseif ($submitAction == 'linkToAccepted') {
 		$deleteOther = array_key_exists("deleteother", $_REQUEST) ? true : false;
-		$statusStr = $taxonEditorObj->submitAddAcceptedLink($_REQUEST["tidaccepted"], $deleteOther);
+		if(!$taxonEditorObj->submitAddAcceptedLink($_REQUEST['tidaccepted'], $deleteOther)){
+			$errStr = $taxonEditorObj->getErrorMessage();
+			if(isset($LANG[$errStr])){
+				$statusStr = $LANG[$errStr];
+			}
+			else $statusStr = $LANG['ERROR_ADD_LINK'] . ': ' . $errStr;
+		}
 	} elseif (array_key_exists('deltidaccepted', $_REQUEST)) {
 		$statusStr = $taxonEditorObj->removeAcceptedLink($_REQUEST['deltidaccepted']);
 	} elseif (array_key_exists("changetoaccepted", $_REQUEST)) {
@@ -109,6 +115,8 @@ if ($isEditor) {
 					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggest.config.rankMaximum = 0;
 					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("aefacceptedstr", function(result) {
 						if (result.valid) {
 							document.getElementById("aeftidaccepted").value = result.item.id;
@@ -130,6 +138,8 @@ if ($isEditor) {
 					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggest.config.rankMaximum = 0;
 					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("ctnafacceptedstr", function(result) {
 						if (result.valid) {
 							document.getElementById("ctnaftidaccepted").value = result.item.id;
@@ -146,8 +156,24 @@ if ($isEditor) {
 		});
 
 		function validateAcceptedChangeForm(f) {
-			if (f.tidaccepted.value == "") {
+			if (f.acceptedstr.value != "" && f.tidaccepted.value == "") {
 				alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+				return false;
+			}
+			if(f.tidaccepted.value == f.tid.value){
+				alert("<?= $LANG['CANT_LINK_TO_SELF'] ?>");
+				return false;
+			}
+			return true;
+		}
+
+		function validateTaxStatusForm(f){
+			if(f.parentstr.value != "" && f.parenttid.value == ""){
+				alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+				return false;
+			}
+			if(f.parenttid.value == f.tid.value){
+				alert("<?= $LANG['CANT_LINK_TO_SELF'] ?>");
 				return false;
 			}
 			return true;
@@ -373,7 +399,7 @@ if ($isEditor) {
 								?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="source" name="source" style="width:100%;" value="<?= $safeSource ?>" />
+								<input type="text" id="source" name="source" style="width:100%;" value="<?= Sanitize::outString($safeSource) ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
@@ -400,7 +426,7 @@ if ($isEditor) {
 									<option value="0" <?php if ($taxonEditorObj->getSecurityStatus() == 0) echo "SELECTED" ?>><?= $LANG['SHOW_ALL_LOC'] ?></option>
 									<option value="1" <?php if ($taxonEditorObj->getSecurityStatus() == 1) echo "SELECTED" ?>><?= $LANG['HIDE_LOC'] ?></option>
 								</select>
-								<input type='hidden' name='securitystatusstart' value='<?= $taxonEditorObj->getSecurityStatus() ?>' />
+								<input type='hidden' name='securitystatusstart' value='<?= Sanitize::outString($taxonEditorObj->getSecurityStatus()) ?>' />
 							</div>
 						</div>
 						<div class="editfield" style="display:none;clear:both;margin:15px 0px" class="gridlike-form">
@@ -458,7 +484,7 @@ if ($isEditor) {
 								<a href="#" onclick="toggle('tsedit');return false;"><img style='width:1.3em;border:0px;' src='../../images/edit.png' /></a>
 							</div>
 							<div style="float:left">
-								<form name="taxstatusform" action="taxoneditor.php" method="post">
+								<form name="taxstatusform" action="taxoneditor.php" method="post" onsubmit="return validateTaxStatusForm(this)">
 									<?php
 									if ($taxonEditorObj->getRankId() > 140 && $taxonEditorObj->getFamily()) {
 										?>
@@ -478,7 +504,7 @@ if ($isEditor) {
 										</div>
 										<div class="tsedit" style="display:none;margin:3px;">
 											<input id="parentstr" name="parentstr" type="text" value="<?= Sanitize::outString($taxonEditorObj->getParentName()) ?>" style="width:450px" required />
-											<input id="parenttid" name="parenttid" type="text" value="<?= $taxonEditorObj->getParentTid() ?>" />
+											<input id="parenttid" name="parenttid" type="hidden" value="<?= $taxonEditorObj->getParentTid() ?>" />
 										</div>
 									</div>
 									<div class="tsedit" style="display:none;clear:both;">
@@ -542,7 +568,7 @@ if ($isEditor) {
 												<input type="checkbox" name="deleteother" checked /> <?= $LANG['REMOVE_OTHER_LINKS'] ?>
 											</div>
 											<div>
-												<input type="hidden" name="tid" value="<?= $taxonEditorObj->get ?>) ?>" />
+												<input type="hidden" name="tid" value="<?= $taxonEditorObj->getTid() ?>) ?>" />
 												<input type="hidden" name="taxauthid" value="<?= $taxAuthId ?>" />
 												<input type="hidden" name="tabindex" value="1" />
 												<button name="submitaction" type="submit" value="linkToAccepted"><?= $LANG['ADD_LINK'] ?></button>

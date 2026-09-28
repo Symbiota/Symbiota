@@ -10,6 +10,7 @@ $LANG['NEED_COOKIES'] = 'Les cookies de votre navigateur sont désactivés. Pour
 $LANG['CHOOSE_ONE'] = 'Veuillez choisir au moins une collection!';
 $LANG['HOME'] = 'Accueil';
 $LANG['COLLECTIONS'] = 'Collections';
+$LANG['BATCH_UPDATE_STATS'] = 'Mettre à jour les statistiques de la collection à l\'échelle du portail';
 $LANG['STATISTICS'] = 'Statistiques';
 $LANG['SELECT_COLS'] = 'Sélectionnez Collections à Analyser';
 $LANG['REC_CRITERIA'] = "Critères d'Enregistrement";

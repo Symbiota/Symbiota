@@ -315,29 +315,36 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function submitAddAcceptedLink($tidAcc, $deleteOther = true){
-		$family = "";$parentTid = 0;
+		$family = "";
 		$statusStr = '';
-		if(is_numeric($tidAcc)){
-			$sqlFam = 'SELECT ts.family, ts.parenttid FROM taxstatus ts WHERE (ts.tid = '.$this->tid.') AND (ts.taxauthid = '.$this->taxAuthId.')';
-			$rs = $this->conn->query($sqlFam);
-			if($row = $rs->fetch_object()){
-				$family = $row->family;
-				$parentTid = $row->parenttid;
-			}
-			$rs->free();
-
-			if($deleteOther){
-				$sqlDel = 'DELETE FROM taxstatus WHERE (tid = '.$this->tid.') AND (taxauthid = '.$this->taxAuthId.')';
-				$this->conn->query($sqlDel);
-			}
-			$sql = 'INSERT INTO taxstatus (tid,tidaccepted,taxauthid,family,parenttid,modifiedUid) '.
-				'VALUES ('.$this->tid.', '.$tidAcc.', '.$this->taxAuthId.','.($family?'"'.$family.'"':"NULL").','.$parentTid.','.$GLOBALS['SYMB_UID'].') ';
-			//echo $sql;
-			if(!$this->conn->query($sql)){
-				$statusStr = (isset($this->langArr['ERROR_ADD_LINK'])?$this->langArr['ERROR_ADD_LINK']:'ERROR adding accepted link').': '.$this->conn->error;
-			}
+		if(!$tidAcc || !is_numeric($tidAcc)){
+			$this->errorMessage = 'ERROR_ACCEPTED_TID_NULL';
+			return false;
 		}
-		return $statusStr;
+		$parentTid = 0;
+		$sqlFam = 'SELECT family, parenttid FROM taxstatus WHERE (tid = ' . $this->tid . ') AND (taxauthid = ' . $this->taxAuthId . ')';
+		$rs = $this->conn->query($sqlFam);
+		if($row = $rs->fetch_object()){
+			$family = $row->family;
+			$parentTid = $row->parenttid;
+		}
+		$rs->free();
+		if(!$parentTid){
+			$this->errorMessage = 'ERROR_PARENT_TID_NULL';
+			return false;
+		}
+
+		if($deleteOther){
+			$sqlDel = 'DELETE FROM taxstatus WHERE (tid = ' . $this->tid . ') AND (taxauthid = ' . $this->taxAuthId . ')';
+			$this->conn->query($sqlDel);
+		}
+		$sql = 'INSERT INTO taxstatus (tid,tidaccepted,taxauthid,family,parenttid,modifiedUid)
+			VALUES ('.$this->tid.', '.$tidAcc.', '.$this->taxAuthId.','.($family?'"'.$family.'"':"NULL").','.$parentTid.','.$GLOBALS['SYMB_UID'].') ';
+		if(!$this->conn->query($sql)){
+			$this->errorMessage = $this->conn->error;
+			return false;
+		}
+		return true;
 	}
 
 	public function removeAcceptedLink($tidAccepted){

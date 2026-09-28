@@ -14,6 +14,7 @@ $LANG['HOMEPAGE'] = 'Sitio Web';
 $LANG['MORE_INFO'] = 'Más Información';
 $LANG['COLLECTION_SEARCH'] = 'Página de Búsqueda de Colección';
 $LANG['UPDATE_STATISTICS'] = 'Actualizando las estadísticas relacionadas con esta colección...';
+$LANG['BATCH_UPDATE_STATS'] = 'Actualizar estadísticas de colección a nivel de portal';
 $LANG['DEACTIVATED'] = 'Desactivado';
 $LANG['DEACTIVATED_MESSAGE'] = 'Ciertas opciones de administración solo están disponibles para conjuntos de datos administrados en vivo. Comuníquese con el administrador del portal si es necesario reclasificar la colección.';
 $LANG['TOGGLE_MAN'] = 'Desplegar Panel de Control';

@@ -5,7 +5,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load(['collections/misc/collprofiles', 'profile/adminmenu']);
+Language::load('collections/misc/collprofiles');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);

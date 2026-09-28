@@ -10,6 +10,7 @@ $LANG['NEED_COOKIES'] = 'Your browser cookies are disabled. To be able to login 
 $LANG['CHOOSE_ONE'] = 'Please choose at least one collection!';
 $LANG['HOME'] = 'Home';
 $LANG['COLLECTIONS'] = 'Collections';
+$LANG['BATCH_UPDATE_STATS'] = 'Update Portal-wide Collection Statistics';
 $LANG['STATISTICS'] = 'Statistics';
 $LANG['SELECT_COLS'] = 'Select Collections to be Analyzed';
 $LANG['REC_CRITERIA'] = 'Record Criteria';

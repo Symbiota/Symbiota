@@ -1,10 +1,10 @@
 <?php
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
-Language::load(['collections/misc/collstats','collections/search/index', 'profile/adminmenu']);
+Language::load(['collections/misc/collstats','collections/search/index']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
@@ -17,7 +17,7 @@ $cParentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'],
 $cCountry = isset($_REQUEST['country']) ? htmlspecialchars($_REQUEST['country'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $days = array_key_exists('days', $_REQUEST) ? filter_var($_REQUEST['days'], FILTER_SANITIZE_NUMBER_INT) : 365;
 $months = array_key_exists('months', $_REQUEST)? filter_var($_REQUEST['months'], FILTER_SANITIZE_NUMBER_INT) : 12;
-$action = array_key_exists('submitaction', $_REQUEST) ? htmlspecialchars($_REQUEST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $collManager = new OccurrenceCollectionProfile();
 
@@ -356,28 +356,14 @@ if($action != "Update Statistics"){
 		</head>
 		<body>
 			<?php
-			$displayLeftMenu = (isset($collections_misc_collstatsMenu)?$collections_misc_collstatsMenu:false);
+			$displayLeftMenu = false;
 			include($SERVER_ROOT.'/includes/header.php');
-			if(isset($collections_misc_collstatsCrumbs)){
-				if($collections_misc_collstatsCrumbs){
-					echo "<div class='navpath'>";
-					echo "<a href='" . $CLIENT_ROOT . "/index.php'>Home</a> &gt;&gt; ";
-					echo $collections_misc_collstatsCrumbs.' &gt;&gt; ';
-					echo "<b>" . $LANG['BATCH_UPDATE_STATS'] . "</b>";
-					echo "</div>";
-				}
-			}
-			else{
-				?>
-				<div class='navpath'>
-					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?= $LANG['COLLECTIONS'] ?></a> &gt;&gt;
-					<b><?php echo $LANG['BATCH_UPDATE_STATS']; ?></b>
-				</div>
-				<?php
-			}
 			?>
-			<!-- This is inner text! -->
+			<div class='navpath'>
+				<a href='<?= $CLIENT_ROOT ?>/index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+				<a href='<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php'><?= $LANG['COLLECTIONS'] ?></a> &gt;&gt;
+				<b><?= $LANG['BATCH_UPDATE_STATS'] ?></b>
+			</div>
 			<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
 				<h1 class="page-heading"><?= $LANG['SELECT_COLS']; ?></h1>
 				<div id="error-msgs" class="errors"></div>

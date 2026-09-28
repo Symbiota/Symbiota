@@ -5,9 +5,11 @@ Language: Español
 ------------------
 */
 
-include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.' . $LANG_TAG . '.php');
 
 $LANG['FOLLOWING_WARNINGS'] = 'Las siguientes advertencias ocurrieron';
+$LANG['ERROR_PARENT_TID_NULL'] = 'Error al añadir el enlace aceptado: Identificador de elemento padre nulo (NULL)';
+$LANG['ERROR_ADD_LINK'] = 'Error al añadir el enlace aceptado';
 $LANG['SUCCESS_REMAPPING'] = '¡Taxón remapeado exitosamente!';
 $LANG['SUCCESS_DELETING'] = '¡Taxón eliminado exitosamente!';
 $LANG['TAX_EDITOR'] = 'Editor de Taxón';

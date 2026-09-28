@@ -43,7 +43,7 @@ if($isEditor){
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.sharedTaxonomyCRUD.js?ver=5"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyloader.js?v=1"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.taxonomyloader.js?v=1b"></script>
 	<script type="text/javascript">
 		document.addEventListener("DOMContentLoaded", function() {
 			const form = document.getElementById("loaderform");
@@ -79,6 +79,8 @@ if($isEditor){
 					taxaSuggest.config.minLength = 2;
 					taxaSuggest.config.limitToAccepted = 0;
 					taxaSuggest.config.rankMaximum = document.getElementById("rankid").value - 1;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("parentname", function(result) {
 						if (result.valid) {
 							document.getElementById("parenttid").value = result.item.id;

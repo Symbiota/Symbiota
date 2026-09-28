@@ -8,7 +8,6 @@ Language: English
 $LANG['ERROR_EDITING_TAXON'] = 'ERROR editing taxon';
 $LANG['UNABLE_EDIT_TAX'] = 'Unable to edit taxonomic placement. SQL';
 $LANG['ERROR_SYN_EDITS'] = 'ERROR submitting synonym edits';
-$LANG['ERROR_ADD_LINK'] = 'ERROR adding accepted link';
 $LANG['ERROR_REMOVING_LINK'] = 'ERROR removing tidAccepted link';
 $LANG['ERROR_CHANGING_ACCEPTED'] = 'ERROR changing to accepted';
 $LANG['ERROR_SWITCH_ACCEPT'] = 'ERROR: unable to switch acceptance';

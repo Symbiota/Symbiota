@@ -62,7 +62,7 @@ function validateFormInput (f, silent = false){
   //If name is not accepted, verify accepted name
   var accStatusObj = f.acceptstatus;
   if (accStatusObj[0].checked == false) {
-    if (f.acceptedstr.value == "") {
+    if (f.acceptedstr.value == "" || f.tidaccepted.value == "") {
       if (!silent) alert(translations.ACC_NAME_NEEDS_VALUE);
       document.getElementById("error-display").textContent = processTextContent(translations.ACC_NAME_NEEDS_VALUE);
       return false;
