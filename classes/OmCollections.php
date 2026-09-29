@@ -5,6 +5,7 @@ include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/ApiKeyEncryption.php');
 
 class OmCollections extends Manager{
 
@@ -103,6 +104,10 @@ class OmCollections extends Manager{
 				}
 			}
 			else $this->conn->query('DELETE FROM omcollcatlink WHERE collid = '.$this->collid);
+
+			if(array_key_exists('vvGeminiApiKey', $reqArr) && $reqArr['vvGeminiApiKey'] !== null && $reqArr['vvGeminiApiKey'] !== ''){
+				if(!$this->setCollectionGeminiApiKey($reqArr['vvGeminiApiKey'])) return false;
+			}
 		}
 		if(!$reqArr['securityKey']) $this->addGuid('securityKey');
 		if(!$reqArr['collectionGuid']) $this->addGuid('collectionGuid');
@@ -135,6 +140,9 @@ class OmCollections extends Manager{
 							}
 						}
 						$this->collid = $cid;
+						if(array_key_exists('vvGeminiApiKey', $reqArr) && $reqArr['vvGeminiApiKey'] !== null && $reqArr['vvGeminiApiKey'] !== ''){
+							if(!$this->setCollectionGeminiApiKey($reqArr['vvGeminiApiKey'])) $cid = false;
+						}
 					}
 				}
 				else $this->errorMessage = 'ERROR inserting omcollections record (2): '.$stmt->error;
@@ -181,10 +189,27 @@ class OmCollections extends Manager{
 			if(isset($postArr['sortSeq']) && is_numeric($postArr['sortSeq'])) $retArr['sortSeq'] = $postArr['sortSeq'];
 		}
 		if(isset($postArr['ccpk']) && is_numeric($postArr['ccpk'])) $retArr['ccpk'] = $postArr['ccpk'];
+		$retArr['vvGeminiApiKey'] = (isset($postArr['vvGeminiApiKey']) && trim($postArr['vvGeminiApiKey']) !== '' ? trim($postArr['vvGeminiApiKey']) : null);
 		$retArr['securityKey'] = (!empty($postArr['securityKey'])?$postArr['securityKey']:NULL);
 		$retArr['collectionGuid'] = (!empty($postArr['collectionGuid'])?$postArr['collectionGuid']:NULL);
 		if(!$retArr['collectionGuid'] && !empty($postArr['recordID'])) $retArr['collectionGuid'] = $postArr['recordID'];
 		return $retArr;
+	}
+
+	public function setCollectionGeminiApiKey($apiKey){
+		if(!$this->collid) return false;
+		$apiKey = trim((string)$apiKey);
+		if($apiKey === '') return false;
+		return $this->setAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', ApiKeyEncryption::encrypt($apiKey, 'collection:' . $this->collid . ':gemini'), 'omcollections', $this->collid);
+	}
+
+	public function getCollectionGeminiApiKey($collid = null){
+		$targetCollid = $this->collid;
+		if($collid !== null && is_numeric($collid)) $targetCollid = (int)$collid;
+		if(!$targetCollid) return '';
+		$ecodedValue = $this->getAdminPropertyValue('collectionConfig', 'GEMINI_API_KEY', 'GEMINI_API_KEY', 'omcollections', $targetCollid);
+		if(!$ecodedValue) return '';
+		return ApiKeyEncryption::decrypt($ecodedValue, 'collection:' . $targetCollid . ':gemini');
 	}
 
 	private function addIconImageFile($postArr){

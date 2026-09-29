@@ -378,6 +378,10 @@ function fieldChanged(fieldName) {
     document.fullform.editedfields.value =
       document.fullform.editedfields.value + fieldName + ";";
   } catch (ex) {}
+  const saveEditsButton = document.getElementById("saveEditsButton");
+  if (saveEditsButton) {
+    saveEditsButton.disabled = false;
+  }
   if (fieldName == "cultivationstatus") {
     if ($("input[name=cultivationstatus]").prop("checked")) {
       if (
