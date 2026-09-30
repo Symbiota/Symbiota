@@ -211,12 +211,14 @@ $creatorArray = Media::getCreatorArray(false);
 								if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 									if(substr($imgUrl, 0, 1) == '/'){
 										$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
+										$displayUrl = $imgUrl;
 									}
 									if($origUrl && substr($origUrl, 0, 1) == '/'){
 										$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
 									}
 									if($tnUrl && substr($tnUrl, 0, 1) == '/'){
 										$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
+										$imgUrl = $tnUrl;
 									}
 								}
 								echo '<a href="' . $imgUrl . '" target="_blank">';

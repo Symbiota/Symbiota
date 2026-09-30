@@ -32,8 +32,8 @@ $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
 $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
-$MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';			//URL path to images
+$MEDIA_DOMAIN = '';				//Domain path to images, if different from portal. Ex. 'https://media01.symbiota.org/media/'
+$MEDIA_ROOT_URL = '';			//URL path to images (This value is prepended to local image path when storing new media record)
 $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
 
 $STORAGE_DRIVER = 'local'; // Can be either 'local' or 's3'. s3 option requires 'Aws\S3\S3Client' composer lib installed

@@ -120,7 +120,7 @@ class ImageCleaner extends Manager{
 	}
 
 	private function getSqlWhere(){
-		$sql = 'WHERE ((m.thumbnailurl IS NULL) OR (m.thumbnailurl LIKE "processing%")) AND m.mediaType = "image"';
+		$sql = 'WHERE ((m.thumbnailurl IS NULL) OR (m.thumbnailurl LIKE "processing%")) AND m.mediaType = "image" ';
 		if($this->collid) $sql .= 'AND (o.collid = '.$this->collid.') ';
 		elseif($this->collid === '0') $sql .= 'AND (m.occid IS NULL) ';
 		if($this->tidArr) $sql .= 'AND (e.taxauthid = 1) AND (m.tid IN('.implode(',',$this->tidArr).') OR e.parenttid IN('.implode(',',$this->tidArr).')) ';
