@@ -581,7 +581,7 @@ class ImageShared {
 		$urlBase = $this->urlBase;
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 		//e.g. this portal is sister portal to central portal
-		if ($GLOBALS['MEDIA_DOMAIN']) $urlBase = $this->getDomainUrl() . $urlBase;
+		//if ($GLOBALS['MEDIA_DOMAIN']) $urlBase = $this->getDomainUrl() . $urlBase;
 		return $urlBase;
 	}
 
