@@ -2,6 +2,7 @@
 
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');
+include_once($SERVER_ROOT . '/classes/utilities/TaxonomyUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -49,11 +50,10 @@ class TaxonomyEditorManager extends Manager{
 	}
 
 	public function setTaxon(){
-		$sqlTaxon = 'SELECT tid, rankid, sciname, unitind1, unitname1, '.
-			'unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, author, source, notes, securitystatus, initialtimestamp '.
-			'FROM taxa '.
-			'WHERE (tid = '.$this->tid.')';
-		//echo $sqlTaxon;
+		$status = false;
+		$sqlTaxon = 'SELECT tid, rankid, sciname, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, author, source, notes, securitystatus, initialtimestamp
+			FROM taxa
+			WHERE (tid = '.$this->tid.')';
 		$rs = $this->conn->query($sqlTaxon);
 		if($r = $rs->fetch_object()){
 			$this->sciName = $r->sciname;
@@ -70,6 +70,7 @@ class TaxonomyEditorManager extends Manager{
 			$this->source = $r->source;
 			$this->notes = $r->notes;
 			$this->securityStatus = $r->securitystatus;
+			$status = true;
 		}
 		$rs->free();
 
@@ -153,6 +154,7 @@ class TaxonomyEditorManager extends Manager{
 			if($this->isAccepted == 1) $this->setSynonyms();
 			if($this->parentTid) $this->setParentName();
 		}
+		return $status;
 	}
 
 	private function setRankName(){
@@ -283,19 +285,19 @@ class TaxonomyEditorManager extends Manager{
 		return $statusStr;
 	}
 
-	public function submitTaxStatusEdits($parentTid,$tidAccepted){
-		$status = '';
+	public function submitTaxStatusEdits($parentTid, $tidAccepted){
+		$status = false;
 		if(is_numeric($parentTid) && is_numeric($tidAccepted)){
 			$this->setTaxon();
-			$sql = 'UPDATE taxstatus '.
-				'SET parenttid = '.$parentTid.' '.
-				'WHERE (taxauthid = '.$this->taxAuthId.') AND (tid = '.$this->tid.') AND (tidaccepted = '.$tidAccepted.')';
-			if($this->conn->query($sql)){
-				$this->rebuildHierarchy();
+			$sql = 'UPDATE taxstatus SET parenttid = ? WHERE (taxauthid = ?) AND (tid = ?) AND (tidaccepted = ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('iiii', $parentTid, $this->taxAuthId, $this->tid, $tidAccepted);
+				$stmt->execute();
+				if(!$stmt->error) $status = true;
+				else $this->errorMessage = $stmt->error;
+				$stmt->close();
 			}
-			else{
-				$status = (isset($this->langArr['UNABLE_EDIT_TAX'])?$this->langArr['UNABLE_EDIT_TAX']:'Unable to edit taxonomic placement. SQL').': '.$sql;
-			}
+			$this->rebuildHierarchy();
 		}
 		return $status;
 	}
@@ -487,271 +489,244 @@ class TaxonomyEditorManager extends Manager{
 		}
 	}
 
-	public function rebuildHierarchy($tid = 0){
-		if(!$tid) $tid = $this->tid;
-		if(!$this->rankid) $this->setTaxon();
-		//Get parent array
-		$parentArr = Array();
-		$parCnt = 0;
-		$targetTid = $tid;
-		do{
-			$sql1 = 'SELECT DISTINCT ts.parenttid '.
-				'FROM taxstatus ts '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.tid = '.$targetTid.')';
-			//echo $sqlParents;
-			$targetTid = 0;
-			$rs1 = $this->conn->query($sql1);
-			if($r1 = $rs1->fetch_object()){
-				if($r1->parenttid){
-					if(in_array($r1->parenttid,$parentArr)) break;
-					$parentArr[] = $r1->parenttid;
-					$targetTid = $r1->parenttid;
-				}
-			}
-			$rs1->free();
-			$parCnt++;
-		}while($targetTid && $parCnt < 16);
-
-		//Add hierarchy to taxaenumtree table
-		if($parentArr != $this->hierarchyArr){
-			//Reset hierarchy for all children
-			$branchTidArr = array($tid);
-			$sql2 = 'SELECT DISTINCT tid FROM taxaenumtree WHERE parenttid = '.$tid;
-			$rs2 = $this->conn->query($sql2);
-			while($r2 = $rs2->fetch_object()){
-				$branchTidArr[] = $r2->tid;
-			}
-			$rs2->free();
-			if($this->hierarchyArr){
-				//Delete hierarchy for this taxon AND hierachies for all children
-				$sql2a = 'DELETE FROM taxaenumtree '.
-					'WHERE parenttid IN('.implode(',',$this->hierarchyArr).') AND (tid IN ('.implode(',',$branchTidArr).')) '.
-					'AND (taxauthid = '.$this->taxAuthId.') ';
-				//echo $sql2a; exit;
-				$this->conn->query($sql2a);
-			}
-
-			$sql3 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) ';
-			foreach($parentArr as $pid){
-				//Reset hierarchy for children taxa
-				$sql3a = $sql3.'SELECT DISTINCT tid,'.$pid.','.$this->taxAuthId.' FROM taxaenumtree WHERE parenttid = '.$tid;
-				$this->conn->query($sql3a);
-				//echo $sql3a.'<br/>';
-				//Reset hierarchy for target taxon
-				$sql3b = $sql3.'VALUES('.$tid.','.$pid.','.$this->taxAuthId.')';
-				$this->conn->query($sql3b);
-				//echo $sql3b.'<br/>';
-			}
-			$this->setHierarchy();
-		}
-
-		if($this->rankid > 140){
-			//Update family in taxstatus table
-			$newFam = '';
-			$sqlFam1 = 'SELECT t.sciname FROM taxaenumtree e INNER JOIN taxa t ON e.parenttid = t.tid '.
-				'WHERE (e.taxauthid = '.$this->taxAuthId.') AND (e.tid = '.$tid.') AND (t.rankid = 140)';
-			$rsFam1 = $this->conn->query($sqlFam1);
-			if($r1 = $rsFam1->fetch_object()){
-				$newFam = $r1->sciname;
-			}
-			$rsFam1->free();
-
-			//reset family of target taxon and all it's children
-			$sql = 'UPDATE taxstatus ts INNER JOIN taxaenumtree e ON ts.tid = e.tid '.
-				'SET ts.family = '.($newFam?'"'.$this->cleanInStr($newFam).'"':'NULL').' '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (e.taxauthid = '.$this->taxAuthId.') '.
-				'AND ((ts.tid = '.$tid.') OR (e.parenttid = '.$tid.'))';
-			if(!$this->conn->query($sql)){
-				$this->errorMessage = (isset($this->langArr['ERROR_RESET_FAMILY'])?$this->langArr['ERROR_RESET_FAMILY']:'ERROR attempting to reset family string').': '.$this->conn->error;
-				echo $this->errorMessage;
-			}
-		}
-	}
-
 	//Load Taxon functions
 	public function loadNewName($dataArr){
 		//Load new name into taxa table
 		$tid = 0;
-		$unitind1 = array_key_exists('unitind1', $dataArr) ? $dataArr['unitind1'] : '';
-		$unitname1 = array_key_exists('unitname1', $dataArr) ? $dataArr['unitname1'] : '';
-		$unitind2 = array_key_exists('unitind2', $dataArr) ? $dataArr['unitind2'] : '';
-		$unitname2 = array_key_exists('unitname2', $dataArr) ? $dataArr['unitname2'] : '';
-		$unitind3 = array_key_exists('unitind3', $dataArr) ? $dataArr['unitind3'] : '';
-		$unitname3 = array_key_exists('unitname3', $dataArr) ? $dataArr['unitname3'] : '';
-		$processedSciname = trim( $unitind1 . $unitname1 . ' ' . $unitind2 . $unitname2 . ' ' . trim($unitind3 . ' ' . $unitname3));
-		$processedTradeName = '';
-		$processedCultivarEpithet = '';
+		$unitInd1 = null;
+		if(!empty($dataArr['unitind1'])) $unitInd1 = $dataArr['unitind1'];
+		$unitName1 = null;
+		if(!empty($dataArr['unitname1'])) $unitName1 = $dataArr['unitname1'];
+		$unitInd2 = null;
+		if(!empty($dataArr['unitind2'])) $unitInd2 = $dataArr['unitind2'];
+		$unitName2 = null;
+		if(!empty($dataArr['unitname2'])) $unitName2 = $dataArr['unitname2'];
+		$unitInd3 = null;
+		if(!empty($dataArr['unitind3'])) $unitInd3 = $dataArr['unitind3'];
+		$unitName3 = null;
+		if(!empty($dataArr['unitname3'])) $unitName3 = $dataArr['unitname3'];
+		$sciname = trim( $unitInd1 . $unitName1 . ' ' . $unitInd2 . $unitName2 . ' ' . trim($unitInd3 . ' ' . $unitName3));
+		$processedTradeName = null;
+		$processedCultivarEpithet = null;
 		if(array_key_exists('cultivarEpithet', $dataArr) && !empty($dataArr['cultivarEpithet'])){
 			$processedCultivarEpithet = $this->standardizeCultivarEpithet($dataArr['cultivarEpithet']);
-			$processedSciname .= " ". $processedCultivarEpithet;
+			$sciname .= ' ' . $processedCultivarEpithet;
+			$processedCultivarEpithet = preg_replace('/(^["\'“]+)|(["\'”]+$)/', '', $processedCultivarEpithet);
 		}
 		if(array_key_exists('tradeName', $dataArr) && !empty($dataArr['tradeName'])){
 			$processedTradeName = $this->standardizeTradeName($dataArr['tradeName']);
-			$processedSciname .= ' ' . $processedTradeName;
+			$sciname .= ' ' . $processedTradeName;
 		}
 
-		$parentTid = array_key_exists('parenttid', $dataArr) && is_numeric($dataArr['parenttid']) ? (int)$dataArr['parenttid'] : null;
-
-		$parentKingdomNameSql = 'SELECT k.sciname
-			FROM taxa k INNER JOIN taxaenumtree e ON k.tid = e.parenttid
-			WHERE e.taxauthid = 1 AND k.rankid = 10 AND e.tid = ?;';
-		$stmnt = $this->conn->prepare($parentKingdomNameSql);
-		$kingdomName = '';
-		if($stmnt){
-			$stmnt->bind_param('i', $parentTid);
-			if($stmnt->execute()){
-				$stmnt->bind_result($kingdomName);
-				$stmnt->store_result();
-				$stmnt->fetch();
-			}
+		$parentTid = 0;
+		if(!empty($dataArr['parenttid']) && is_numeric($dataArr['parenttid'])) $parentTid = $dataArr['parenttid'];
+		if(!$parentTid && $dataArr['rankid'] <= 10) $parentTid = $tid;
+		if(!$parentTid){
+			$this->errorMessage = 'ERROR_NULL_PARENT';
+			return false;
 		}
 
-
-		$sqlTaxa = 'INSERT INTO taxa(kingdomName, sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName, '.
-			'source, notes, securitystatus, modifiedUid, modifiedTimeStamp) '.
-			'VALUES (' . ($kingdomName ? ('"' . $this->cleanInStr($kingdomName) . '"') : '""') . ',
-			"'.$this->cleanInStr($processedSciname).'","'.
-			($dataArr['author']? ($this->cleanInStr($dataArr['author'])) : '').'",'.
-			(isset($dataArr['rankid'])?$dataArr['rankid']:0).','.
-			($dataArr['unitind1']?'"'.$this->cleanInStr($dataArr['unitind1']).'"':'NULL').',"'.
-			$this->cleanInStr($dataArr['unitname1']).'",'.
-			($dataArr['unitind2']?'"'.$this->cleanInStr($dataArr['unitind2']).'"':'NULL').','.
-			($dataArr['unitname2']?'"'.$this->cleanInStr($dataArr['unitname2']).'"':'NULL').','.
-			($dataArr['unitind3']?'"'.$this->cleanInStr($dataArr['unitind3']).'"':'NULL').','.
-			($dataArr['unitname3']?'"'.$this->cleanInStr($dataArr['unitname3']).'"':'NULL').','.
-			((array_key_exists('cultivarEpithet', $dataArr) && $dataArr['cultivarEpithet']) ? ('"' . $this->cleanInStr(preg_replace('/(^["\'“]+)|(["\'”]+$)/', '', $processedCultivarEpithet)) . '"') : '""') . ',' .
-			((array_key_exists('tradeName', $dataArr) && $dataArr['tradeName']) ? ('"' . $this->cleanInStr($processedTradeName) . '"') : '""') . ',' .
-			($dataArr['source']? '"'.$this->cleanInStr($dataArr['source']).'"':'NULL').','.
-			($dataArr['notes']?'"'.$this->cleanInStr($dataArr['notes']).'"':'NULL').','.
-			($dataArr['securitystatus']? '"' . $this->cleanInStr($dataArr['securitystatus']) . '",' : '0,').
-			$GLOBALS['SYMB_UID'].',"'.
-			date('Y-m-d H:i:s').'")';
+		$author = $dataArr['author'];
+		$rankid = 0;
+		$source = null;
+		if($dataArr['source']) $source = $dataArr['source'];
+		$notes = null;
+		if($dataArr['notes']) $notes = $dataArr['notes'];
+		$securityStatus = 0;
+		$symbUid = $GLOBALS['SYMB_UID'];
+		if(is_numeric($dataArr['securitystatus'])) $securityStatus = $dataArr['securitystatus'];
+		if(is_numeric($dataArr['rankid'])) $rankid = $dataArr['rankid'];
+		$sqlTaxa = 'INSERT INTO taxa(sciname, author, rankid, unitind1, unitname1, unitind2, unitname2, unitind3, unitname3, cultivarEpithet, tradeName,
+			source, notes, securitystatus, modifiedUid, modifiedTimeStamp) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"' . date('Y-m-d H:i:s') . '")';
 		$insertStatus = false;
 		try{
-			$insertStatus = $this->conn->query($sqlTaxa);
+			if($stmt = $this->conn->prepare($sqlTaxa)){
+				$stmt->bind_param('ssissssssssssii', $sciname, $author, $rankid, $unitInd1, $unitName1, $unitInd2, $unitName2, $unitInd3, $unitName3,
+					$processedCultivarEpithet, $processedTradeName, $source, $notes, $securityStatus, $symbUid);
+				$stmt->execute();
+				if($stmt->affected_rows && !$stmt->error) $insertStatus = true;
+				$stmt->close();
+			}
 		} catch (Exception $e){
-			error_log("Error inserting new taxon: " . $sqlTaxa);
+			$this->errorMessage = 'ERROR_INSERT_TAXON_FAILED';
+			return false;
 		}
 
 		if($insertStatus){
-			$tid = $this->conn->insert_id;
-		 	//Load accepteance status into taxstatus table
-			$tidAccepted = ($dataArr['acceptstatus']?$tid:$dataArr['tidaccepted']);
-			$parTid = $this->cleanInStr($dataArr['parenttid']);
-			if(!$parTid && $dataArr['rankid'] <= 10) $parTid = $tid;
-			if(!$parTid && $dataArr['parentname']){
-				$sqlPar = 'SELECT tid FROM taxa WHERE sciname = "'.$dataArr['parentname'].'"';
-				$rsPar = $this->conn->query($sqlPar);
-				if($rPar = $rsPar->fetch_object()){
-					$parTid = $rPar->tid;
-				}
-				$rsPar->free();
-			}
-			if($parTid){
-				//Get family from hierarchy
-				$family = '';
-				if($dataArr['rankid'] > 140){
-					$sqlFam = 'SELECT t.sciname '.
-						'FROM taxa t INNER JOIN taxaenumtree e ON t.tid = e.parenttid '.
-						'WHERE (t.tid = '.$parTid.' OR e.tid = '.$parTid.') AND t.rankid = 140 ';
-					//echo $sqlFam; exit;
-					$rsFam = $this->conn->query($sqlFam);
-					if($r = $rsFam->fetch_object()){
-						$family = $r->sciname;
-					}
-					$rsFam->free();
-				}
+			$this->tid = $this->conn->insert_id;
+			$tidAccepted = $this->tid;
+			if($dataArr['acceptstatus'] && is_numeric($dataArr['tidaccepted'])) $tidAccepted = $dataArr['tidaccepted'];
+			$unacceptabilityReason = null;
 
-				//Load new record into taxstatus table
-				$sqlTaxStatus = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, family, parenttid, unacceptabilityreason, modifiedUid) '.
-					'VALUES ('.$tid.','.$tidAccepted.','.$this->taxAuthId.','.($family?'"'.$this->cleanInStr($family).'"':'NULL').','.
-					$parTid.','.($dataArr["unacceptabilityreason"]?'"'.$this->cleanInStr($dataArr["unacceptabilityreason"]).'"':'NULL').','.$GLOBALS['SYMB_UID'].') ';
-				//echo "sqlTaxStatus: ".$sqlTaxStatus;
-				if(!$this->conn->query($sqlTaxStatus)){
-					return (isset($this->langArr['ERROR_LOAD_TAXSTATUS'])?$this->langArr['ERROR_LOAD_TAXSTATUS']:'ERROR: Taxon loaded into taxa, but failed to load taxstatus').': '.$this->conn->error.'; '.$sqlTaxStatus;
-				}
-
-				//Load hierarchy into taxaenumtree table
-				$sqlEnumTree = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid) '.
-					'SELECT '.$tid.' as tid, parenttid, taxauthid FROM taxaenumtree WHERE tid = '.$parTid;
-				if($this->conn->query($sqlEnumTree)){
-					$sqlEnumTree2 = 'INSERT IGNORE INTO taxaenumtree(tid,parenttid,taxauthid) '.
-						'VALUES ('.$tid.','.$parTid.','.$this->taxAuthId.')';
-					if(!$this->conn->query($sqlEnumTree2)){
-						echo (isset($this->langArr['WARNING_TAXAENUMTREE2'])?$this->langArr['WARNING_TAXAENUMTREE2']:'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree(2)').': '.$this->conn->error;
-					}
-				}
-				else{
-					echo (isset($this->langArr['WARNING_TAXAENUMTREE'])?$this->langArr['WARNING_TAXAENUMTREE']:'WARNING: Taxon loaded into taxa, but failed to populate taxaenumtree').': '.$this->conn->error;
-				}
-			}
-			else{
-				return (isset($this->langArr['ERROR_MISSING_PARENTID'])?$this->langArr['ERROR_MISSING_PARENTID']:'ERROR loading taxon due to missing parentTid');
-			}
-
-			//Link new name to existing specimens
-			$sqlUpdate1 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname SET o.TidInterpreted = t.tid WHERE (o.sciname = ?)';
-			if($stmt = $this->conn->prepare($sqlUpdate1)){
-				$stmt->bind_param('s', $dataArr["sciname"]);
+			//Load accepteance status into taxstatus table
+			$sqlTaxStatus = 'INSERT INTO taxstatus(tid, tidaccepted, taxauthid, parenttid, unacceptabilityreason, modifiedUid) VALUES (?,?,?,?,?,?) ';
+			if($stmt = $this->conn->prepare($sqlTaxStatus)){
+				$stmt->bind_param('iiiisi', $this->tid, $tidAccepted, $this->taxAuthId, $parentTid, $unacceptabilityReason, $symbUid);
 				$stmt->execute();
-				if($stmt->error){
-					if(isset($this->langArr['WARNING_OCCURRENCES_NOT'])) echo $this->langArr['WARNING_OCCURRENCES_NOT'];
-					else echo 'WARNING: Taxon loaded into taxa, but occurrences must be updated with matching name';
-					echo ': ' . $this->conn->error;
+				if(!$stmt->affected_rows || $stmt->error){
+					$this->errorMessage = $stmt->error;
+					return false;
 				}
 				$stmt->close();
 			}
-			if($dataArr['securitystatus'] == 1){
-				//Set locality security
-				$sqlUpdate2 = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
-					SET o.recordSecurity = 1
-					WHERE (o.securityReason IS NULL) AND (cultivationStatus = 0 OR cultivationStatus IS NULL) AND (o.sciname = ?) ';
-				if($stmt = $this->conn->prepare($sqlUpdate2)){
-					$stmt->bind_param('s', $dataArr["sciname"]);
-					$stmt->execute();
-					$stmt->close();
-				}
-			}
 
-			//Link occurrence images to the new name
-			$occidArr = array();
-			$sql2a = 'SELECT occid FROM omoccurrences WHERE (tidinterpreted = '.$tid.')';
-			$rs2a = $this->conn->query($sql2a);
-			while($r2a = $rs2a->fetch_object()){
-				$occidArr[] = $r2a->occid;
-			}
-			$rs2a->free();
-
-			if($occidArr){
-				$sql2 = 'UPDATE media SET tid = '.$tid.' WHERE tid IS NULL AND occid IN('.implode(',',$occidArr).')';
-				$this->conn->query($sql2);
-				if(!$this->conn->query($sql2)){
-					echo (isset($this->langArr['WARNING_UPDATE_IMAGES'])?$this->langArr['WARNING_UPDATE_IMAGES']:'WARNING: Taxon loaded into taxa, but occurrence images must be updated with matching name').': '.$this->conn->error;
-				}
-			}
-
-			//Add their geopoints to omoccurgeoindex
-			$sql3 = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude)
-				SELECT DISTINCT o.tidinterpreted, round(o.decimallatitude,2), round(o.decimallongitude,2)
-				FROM omoccurrences o
-				WHERE (o.tidinterpreted = '.$tid.') AND (o.decimallatitude between -90 and 90) AND (o.decimallongitude between -180 and 180)
-				AND (o.cultivationStatus IS NULL OR o.cultivationStatus = 0) AND (o.coordinateUncertaintyInMeters IS NULL OR o.coordinateUncertaintyInMeters < 10000) ';
-
-			$this->conn->query($sql3);
-
-			//Populate NULL kingdomName values
-			$sql4 = 'UPDATE IGNORE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
-				INNER JOIN taxa p ON e.parenttid = p.tid
-				SET t.kingdomname = p.sciname
-				WHERE p.rankid = 10 AND t.kingdomname = ""';
-			$this->conn->query($sql4);
+			$this->buildHierarchy($this->tid);
+			$this->updateLinkedData($dataArr['sciname'], $dataArr['securitystatus']);
 		}
 		else{
 			$this->errorMessage = (isset($this->langArr['ERROR_INSERT'])?$this->langArr['ERROR_INSERT']:'ERROR inserting new taxon').': '.$this->conn->error;
 			//$this->errorMessage .= '; SQL = '.$sqlTaxa;
 			return $this->errorMessage;
 		}
-		return $tid;
+		return $this->tid;
+	}
+
+	public function rebuildHierarchy($tid = 0){
+		if(!$tid) $tid = $this->tid;
+		if(!$this->rankid) $this->setTaxon();
+
+		//Delete hierachies for all children
+		$sql = 'DELETE e.*
+			FROM taxaenumtree e INNER JOIN taxaenumtree p ON e.parenttid = p.parenttid
+			INNER JOIN taxaenumtree p2 ON e.tid = p2.tid
+			WHERE (e.taxauthid = ?) AND (p.tid = ?) AND (p.taxauthid = ?) AND (p2.parentTid = ?) AND (p2.taxauthid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('iiiii', $this->taxAuthId, $tid, $this->taxAuthId, $tid, $this->taxAuthId);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Delete hierachy for subject
+		$sql = 'DELETE FROM taxaenumtree WHERE (taxauthid = ?) AND (tid = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $this->taxAuthId, $tid);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		$this->buildHierarchy($tid);
+	}
+
+	private function buildHierarchy($tid){
+		//Get parent array
+		$parentArr = Array();
+		$parCnt = 0;
+		$targetTid = $tid;
+		do{
+			$sql = 'SELECT DISTINCT parentTid FROM taxstatus WHERE (taxauthid = ?) AND (tid = ?) AND (tid != parentTid)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $this->taxAuthId, $targetTid);
+				$stmt->execute();
+				$targetTid = 0;
+				$rs = $stmt->get_result();
+				if($r = $rs->fetch_object()){
+					if($r->parentTid){
+						$parentArr[] = $r->parentTid;
+						$targetTid = $r->parentTid;
+					}
+				}
+				$rs->free();
+				$parCnt++;
+				$stmt->close();
+			}
+		}while($targetTid && $parCnt < 20);
+
+		$sqlInsert = 'INSERT IGNORE INTO taxaenumtree(tid, parenttid, taxauthid) ';
+		foreach($parentArr as $pid){
+			//Reset hierarchy for children taxa
+			$sql = $sqlInsert . 'SELECT DISTINCT tid, ?, taxauthid FROM taxaenumtree WHERE taxauthid = ? AND parenttid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('iii', $pid, $this->taxAuthId, $tid);
+				$stmt->execute();
+				$stmt->close();
+			}
+
+			//Reset hierarchy for target taxon
+			$sql = $sqlInsert . 'VALUES(?, ?, ?)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('iii', $tid, $pid, $this->taxAuthId);
+				$stmt->execute();
+				$stmt->close();
+			}
+		}
+		$this->setHierarchy();
+
+		TaxonomyUtil::resetParentLookupFields($this->conn, $this->taxAuthId);
+	}
+
+	private function updateLinkedData($sciname, $securityStatus = 0){
+		//Link taxon to existing specimens based on name and author matching
+		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname AND o.scientificNameAuthorship = t.author
+			SET o.tidInterpreted = t.tid
+			WHERE (o.tidInterpreted IS NULL) AND (o.scientificNameAuthorship != "") AND (o.sciname = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $sciname);
+			$stmt->execute();
+			$stmt->close();
+		}
+		//Link taxon to existing specimens based on matching sciname and family to improve correct match when cross kingdom homonyms exist
+		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
+			INNER JOIN taxaenumtree e ON t.tid = e.tid
+			INNER JOIN taxa f ON e.parenttid = f.tid
+			SET o.tidInterpreted = t.tid
+			WHERE (o.TidInterpreted IS NULL) AND e.taxAuthID = ? AND (f.rankid = 140) AND (f.sciname = o.family) AND (o.sciname = ?) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('is', $this->taxAuthId, $sciname);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Link taxon to existing specimens based on matching sciname of only ligitimate taxa
+		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
+			SET o.tidInterpreted = t.tid
+			WHERE (o.tidInterpreted IS NULL) AND (o.sciname = ?) AND (t.isLegitimate = 1)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $sciname);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Link taxon to existing specimens based on matching only sciname
+		$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
+			SET o.tidInterpreted = t.tid
+			WHERE (o.tidInterpreted IS NULL) AND (o.sciname = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('s', $sciname);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Set locality security
+		if($securityStatus == 1){
+			$sql = 'UPDATE omoccurrences o INNER JOIN taxa t ON o.sciname = t.sciname
+				SET o.recordSecurity = 1
+				WHERE (o.securityReason IS NULL) AND (o.cultivationStatus = 0 OR o.cultivationStatus IS NULL) AND (o.tidinterpreted = ?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('s', $this->tid);
+				$stmt->execute();
+				$stmt->close();
+			}
+		}
+
+		//Link occurrence images to the new name
+		$sql = 'UPDATE media m INNER JOIN omoccurrences o ON m.occid = o.occid SET tid = ? WHERE (o.tidinterpreted = ?)';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('ii', $this->tid, $this->tid);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Add their geopoints to omoccurgeoindex
+		$sql = 'INSERT IGNORE INTO omoccurgeoindex(tid,decimallatitude,decimallongitude)
+			SELECT DISTINCT tidinterpreted, round(decimallatitude,2), round(decimallongitude,2)
+			FROM omoccurrences
+			WHERE (tidinterpreted = ?) AND (decimallatitude between -90 and 90) AND (decimallongitude between -180 and 180)
+			AND (cultivationStatus IS NULL OR cultivationStatus = 0) AND (coordinateUncertaintyInMeters IS NULL OR coordinateUncertaintyInMeters < 10000) ';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->tid);
+			$stmt->execute();
+			$stmt->close();
+		}
 	}
 
 	//Delete taxon functions
@@ -865,7 +840,7 @@ class TaxonomyEditorManager extends Manager{
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_IMGS'])?$this->langArr['ERROR_TRANSFER_IMGS']:'ERROR transferring image links').' ('.$this->conn->error.')';
 
 			//Taxon maps
-			$sql ='UPDATE IGNORE taxamaps SET mid = '.$targetTid.' WHERE tid = '.$this->tid;
+			$sql ='UPDATE IGNORE taxamaps SET tid = '.$targetTid.' WHERE tid = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = $this->langArr['ERROR_TRANSFER_MAPS'] . ' (' . $this->conn->error . ')';
 
 			//Vernaculars
@@ -898,10 +873,6 @@ class TaxonomyEditorManager extends Manager{
 			//Transfer Synonyms
 			$sql ='UPDATE IGNORE taxstatus SET tidaccepted = '.$targetTid.' WHERE tidaccepted = '.$this->tid;
 			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_SYN'])?$this->langArr['ERROR_TRANSFER_SYN']:'ERROR transferring synonyms taxa').' ('.$this->conn->error.')';
-
-			//Adjust taxaEnumTree index table
-			$sql ='UPDATE IGNORE taxaenumtree SET parenttid = '.$targetTid.' WHERE parenttid = '.$this->tid;
-			if(!$this->conn->query($sql)) $this->warningArr[] = (isset($this->langArr['ERROR_TRANSFER_TAXENUMTREE'])?$this->langArr['ERROR_TRANSFER_TAXENUMTREE']:'ERROR resetting taxaEnumTree index').' ('.$this->conn->error.')';
 
 			$status = $this->deleteTaxon();
 		}
@@ -966,7 +937,7 @@ class TaxonomyEditorManager extends Manager{
 			if(!$this->conn->query($sql)){
 				$this->errorMessage = (isset($this->langArr['ERROR_ATTEMPT_DELETE'])?$this->langArr['ERROR_ATTEMPT_DELETE']:'ERROR attempting to delete taxon').': '.$this->conn->error;
 				$status = false;
-				//Reinstate taxstatus record
+				//Delete failed, thus reinstate taxstatus record
 				foreach($taxStatusArr as $taxAuthId => $tsArr){
 					$tsNewSql = 'INSERT INTO taxstatus(tid,taxauthid,tidaccepted, parenttid, family, unacceptabilityreason, notes, sortsequence) '.
 						'VALUES('.$this->tid.','.$taxAuthId.','.$taxStatusArr[$taxAuthId]['tidaccepted'].','.$taxStatusArr[$taxAuthId]['parenttid'].',"'.
@@ -981,6 +952,96 @@ class TaxonomyEditorManager extends Manager{
 		}
 
 		return $status;
+	}
+
+	//Misc methods for retrieving field data
+	public function getTaxonomicThesaurusIds(){
+		//For now, just return the default taxonomy (taxauthid = 1)
+		$retArr = array();
+		if($this->tid){
+			$sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta INNER JOIN taxstatus ts ON ta.taxauthid = ts.taxauthid
+				WHERE ta.isactive = 1 AND (ts.tid = ".$this->tid.") ORDER BY ta.taxauthid ';
+			$rs = $this->conn->query($sql);
+			while($row = $rs->fetch_object()){
+				$retArr[$row->taxauthid] = $row->name;
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getRankArr(){
+		$retArr = array();
+		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid, rankname DESC';
+		if($this->kingdomName) $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits WHERE (kingdomname = "'.$this->kingdomName.'") ORDER BY rankid, rankname DESC';
+		$rs = $this->conn->query($sql);
+		while($row = $rs->fetch_object()){
+			$retArr[$row->rankid][] = $row->rankname;
+		}
+		$rs->free();
+		if(!$retArr){
+			$sql2 = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid, rankname DESC ';
+			$rs2 = $this->conn->query($sql2);
+			while($r2 = $rs2->fetch_object()){
+				$retArr[$r2->rankid][] = $r2->rankname;
+			}
+			$rs2->free();
+		}
+		return $retArr;
+	}
+
+	public function getHierarchyArr(){
+		$retArr = array();
+		if($this->hierarchyArr){
+			$sql = 'SELECT t.tid, t.sciname, ts.parenttid, t.rankid
+				FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+				WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (t.tid IN('.implode(',',$this->hierarchyArr).'))
+				ORDER BY t.rankid, t.sciname ';
+			$rs = $this->conn->query($sql);
+			$nonRanked = array();
+			while($r = $rs->fetch_object()){
+				if($r->rankid){
+					$retArr[$r->tid] = $r->sciname;
+				}
+				else{
+					$nonRanked[$r->parenttid]['name'] = $r->sciname;
+					$nonRanked[$r->parenttid]['tid'] = $r->tid;
+				}
+				if($nonRanked && array_key_exists($r->tid,$nonRanked)){
+					$retArr[$nonRanked[$r->tid]['tid']] = $nonRanked[$r->tid]['name'];
+				}
+			}
+			$rs->free();
+		}
+		return $retArr;
+	}
+
+	public function getChildren(){
+		$retArr = array();
+		$sql = 'SELECT t.tid, t.sciname, t.author, a.tid AS accTid, a.sciname AS accSciname, a.author AS accAuthor
+			FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxa a ON ts.tidaccepted = a.tid
+			WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.parenttid = '.$this->tid.')';
+		$rs = $this->conn->query($sql);
+		while($r = $rs->fetch_object()){
+			$retArr[$r->tid]['sciname'] = $r->sciname;
+			$retArr[$r->tid]['author'] = $r->author;
+			$retArr[$r->tid]['accTid'] = $r->accTid;
+			$retArr[$r->tid]['accSciname'] = $r->accSciname;
+			$retArr[$r->tid]['accAuthor'] = $r->accAuthor;
+		}
+		$rs->free();
+		asort($retArr);
+		return $retArr;
+	}
+
+	public function hasAcceptedChildren(){
+		$bool = false;
+		$sql = 'SELECT tid FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (parenttid = '.$this->tid.') AND (tid = tidaccepted) LIMIT 1';
+		$rs = $this->conn->query($sql);
+		if($rs->num_rows) $bool = true;
+		$rs->free();
+		return $bool;
 	}
 
 	//setters and  getters
@@ -1098,97 +1159,6 @@ class TaxonomyEditorManager extends Manager{
 
 	public function getSynonyms(){
 		return $this->synonymArr;
-	}
-
-	//Misc methods for retrieving field data
-	public function getTaxonomicThesaurusIds(){
-		//For now, just return the default taxonomy (taxauthid = 1)
-		$retArr = array();
-		if($this->tid){
-			$sql = 'SELECT ta.taxauthid, ta.name FROM taxauthority ta INNER JOIN taxstatus ts ON ta.taxauthid = ts.taxauthid '.
-				'WHERE ta.isactive = 1 AND (ts.tid = ".$this->tid.") ORDER BY ta.taxauthid ';
-			$rs = $this->conn->query($sql);
-			while($row = $rs->fetch_object()){
-				$retArr[$row->taxauthid] = $row->name;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
-	public function getRankArr(){
-		$retArr = array();
-		$sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid, rankname DESC';
-		if($this->kingdomName) $sql = 'SELECT DISTINCT rankid, rankname FROM taxonunits WHERE (kingdomname = "'.$this->kingdomName.'") ORDER BY rankid, rankname DESC';
-		$rs = $this->conn->query($sql);
-		while($row = $rs->fetch_object()){
-			$retArr[$row->rankid][] = $row->rankname;
-		}
-		$rs->free();
-		if(!$retArr){
-			$sql2 = 'SELECT DISTINCT rankid, rankname FROM taxonunits ORDER BY rankid, rankname DESC ';
-			$rs2 = $this->conn->query($sql2);
-			while($r2 = $rs2->fetch_object()){
-				$retArr[$r2->rankid][] = $r2->rankname;
-			}
-			$rs2->free();
-		}
-		return $retArr;
-	}
-
-	public function getHierarchyArr(){
-		$retArr = array();
-		if($this->hierarchyArr){
-			$sql = 'SELECT t.tid, t.sciname, ts.parenttid, t.rankid '.
-				'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-				'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (t.tid IN('.implode(',',$this->hierarchyArr).')) '.
-				'ORDER BY t.rankid, t.sciname ';
-			//echo $sql;
-			$rs = $this->conn->query($sql);
-			$nonRanked = array();
-			while($r = $rs->fetch_object()){
-				if($r->rankid){
-					$retArr[$r->tid] = $r->sciname;
-				}
-				else{
-					$nonRanked[$r->parenttid]['name'] = $r->sciname;
-					$nonRanked[$r->parenttid]['tid'] = $r->tid;
-				}
-				if($nonRanked && array_key_exists($r->tid,$nonRanked)){
-					$retArr[$nonRanked[$r->tid]['tid']] = $nonRanked[$r->tid]['name'];
-				}
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
-	public function getChildren(){
-		$retArr = array();
-		$sql = 'SELECT t.tid, t.sciname, t.author, a.tid AS accTid, a.sciname AS accSciname, a.author AS accAuthor '.
-			'FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid '.
-			'INNER JOIN taxa a ON ts.tidaccepted = a.tid '.
-			'WHERE (ts.taxauthid = '.$this->taxAuthId.') AND (ts.parenttid = '.$this->tid.')';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->tid]['sciname'] = $r->sciname;
-			$retArr[$r->tid]['author'] = $r->author;
-			$retArr[$r->tid]['accTid'] = $r->accTid;
-			$retArr[$r->tid]['accSciname'] = $r->accSciname;
-			$retArr[$r->tid]['accAuthor'] = $r->accAuthor;
-		}
-		$rs->free();
-		asort($retArr);
-		return $retArr;
-	}
-
-	public function hasAcceptedChildren(){
-		$bool = false;
-		$sql = 'SELECT tid FROM taxstatus WHERE (taxauthid = '.$this->taxAuthId.') AND (parenttid = '.$this->tid.') AND (tid = tidaccepted) LIMIT 1';
-		$rs = $this->conn->query($sql);
-		if($rs->num_rows) $bool = true;
-		$rs->free();
-		return $bool;
 	}
 }
 ?>

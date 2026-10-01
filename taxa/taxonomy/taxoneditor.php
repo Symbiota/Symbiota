@@ -27,7 +27,9 @@ if ($isEditor) {
 	if (array_key_exists('taxonedits', $_POST)) {
 		$statusStr = $taxonEditorObj->submitTaxonEdits($_POST);
 	} elseif ($submitAction == 'updatetaxstatus') {
-		$statusStr = $taxonEditorObj->submitTaxStatusEdits($_POST['parenttid'], $_POST['tidaccepted']);
+		if(!$taxonEditorObj->submitTaxStatusEdits($_POST['parenttid'], $_POST['tidaccepted'])){
+			$statusStr = $taxonEditorObj->getErrorMessage();
+		}
 	} elseif (array_key_exists("synonymedits", $_REQUEST)) {
 		$statusStr = $taxonEditorObj->submitSynonymEdits($_POST['tidsyn'], $tid, $_POST['unacceptabilityreason'], $_POST['notes'], $_POST['sortsequence']);
 	} elseif ($submitAction == 'linkToAccepted') {
@@ -65,13 +67,13 @@ if ($isEditor) {
 			header('Location: taxonomydisplay.php?statusstr=' . $statusStr);
 		} else $statusStr = $taxonEditorObj->getErrorMessage();
 	}
-	$taxonEditorObj->setTaxon();
+	$TaxonExists = $taxonEditorObj->setTaxon();
 }
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?= $DEFAULT_TITLE . " " . $LANG['TAX_EDITOR'] . ": " . $tid ?></title>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['TAXONOMY_EDITOR'] . ': ' . $tid ?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>" />
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
@@ -81,8 +83,8 @@ if ($isEditor) {
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script>
-		var tid = <?php echo $taxonEditorObj->getTid() ?>;
-		var tabIndex = <?php echo $tabIndex ?>;
+		var tid = <?= $taxonEditorObj->getTid() ?>;
+		var tabIndex = <?= $tabIndex ?>;
 
 	    document.addEventListener('DOMContentLoaded', () => {
 
@@ -189,37 +191,26 @@ if ($isEditor) {
 		.editfield { float: left; margin-left: 5px; }
 		.tsedit { float: left; margin-left: 5px; }
 		.headingDiv { font-size: 110%; font-weight: bold; padding-top: 10px; }
-		.taxonDiv { font-size: 1.125rem; margin-top: 15px; margin-left: 10px; }
-		.taxonDiv a { color: #990000; font-weight: bold; font-style: italic; }
-		.taxonDiv img { border: 0px; margin: 0px; height: 15px; }
+		.icon-img { border:0px; width:1.3em; }
+		.taxon-header { display: flex; justify-content: space-between; align-items: flex-end; }
+		.taxon-header h2 { margin: 5px 0px; }
+		.taxon-header-icons { display: flex; align-items: flex-end; gap: 10px; }
 	</style>
 </head>
 <body>
 	<?php
+	include($SERVER_ROOT . '/includes/header.php');
 	$jsLangFile = $CLIENT_ROOT . '/js/symb/' . $LANG_TAG . '.js';
 	if(!file_exists($jsLangFile)) $jsLangFile = $CLIENT_ROOT . '/js/symb/en.js';
 	?>
 	<script src="<?= $jsLangFile ?>" type="text/javascript"></script>
-	<?php
-	$displayLeftMenu = (isset($taxa_admin_taxonomyeditorMenu) ? $taxa_admin_taxonomyeditorMenu : "true");
-	include($SERVER_ROOT . '/includes/header.php');
-	?>
 	<div class="navpath">
 		<a href="../../index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 		<a href="taxonomydisplay.php"><?= $LANG['TAX_TREE_VIEW'] ?></a> &gt;&gt;
 		<b><?= $LANG['TAXONOMY_EDITOR'] ?></b>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading">
-			<?php
-			$splitSciname = $taxonEditorObj->splitSciname();
-			$author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
-			$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
-			$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
-			$nonItalicizedScinameComponent = $author . $cultivarEpithet . $tradeName;
-			echo $LANG['TAX_EDITOR'] . ': <i>' . Sanitize::outString($splitSciname['base']) . '</i> ' . Sanitize::outString($nonItalicizedScinameComponent) . ' [' . $taxonEditorObj->getTid() . ']';
-			?>
-		</h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['TAXONOMY_EDITOR'] ?></h1>
 		<?php
 		if ($statusStr) {
 			?>
@@ -230,27 +221,32 @@ if ($isEditor) {
 			<hr />
 			<?php
 		}
-		if ($isEditor && $tid) {
+
+		if ($isEditor && $TaxonExists) {
+			$splitSciname = $taxonEditorObj->splitSciname();
+			$author = !empty($splitSciname['author']) ? ($splitSciname['author'] . ' ') : '';
+			$cultivarEpithet = !empty($splitSciname['cultivarEpithet']) ? ($taxonEditorObj->standardizeCultivarEpithet($splitSciname['cultivarEpithet'])) . ' ' : '';
+			$tradeName = !empty($splitSciname['tradeName']) ? ($taxonEditorObj->standardizeTradeName($splitSciname['tradeName']) . ' ') : '';
+			$nonItalicizedScinameComponent = Sanitize::outString($author . $cultivarEpithet . $tradeName);
+			$baseName = Sanitize::outString($splitSciname['base']);
+
 			$hierarchyArr = $taxonEditorObj->getHierarchyArr();
 			?>
-			<div style="float:right;" title="<?= $LANG['GO_TAX_DISPLAY'] ?>">
-				<a href="taxonomydisplay.php?target=<?= Sanitize::outString($taxonEditorObj->getUnitName1()) ?>&showsynonyms=1">
-					<img style='border:0px;width:1.3em;' src='../../images/toparent.png' />
-				</a>
+			<div class="taxon-header">
+				<h2><i><?= $baseName ?></i> <?= $nonItalicizedScinameComponent ?> [<?= $taxonEditorObj->getTid() ?>]</h2>
+				<div class="taxon-header-icons">
+					<span title="<?= $LANG['GO_TAX_DISPLAY'] ?>">
+						<a href="taxonomydisplay.php?target=<?= Sanitize::outString($taxonEditorObj->getUnitName1()) ?>&showsynonyms=1"><img class="icon-img" src="../../images/toparent.png"></a>
+					</span>
+					<span title="<?= $LANG['ADD_NEW_TAXON'] ?>">
+						<a href="taxonomyloader.php"><img class="icon-img" src="../../images/add.png"></a>
+					</span>
+					<span title="<?= $LANG['VIEW_TP_EDITOR'] ?>">
+						<a href="../profile/tpeditor.php?tid=<?= $taxonEditorObj->getTid() ?>"><img class="icon-img" src="../../images/editsquare.png" ></a>
+					</span>
+				</div>
 			</div>
-			<div style="float:right;" title="<?= $LANG['ADD_NEW_TAXON'] ?>">
-				<a href="taxonomyloader.php">
-					<img style='border:0px;width:1.3em;' src='../../images/add.png' />
-				</a>
-			</div>
-			<h1>
-				<?php
-				echo "<div class='taxonDiv'><a href='../profile/tpeditor.php?tid=" . $taxonEditorObj->getTid() . "'>";
-				echo "View Taxon Profile Editor";
-				echo "</a></div>";
-				?>
-			</h1>
-			<div id="tabs" class="taxondisplaydiv">
+			<div id="tabs" class="taxondisplaydiv" style="clear:both">
 				<ul>
 					<li><a href="#editorDiv"><?= $LANG['EDITOR'] ?></a></li>
 					<li><a href="#taxonstatusdiv"><?= $LANG['TAX_STATUS'] ?></a></li>
@@ -484,19 +480,16 @@ if ($isEditor) {
 								<a href="#" onclick="toggle('tsedit');return false;"><img style='width:1.3em;border:0px;' src='../../images/edit.png' /></a>
 							</div>
 							<div style="float:left">
-								<form name="taxstatusform" action="taxoneditor.php" method="post" onsubmit="return validateTaxStatusForm(this)">
-									<?php
-									if ($taxonEditorObj->getRankId() > 140 && $taxonEditorObj->getFamily()) {
-										?>
-										<div class="editDiv">
-											<div class="editLabel"><?= $LANG['FAMILY'] ?>: </div>
-											<div class="tsedit">
-												<?= Sanitize::outString($taxonEditorObj->getFamily()) ?>
-											</div>
-										</div>
-										<?php
-									}
+								<?php
+								if ($taxonEditorObj->getRankId() > 140 && $taxonEditorObj->getFamily()) {
 									?>
+									<div class="editDiv" style="margin-bottom: 3px">
+										<b><?= $LANG['FAMILY'] ?>:</b> <?= Sanitize::outString($taxonEditorObj->getFamily()) ?>
+									</div>
+									<?php
+								}
+								?>
+								<form name="taxstatusform" action="taxoneditor.php" method="post" onsubmit="return validateTaxStatusForm(this)">
 									<div class="editDiv">
 										<div class="editLabel"><?= $LANG['PARENT_TAXON'] ?>: </div>
 										<div class="tsedit">
@@ -516,8 +509,7 @@ if ($isEditor) {
 										?>
 										<input type="hidden" name="tidaccepted" value="<?= ($taxonEditorObj->getIsAccepted() == 1 ? $taxonEditorObj->getTid() : $aStr) ?>" />
 										<input type="hidden" name="tabindex" value="1" />
-										<input type="hidden" name="submitaction" value="updatetaxstatus" />
-										<button type="submit" name="taxstatuseditsubmit"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
+										<button type="submit" name="submitaction" value="updatetaxstatus"><?= $LANG['SUBMIT_UPPER_EDITS'] ?></button>
 									</div>
 								</form>
 							</div>
@@ -739,10 +731,8 @@ if ($isEditor) {
 			</div>
 			<?php
 		} else {
-			if (!$tid) {
-				if ($statusStr != 'SUCCESS: taxon deleted!') {
-					echo "<div>" . $LANG['TARGET_TAXON_MISSING'] . "</div>";
-				}
+			if (!$TaxonExists) {
+				echo '<div>' . $LANG['TARGET_TAXON_MISSING'] . '</div>';
 			} else {
 				?>
 				<div style="margin:30px;font-weight:bold;font-size:120%;">

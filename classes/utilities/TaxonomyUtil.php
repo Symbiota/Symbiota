@@ -5,6 +5,9 @@ include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 class TaxonomyUtil {
 
 	use TaxonomyTrait;
+
+	public static $errorMessage = '';
+
 	/*
 	 * INPUT: String representing a verbatim scientific name
 	 *        Name may have imbedded authors, cf, aff, hybrid
@@ -300,18 +303,59 @@ class TaxonomyUtil {
 	}
 
 	//Taxonomic indexing functions
-	public static function rebuildHierarchyEnumTree($conn = null){
+	public static function resetParentLookupFields($conn = null, $taxAuthId = 1){
+		//Update Kingdom quick lookup field
+		$sqlKingdom = 'UPDATE taxa t INNER JOIN taxaenumtree e ON t.tid = e.tid
+			INNER JOIN taxa p ON e.parentTid = p.tid
+			SET t.kingdomName =  p.sciname
+			WHERE e.taxAuthID = ? AND p.rankid = 10 AND t.kingdomName != p.sciname';
+		if($stmt = $conn->prepare($sqlKingdom)){
+			$stmt->bind_param('i', $taxAuthId);
+			$stmt->execute();
+			$stmt->close();
+		}
+
+		//Update family quick lookup field
+		$sqlFamily = 'UPDATE taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
+			INNER JOIN taxaenumtree e ON t.tid = e.tid
+			INNER JOIN taxa p ON e.parentTid = p.tid
+			SET ts.family = p.sciname
+			WHERE ts.taxAuthID = ? AND e.taxAuthID = ? AND p.rankid = 140 AND ts.family != p.sciname';
+		if($stmt = $conn->prepare($sqlFamily)){
+			$stmt->bind_param('ii', $taxAuthId, $taxAuthId);
+			$stmt->execute();
+			$stmt->close();
+		}
+	}
+
+	public static function rebuildHierarchyEnumTree($conn = null, $taxAuthId = 1, $targetTid = 0){
 		$status = true;
 		if(!$conn) $conn = MySQLiConnectionFactory::getCon('write');
 		if($conn){
-			if($conn->query('DELETE FROM taxaenumtree')){
-				self::buildHierarchyEnumTree($conn);
+			if($targetTid){
+				$sql = 'DELETE FROM taxaenumtree WHERE tid = ?';
+				if($stmt = $conn->prepare($sql)){
+					$stmt->bind_param('i', $targetTid);
+					$stmt->execute();
+					$stmt->close();
+				}
+				//Delete hierarchy of children
+				$sql = 'DELETE e.* FROM taxaenumtree e INNER JOIN taxaenumtree p ON e.tid = p.tid WHERE p.parentTid = ?';
+				if($stmt = $conn->prepare($sql)){
+					$stmt->bind_param('i', $targetTid);
+					$stmt->execute();
+					$stmt->close();
+				}
 			}
 			else{
-				$status = 'ERROR deleting taxaenumtree prior to re-populating: '.$conn->error;
+				$conn->query('TRUNCATE TABLE taxaenumtree');
 			}
+			self::buildHierarchyEnumTree($conn, $taxAuthId);
 		}
-		else $status = 'ERROR deleting taxaenumtree prior to re-populating: NULL connection object';
+		else{
+			$status = false;
+			self::$errorMessage = 'ERROR deleting taxaenumtree prior to re-populating: NULL connection object';
+		}
 		return $status;
 	}
 
@@ -321,39 +365,60 @@ class TaxonomyUtil {
 		if(!$conn) $conn = MySQLiConnectionFactory::getCon('write');
 		if($conn){
 			//Seed taxaenumtree table
-			$sql = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+			$sql = 'INSERT INTO taxaenumtree(tid, parenttid, taxauthid)
+				SELECT DISTINCT tid, parenttid, taxauthid
+				FROM taxstatus
+				WHERE (taxauthid = ?) AND tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = ?)';
+			if($stmt = $conn->prepare($sql)){
+				$stmt->bind_param('ii', $taxAuthId, $taxAuthId);
+				$stmt->execute();
+				if($stmt->error){
+					$status = false;
+					self::$errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
+			//Set direct parents for all taxa
+			$sql2 = 'INSERT INTO taxaenumtree(tid, parenttid, taxauthid)
 				SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
-				FROM taxstatus ts
-				WHERE (ts.taxauthid = '.$taxAuthId.') AND ts.tid NOT IN(SELECT tid FROM taxaenumtree WHERE taxauthid = '.$taxAuthId.')';
-			if($conn->query($sql)){
-				//Set direct parents for all taxa
-				$sql2 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
-					SELECT DISTINCT ts.tid, ts.parenttid, ts.taxauthid
-					FROM taxstatus ts LEFT JOIN taxaenumtree e ON ts.tid = e.tid AND ts.parenttid = e.parenttid AND ts.taxauthid = e.taxauthid
-					WHERE (ts.taxauthid = '.$taxAuthId.') AND (e.tid IS NULL)';
-				if(!$conn->query($sql2)) $status = 'ERROR setting direct parents within taxaenumtree: '.$conn->error;
+				FROM taxstatus ts LEFT JOIN taxaenumtree e ON ts.tid = e.tid AND ts.parenttid = e.parenttid AND ts.taxauthid = e.taxauthid
+				WHERE (ts.taxauthid = ?) AND (e.tid IS NULL)';
+			if($stmt = $conn->prepare($sql2)){
+				$stmt->bind_param('i', $taxAuthId);
+				$stmt->execute();
+				if($stmt->error){
+					$status = false;
+					self::$errorMessage = $stmt->error;
+				}
+				$stmt->close();
+			}
 
-				//Continue adding more distint parents
-				$sql3 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
-					SELECT DISTINCT e.tid, ts.parenttid, ts.taxauthid
-					FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid AND e.taxauthid = ts.taxauthid
-					LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid AND e.taxauthid = e2.taxauthid
-					WHERE (ts.taxauthid = '.$taxAuthId.') AND (e2.tid IS NULL)';
-				$cnt = 0;
+			//Continue adding more distint parents
+			$sql3 = 'INSERT INTO taxaenumtree(tid,parenttid,taxauthid)
+				SELECT DISTINCT e.tid, ts.parenttid, ts.taxauthid
+				FROM taxaenumtree e INNER JOIN taxstatus ts ON e.parenttid = ts.tid AND e.taxauthid = ts.taxauthid
+				LEFT JOIN taxaenumtree e2 ON e.tid = e2.tid AND ts.parenttid = e2.parenttid AND e.taxauthid = e2.taxauthid
+				WHERE (ts.taxauthid = ?) AND (e2.tid IS NULL)';
+			$cnt = 0;
+			if($stmt = $conn->prepare($sql3)){
+				$stmt->bind_param('i', $taxAuthId);
 				do{
-					if(!$conn->query($sql3)){
-						$status = 'ERROR building taxaenumtree: '.$conn->error;
+					$stmt->execute();
+					if($stmt->error){
+						$status = false;
+						self::$errorMessage = $stmt->error;
 						break;
 					}
-					if(!$conn->affected_rows) break;
+					if(!$stmt->affected_rows) break;
 					$cnt++;
 				}while($cnt < 30);
-			}
-			else{
-				$status = 'ERROR seeding taxaenumtree: '.$conn->error;
+				$stmt->close();
 			}
 		}
-		else $status = 'ERROR re-populating taxaenumtree: NULL connection object';
+		else{
+			$status = false;
+			self::$errorMessage = 'ERROR re-populating taxaenumtree: NULL connection object';
+		}
 		return $status;
 	}
 

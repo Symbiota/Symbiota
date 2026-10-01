@@ -2,11 +2,9 @@
 /*
 ------------------
 Language: Français (French)
-Translated by: Google Translate
-Translation date: 2024-10-16
+Translated by: Google Translate (2024-10-16)
 ------------------
 */
-
 include_once($SERVER_ROOT.'/content/lang/taxa/taxonomy/taxoneditor.'.$LANG_TAG.'.php');
 
 $LANG['TAXON_LOADER'] = 'Chargeur de taxons';
@@ -28,5 +26,4 @@ $LANG['INFRA_EPITHET_FIELD'] = "Champ d'épithète infraspécifique";
 $LANG['RANK_FIELD'] = 'Champ de rang';
 $LANG['RUN_QUICK_PARSE'] = 'Analyser';
 $LANG['REQUIRED'] = "* = Champ Obligatoire";
-
 ?>
