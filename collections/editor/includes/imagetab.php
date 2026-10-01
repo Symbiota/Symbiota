@@ -215,10 +215,11 @@ $creatorArray = Media::getCreatorArray(false);
 									}
 									if($origUrl && substr($origUrl, 0, 1) == '/'){
 										$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
+										$displayUrl = $origUrl;
 									}
 									if($tnUrl && substr($tnUrl, 0, 1) == '/'){
 										$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
-										$imgUrl = $tnUrl;
+										$displayUrl = $tnUrl;
 									}
 								}
 								echo '<a href="' . $imgUrl . '" target="_blank">';
