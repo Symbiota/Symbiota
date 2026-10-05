@@ -12,9 +12,9 @@ if(!$SYMB_UID) header('Location: ../../../profile/index.php?refurl=../ident/admi
 
 $langId = array_key_exists('langid',$_REQUEST) ? $_REQUEST['langid'] : '';
 
-$charManager = new OccurrenceTraitAdmin();
+$traitManager = new OccurrenceTraitAdmin();
 
-$traitList = $charManager->getTraitArr();
+$traitList = $traitManager->getTraitArr();
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
@@ -45,9 +45,9 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	</div>
 	<div role="main" id="innertext">
 		<div style="float: right;">
-			<a href="#" onclick="toggle('addtraitdiv');">
-				<img class="icon-img" src="../../../images/add.png" alt="<?= $LANG['ADD_BTN'] ?>" />
-			</a>
+			<button type="button" class="clear-icon-button" onclick="toggle('addtraitdiv');" title="<?= $LANG['ADD_BTN'] ?>">
+				<img class="icon-img" src="../../../images/add.png" />
+			</button>
 		</div>
 		<h1 class="page-heading">Occurrence Traits</h1>
 		<?php

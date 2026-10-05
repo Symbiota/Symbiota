@@ -62,6 +62,13 @@ if($formSubmit && $isEditor){
 			$statusStr = $LANG['ERROR_DELETE_TAXON'] . $traitManager->getErrorMessage();
 		}
 	}
+	elseif($formSubmit == 'addDependency'){
+		$traitManager->insertTraitStateDep($_POST);
+	}
+	else if($formSubmite =- 'deleteDependency') {
+
+	}
+		
 }
 
 if(!$traitID) header('Location: index.php');
@@ -173,6 +180,7 @@ if(!$traitID) header('Location: index.php');
 				<hr/>
 				<?php
 			}
+			$traitList = $traitManager->getTraitArr();
 			$traitArr = $traitManager->getTraitArrById();
 			$traitStateArr = $traitManager->getTraitStateArr();
 			?>
@@ -329,8 +337,8 @@ if(!$traitID) header('Location: index.php');
 												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<div style="padding-top:4px;">
-												<label for="refurl">Reference URL</label><br />
-												<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($stateArr['refUrl']) ?>" />
+												<label for="refurl-<?= $stateID ?>">Reference URL</label><br />
+												<input type="text" id="refurl-<?= $stateID ?>" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($stateArr['refUrl']) ?>" />
 												<?php
 												if($stateArr['refUrl'] && substr($stateArr['refUrl'],0,4) == 'http'){
 													echo '<a href="' . Sanitize::outString($stateArr['refUrl']) . '" target="_blank"><img src="../../../images/link2.png" class="icon-img" ></a>';
@@ -345,26 +353,42 @@ if(!$traitID) header('Location: index.php');
 												<label for="sortseq-<?= $stateID ?>">Sort Sequence</label><br />
 												<input type="number" id="sortseq-<?= $stateID ?>" name="sortseq" style="width:80px;" value="<?= Sanitize::outString($stateArr['sortseq']) ?>" />
 											</div>
-											<?php 
-												$stateDepArr = $traitManager->getStateDepArr($stateID);
-												if($stateDepArr){
-											?>
-												<div>
-													<fieldset>
-													<legend>Dependencies (Trait and States that Appear when this Trait is Selected):</legend>
+											<div>
+												<fieldset>
+													<button type="button" class="clear-icon-button" style="float:right;" onclick="toggle('newdepform-<?= $stateID ?>');" title="Add New Dependency">
+														<img src="../../../images/add.png" class="icon-img"/>			
+													</button>
+													<div id="newdepform-<?= $stateID ?>" style="display:none;">
+														<form>
+															<select name="traitID">
+																<?php 
+																# dependnency name="traitID" needs to be different from a state's name="traitid"
+																foreach ($traitList as $trait) {
+																	echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
+																}
+																?>
+															</select>
+															<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
+															<button name="formsubmit" type="submit" value="addDependency">Save</button>
+														</form>
+													</div>
+													<legend>Dependencies (Trait and their States that Appear when this Trait is Selected):</legend>
 													<?php
-														echo '<ul>';
-														foreach ($stateDepArr as $dependency){
-															$trait = $traitManager->getTraitArrById2($dependency['traitid']);
-															echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
+													$stateDepArr = $traitManager->getStateDepArr($stateID);
+														if($stateDepArr){
+															echo '<ul>';
+															foreach ($stateDepArr as $dependency){
+																$trait = $traitManager->getTraitArrById2($dependency['traitID']);
+																echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
+															}
+															echo '</ul>';
 														}
-													echo '</ul>';
+														else {
+															echo 'No dependencies.';
+														}
 													?>
-													</fieldset>
-												</div>
-											<?php
-											}
-											?>
+												</fieldset>
+											</div>
 											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />

@@ -190,7 +190,7 @@ class OmOccurrenceTraits extends DataCore{
 	//tmtraitdependencies functions
 
 	public function setTraitStateDepMap() {
-		$this->fieldMap = array('traitid' => 'pk', 'parentstateid' => 'pk');
+		$this->fieldMap = array('traitID' => 'pk', 'parentstateid' => 'pk');
 	}
 
 	public function getStateDepArr($stateID){
@@ -204,6 +204,11 @@ class OmOccurrenceTraits extends DataCore{
 		$pkArr = array('traitID' => $traitID);
 		$traitArr = $this->getRecordArr('tmtraits', $pkArr);
 		return $traitArr[$traitID];
+	}
+
+	public function insertTraitStateDep($inputArr){
+		$this->setTraitStateDepMap();
+		return $this->insertRecord('tmtraitdependencies', $inputArr);
 	}
 
 	//tmtraittaxalink functions
