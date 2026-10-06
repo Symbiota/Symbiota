@@ -290,14 +290,13 @@ class ImageShared {
 		if (strlen($fName) > 30) {
 			$fName = substr($fName, 0, 30);
 		}
-		$fName .= '_' . time();
 		//Test to see if target images exist (can happen batch loading images with similar names)
 		if ($this->targetPath) {
 			//Check and see if file already exists, if so, rename filename until it has a unique name
 			$tempFileName = $fName;
 			$cnt = 0;
 			while (file_exists($this->targetPath . $tempFileName . '_tn.jpg')) {
-				$tempFileName = $fName . '_' . $cnt;
+				$tempFileName = $fName . '_' . time();
 				$cnt++;
 			}
 			if ($cnt) $fName = $tempFileName;
@@ -581,7 +580,7 @@ class ImageShared {
 		$urlBase = $this->urlBase;
 		//If central images are on remote server and new ones stored locally, then we need to use full domain
 		//e.g. this portal is sister portal to central portal
-		if ($GLOBALS['MEDIA_DOMAIN']) $urlBase = $this->getDomainUrl() . $urlBase;
+		//if ($GLOBALS['MEDIA_DOMAIN']) $urlBase = $this->getDomainUrl() . $urlBase;
 		return $urlBase;
 	}
 
