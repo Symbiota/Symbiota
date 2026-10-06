@@ -6,6 +6,6 @@ const common = {
         <p><a href="${content.donate_url}" target="_blank" onclick="setDonateCookie(60*60*24*31);">Merci de soutenir ce portail en faisant un don au SSH.</a> Cela aide chacune des collections qui partagent leurs données ici.</p>
         <p>Merci beaucoup.<br>-${content.domain}, Nico, Ed, Jenn, Katie, Greg</p>`,
     close: 'Fermer',
-    donate: 'Donner',
+    ask: 'Donner',
     more_ways: ' D\'autres Façons de Soutenir le Portail'
 };
