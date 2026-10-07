@@ -82,7 +82,8 @@ $clArr = $occurManager->getUserChecklists();
 	<title><?= $DEFAULT_TITLE . ' ' . $LANG['OBS_SUBMIT'] ?></title>
 	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/javascript_lang_tags.php');
 	?>
 	<style>
 		.imgSubmitDiv{ padding:10px; width:700px; border:1px solid grey; background-color:#F5F5F5; }

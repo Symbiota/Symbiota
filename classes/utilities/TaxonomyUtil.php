@@ -320,7 +320,7 @@ class TaxonomyUtil {
 			INNER JOIN taxaenumtree e ON t.tid = e.tid
 			INNER JOIN taxa p ON e.parentTid = p.tid
 			SET ts.family = p.sciname
-			WHERE ts.taxAuthID = ? AND e.taxAuthID = ? AND p.rankid = 140 AND ts.family != p.sciname';
+			WHERE ts.taxAuthID = ? AND e.taxAuthID = ? AND p.rankid = 140 AND (ts.family IS NULL OR ts.family != p.sciname)';
 		if($stmt = $conn->prepare($sqlFamily)){
 			$stmt->bind_param('ii', $taxAuthId, $taxAuthId);
 			$stmt->execute();

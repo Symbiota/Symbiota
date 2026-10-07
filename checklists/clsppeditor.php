@@ -64,57 +64,54 @@ $clArray = $vManager->getChecklistData();
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 	<head>
-		<title><?= $LANG['SPEC_DETAILS'] . ': ' . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . ' ' . $LANG['OF'] . ' ' . $vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']; ?></title>
-		<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+		<title><?= $LANG['SPEC_DETAILS'] . ': ' . $vManager->getTaxonName() . ' ' . $LANG['OF'] . ' ' . $vManager->getClName() ?></title>
+		<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 		<?php
-		include_once($SERVER_ROOT.'/includes/head.php');
+		include_once($SERVER_ROOT . '/includes/head.php');
 		?>
-		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script type="text/javascript" src="../js/symb/shared.js?ver=140107"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 		<script type="text/javascript">
-
 			$(document).ready(function() {
-				$("#renamesciname").autocomplete({
-					source: function( request, response ) {
-						$.getJSON( "rpc/speciessuggest.php", { term: request.term }, response );
-					},
-					minLength: 3,
-					autoFocus: true,
-					select: function( event, ui ) {
-						if(ui.item){
-							$( "#renamesciname" ).val(ui.item.value);
-							$( "#renametid" ).val(ui.item.id);
-						}
-					},
-					change: function( event, ui ) {
-						if(ui.item === null) {
-							$( "#renametid" ).val("");
-							if($( "#renamesciname" ).val() != ""){
-								alert('<?= $LANG['SELECT_TAXON'] ?>');
-								f.renamesciname.focus();
-							}
-						}
-					}
-				});
 
 				$('#tabs').tabs({
-					active: <?= $tabIndex; ?>
+					active: <?= $tabIndex ?>
 				});
+
+				const taxonRename = document.querySelector("#renamesciname");
+				if(taxonRename){
+					taxonRename.addEventListener("focus", (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+						taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+						taxaSuggest.initiate("renamesciname", function(result){
+							if(result.valid) {
+								$( "#renametid" ).val(result.item.id);
+							}
+							else{
+								$( "#renametid" ).val("");
+								if(this.value != ""){
+									alert("<?= $LANG['SELECT_TAXON'] ?>");
+								}
+							}
+						});
+					});
+				}
 
 			});
 
 			function validateRenameForm(f){
-				if (f.renamesciname.value !== "" && f.renametid.value !== ""){
-					f.submit();
-				}
-				else if(f.renamesciname.value == ""){
-					alert("<?= $LANG['NAME_BLANK']; ?>");
-				}
-				else {
+				if (f.renamesciname.value != "" && f.renametid.value == ""){
 					alert('<?= $LANG['SELECT_TAXON'] ?>');
+					return false
 				}
-				f.renamesciname.focus();
-				return false;
+				if(f.renametid.value == <?= $tid ?>){
+					alert("<?= $LANG['CANT_MERGE_SELF'] ?>");
+					return false;
+				}
+				return true;
 			}
 
 			function openPopup(urlStr,windowName){
@@ -127,7 +124,6 @@ $clArray = $vManager->getChecklistData();
 				self.close();
 			}
 		</script>
-		<script type="text/javascript" src="../js/symb/shared.js?ver=140107"></script>
 		<style>
 			body{ background-color: #FFFFFF; }
 			.edit-icon{ width: 1em; margin: 0em; }
@@ -138,19 +134,19 @@ $clArray = $vManager->getChecklistData();
 		<a class="screen-reader-only" href="#popup-innertext"><?= $LANG['SKIP_NAV'] ?></a>
 		<!-- This is inner text! -->
 		<div id='popup-innertext'>
-			<h1 class="page-heading"><?= '<i>' . ($vManager->getTaxonName() ?? $LANG['UNKNOWN_TAXON']) . '</i> ' . $LANG['IN'] . ' ' . ($vManager->getClName() ?? $LANG['UNKNOWN_COLLECTION']); ?></h1>
 			<?php
-			if($statusStr){
-				?>
-				<hr />
-				<div style='color:red;font-weight:bold;'>
-					<?= $statusStr;?>
-				</div>
-				<hr />
-				<?php
-			}
 			if($isEditor && $clArray){
+				if($statusStr){
+					?>
+					<hr />
+					<div style='color:red;font-weight:bold;'>
+						<?= $statusStr;?>
+					</div>
+					<hr />
+					<?php
+				}
 				?>
+				<h1 class="page-heading"><?= $vManager->getTaxonFormatted() . ' ' . $LANG['IN'] . ' ' . $vManager->getClName() ?></h1>
 				<div id="tabs" style="margin:10px;">
 					<nav>
 				    <ul>
@@ -168,7 +164,7 @@ $clArray = $vManager->getChecklistData();
 				   			<div style="clear:both;margin:3px;">
 									<label><?= $LANG['HABITAT'] ?>:</label>
 									<div style="float:left;">
-										<input name='habitat' type='text' value="<?= $clArray['habitat'] ?>" size='70' maxlength='250' aria-label="<?= $LANG['HABITAT']; ?>" />
+										<input name='habitat' type='text' value="<?= $clArray['habitat'] ?>" size='70' maxlength='250' aria-label="<?= $LANG['HABITAT'] ?>" />
 									</div>
 								</div>
 								<div style='clear:both;margin:3px;'>
@@ -203,7 +199,6 @@ $clArray = $vManager->getChecklistData();
 								</div>
 								<div style='clear:both;margin:3px;'>
 									<input name='tid' type="hidden" value="<?= $vManager->getTid() ?>" />
-									<input name='taxon' type="hidden" value="<?= $vManager->getTaxonName() ?>" />
 									<input name='clid' type="hidden" value="<?= $vManager->getClid() ?>" />
 									<input name='clname' type="hidden" value="<?= $vManager->getClName() ?>" />
 									<button type="submit" name="action" value="editChecklist"><?= $LANG['SUBMIT_EDITS'] ?></button>
@@ -217,7 +212,7 @@ $clArray = $vManager->getChecklistData();
 								<div style='margin-top:2px;'>
 									<label><?= $LANG['TARGET_TAXON'] ?>:</label>
 									<div style='float:left;'>
-										<input id="renamesciname" name='renamesciname' type="text" size="50" aria-label="<?= $LANG['OVERRIDE']; ?>" />
+										<input id="renamesciname" name='renamesciname' type="text" size="50" aria-label="<?= $LANG['OVERRIDE'] ?>" required />
 										<input id="renametid" name="renametid" type="hidden" value="" />
 									</div>
 								</div>
@@ -229,8 +224,7 @@ $clArray = $vManager->getChecklistData();
 									<input name="clid" type="hidden" value="<?= $vManager->getClid(); ?>" />
 									<input name="cltype" type="hidden" value="<?= $clArray['cltype']; ?>" />
 									<input name="locality" type="hidden" value="<?= $clArray['locality']; ?>" />
-									<input name="action" type="hidden" value="remapTaxon" />
-									<button type="submit" name="submitaction"><?= $LANG['RENAME']; ?></button>
+									<button type="submit" name="action" value="remapTaxon"><?= $LANG['RENAME']; ?></button>
 								</div>
 							</fieldset>
 						</form>
@@ -251,7 +245,7 @@ $clArray = $vManager->getChecklistData();
 						if($OCCURRENCE_MOD_IS_ACTIVE){
 							?>
 							<div style="float:right;margin-top:10px;">
-								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?= urlencode(htmlspecialchars($vManager->getTaxonName(), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE)) . "&targetclid=" . $vManager->getClid() . "&targettid=" . $tid; ?>">
+								<a href="../collections/list.php?mode=voucher&db=all&usethes=1&reset=1&taxa=<?= urlencode($vManager->getTaxonName()) . "&targetclid=" . $vManager->getClid() . "&targettid=" . $tid ?>">
 									<img src="../images/link.png" alt="<?= $LANG['TO_COLLECTIONS_LINK']; ?>" style="border:0px;" />
 								</a>
 							</div>

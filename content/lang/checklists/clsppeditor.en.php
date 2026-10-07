@@ -5,9 +5,9 @@ Language: English
 ------------------
 */
 
+
 $LANG['SPEC_DETAILS'] = 'Species Details';
 $LANG['OF'] = 'of';
-$LANG['NAME_BLANK'] = 'Scientific name field is blank';
 $LANG['GEN_EDIT'] = 'General Editing';
 $LANG['VOUCHER_EDIT'] = 'Voucher Admin';
 $LANG['EDIT_CHECKLIST'] = 'Edit Checklist Information';
@@ -39,11 +39,9 @@ $LANG['RENAME_SCI_NAME'] = 'Rename Scientific Name';
 $LANG['LINK_ICON'] = 'Link Icon';
 
 $LANG['REMOVE_TAXON'] = 'Remove Taxon From Checklist';
-$LANG['UNKNOWN_TAXON'] = 'Unknown Taxon';
-$LANG['UNKNOWN_COLLECTION'] = 'Unknown Collection';
 $LANG['SKIP_NAV'] = 'Skip Navigation';
 $LANG['REMOVE'] = 'Remove';
 $LANG['TO_COLLECTIONS_LINK'] = 'Link to target collections and taxa';
 $LANG['SELECT_TAXON'] = 'Please select a taxon from the list';
-
+$LANG['CANT_MERGE_SELF'] = 'You cannot merge with self. Please select another taxon';
 ?>

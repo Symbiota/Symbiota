@@ -2,14 +2,12 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-08-05
+Translated by: Samanta Orellana (2021-08-05)
 ------------------
 */
 
 $LANG['SPEC_DETAILS'] = 'Detalles de la Especie';
 $LANG['OF'] = 'de';
-$LANG['NAME_BLANK'] = 'El campo de nombre científico está vacío';
 $LANG['GEN_EDIT'] = 'Edición General';
 $LANG['VOUCHER_EDIT'] = 'Administración de Vouchers';
 $LANG['EDIT_CHECKLIST'] = 'Editar Información del Listado de Especies';
@@ -41,9 +39,9 @@ $LANG['RENAME_SCI_NAME'] = 'Cambiar Nombre del Nombre Científico';
 $LANG['LINK_ICON'] = 'Icono de Enlace';
 
 $LANG['REMOVE_TAXON'] = 'Eliminar Taxón de la Lista de Verificación';
-$LANG['UNKNOWN_TAXON'] = 'Taxón Desconocido';
-$LANG['UNKNOWN_COLLECTION'] = 'Colección Desconocida';
+$LANG['SKIP_NAV'] = 'Saltar navegación';
 $LANG['REMOVE'] = 'Eliminar';
 $LANG['TO_COLLECTIONS_LINK'] = 'Enlace a colecciones y taxones objetivo';
 $LANG['SELECT_TAXON'] = 'Por favor seleccione un taxón de la lista';
+$LANG['CANT_MERGE_SELF'] = 'No puede fusionar un elemento consigo mismo. Por favor, seleccione otro taxón';
 ?>

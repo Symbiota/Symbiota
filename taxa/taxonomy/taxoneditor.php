@@ -27,6 +27,7 @@ if ($isEditor) {
 	if (array_key_exists('taxonedits', $_POST)) {
 		$statusStr = $taxonEditorObj->submitTaxonEdits($_POST);
 	} elseif ($submitAction == 'updatetaxstatus') {
+		//Update parent linkages
 		if(!$taxonEditorObj->submitTaxStatusEdits($_POST['parenttid'], $_POST['tidaccepted'])){
 			$statusStr = $taxonEditorObj->getErrorMessage();
 		}
