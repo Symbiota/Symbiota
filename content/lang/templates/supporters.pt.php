@@ -5,10 +5,10 @@ Language: Portuguese
 ------------------
 */
 
-$LANG['SUPPORTERS_TITLE'] = 'Supporters';
-$LANG['SUPPORTERS_TIER_1'] = 'Tier 1 Level';
-$LANG['SUPPORTERS_TIER_2'] = 'Tier 2 Level';
-$LANG['SUPPORTERS_TIER_3'] = 'Tier 3 Level';
-$LANG['SUPPORTERS_MESSAGE'] = 'The following people and organizations have financially supported this portal.';
-$LANG['SUPPORTERS_THANKYOU'] = 'This community is greatfull to these supporters.';
+$LANG['SUPPORTERS_TITLE'] = 'Apoiadores';
+$LANG['SUPPORTERS_TIER_1'] = 'Nível 1';
+$LANG['SUPPORTERS_TIER_2'] = 'Nível 2';
+$LANG['SUPPORTERS_TIER_3'] = 'Nível 3';
+$LANG['SUPPORTERS_MESSAGE'] = 'Este portal conta com o apoio de:';
+
 ?>

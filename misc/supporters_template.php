@@ -56,7 +56,6 @@ header("Content-Type: text/html; charset=" . $CHARSET);
                 <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Twelve</p></div>
             </section>
         </div>
-        <p><?= $LANG['SUPPORTERS_THANKYOU'] ?></p>
     </div>
     <?php
     include($SERVER_ROOT . '/includes/footer.php');
