@@ -140,7 +140,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 						}
 						else{
 							$( "#tid" ).val("");
-							if(this.value != ""){
+							if(this.value != undefined && this.value != ""){
 								alert("<?= $LANG['SELECT_TAXON'] ?>");
 							}
 						}

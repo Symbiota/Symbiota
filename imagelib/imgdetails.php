@@ -114,7 +114,7 @@ if ($imgArr) {
 						}
 						else{
 							$("#tid").val("");
-							if(this.value != ""){
+							if(this.value != undefined && this.value != ""){
 								alert("<?= $LANG['ERROR_TID_ISNULL'] ?>");
 							}
 						}

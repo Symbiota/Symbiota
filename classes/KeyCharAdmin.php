@@ -406,11 +406,13 @@ class KeyCharAdmin{
 	public function getTaxonRelevance(){
 		$retArr = array();
 		if($this->cid){
-			$sql = 'SELECT l.tid, l.relation, l.notes, t.sciname FROM kmchartaxalink l INNER JOIN taxa t ON l.tid = t.tid WHERE l.cid = '.$this->cid;
+			$sql = 'SELECT l.tid, l.relation, l.notes, t.sciname, t.author, t.rankid FROM kmchartaxalink l INNER JOIN taxa t ON l.tid = t.tid WHERE l.cid = '.$this->cid;
 			//echo $sql;
 			if($rs = $this->conn->query($sql)){
 				while($r = $rs->fetch_object()){
 					$retArr[$r->relation][$r->tid]['sciname'] = $r->sciname;
+					$retArr[$r->relation][$r->tid]['author'] = $r->author;
+					$retArr[$r->relation][$r->tid]['rankid'] = $r->rankid;
 					$retArr[$r->relation][$r->tid]['notes'] = $r->notes;
 				}
 				$rs->free();
@@ -425,7 +427,7 @@ class KeyCharAdmin{
 	public function saveTaxonRelevance($tid,$rel,$notes){
 		$statusStr = '';
 		if($this->cid && is_numeric($tid)){
-			$sql = 'INSERT INTO kmchartaxalink(cid,tid,relation,notes) VALUES('.$this->cid.','.$tid.',"'.$this->cleanInStr($rel).'","'.$this->cleanInStr($notes).'")';
+			$sql = 'INSERT IGNORE INTO kmchartaxalink(cid,tid,relation,notes) VALUES('.$this->cid.','.$tid.',"'.$this->cleanInStr($rel).'","'.$this->cleanInStr($notes).'")';
 			//echo $sql;
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR: unable to add Taxon Relevance; '.$this->conn->error;

@@ -92,7 +92,7 @@ $clArray = $vManager->getChecklistData();
 							}
 							else{
 								$( "#renametid" ).val("");
-								if(this.value != ""){
+								if(this.value != undefined && this.value != ""){
 									alert("<?= $LANG['SELECT_TAXON'] ?>");
 								}
 							}

@@ -267,10 +267,10 @@ class OccurrenceCrowdSource {
 	public function getQueueLimitCriteria(){
 		$country = array();
 		$state = array();
-		$sql = 'SELECT DISTINCT o.country, o.stateprovince '.
-			'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
-			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
+		$sql = 'SELECT DISTINCT o.country, o.stateprovince
+			FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
+			LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid
+			WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($r->country) $country[$r->country] = '';
@@ -283,11 +283,11 @@ class OccurrenceCrowdSource {
 		//Add genera to $sciname
 		$family = array();
 		$sciname = array();
-		$sql = 'SELECT DISTINCT o.family, o.sciname, t.unitname1 '.
-			'FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid '.
-			'LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid '.
-			'LEFT JOIN taxa t ON o.tidinterpreted = t.tid '.
-			'WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
+		$sql = 'SELECT DISTINCT o.family, o.sciname, t.unitname1
+			FROM omoccurrences o INNER JOIN media m ON o.occid = m.occid
+			LEFT JOIN omcrowdsourcequeue q ON o.occid = q.occid
+			LEFT JOIN taxa t ON o.tidinterpreted = t.tid
+			WHERE o.collid = '.$this->collid.' AND (o.processingstatus = "unprocessed") AND q.occid IS NULL ';
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			if($r->family) $family[$r->family] = '';

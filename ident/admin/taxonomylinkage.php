@@ -21,6 +21,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 
@@ -37,7 +38,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 						}
 						else{
 							$("#relevancetidinput").val("");
-							if(this.value != ""){
+							if(this.value != undefined && this.value != ""){
 								alert("Select a taxon from the list");
 							}
 						}
@@ -80,8 +81,10 @@ $tLinks = $keyManager->getTaxonRelevance();
 							?>
 							<div style="margin:3px;clear:both;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								$notes = '';
+								if($tArr['notes']) $notes = ' - ' . $tArr['notes'];
 								?>
+								<div style="float:left;"><b><?= $tArr['sciname'] ?></b> <?= $tArr['author'] . $notes ?></div>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
@@ -104,8 +107,10 @@ $tLinks = $keyManager->getTaxonRelevance();
 							?>
 							<div style="margin:3px;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								$notes = '';
+								if($tArr['notes']) $notes = ' - ' . $tArr['notes'];
 								?>
+								<div style="float:left;"><b><?= $tArr['sciname'] ?></b> <?= $tArr['author'] . $notes ?></div>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />

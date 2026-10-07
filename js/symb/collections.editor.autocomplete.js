@@ -30,9 +30,11 @@ $(document).ready(function () {
 						if (f.securityreason && f.securityreason.value == ""){
 							f.recordsecurity.value = 0;
 						}
-						let msg = "";
-						if(typeof translations !== 'undefined') msg = translations.WARNING_TAXON_NOT_FOUND;
-						alert(msg);
+						if(f.sciname.value != ""){
+							let msg = "";
+							if(typeof translations !== 'undefined') msg = translations.WARNING_TAXON_NOT_FOUND;
+							alert(msg);
+						}
 					}
 					if (typeof fieldChanged === "function") {
 						fieldChanged("sciname");

@@ -39,7 +39,7 @@ $childArr = $clManager->getChildrenChecklist()
 					}
 					else{
 						$("#parsetid").val("");
-						if(this.value != ""){
+						if(this.value != undefined && this.value != ""){
 							alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 						}
 					}

@@ -45,7 +45,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 							}
 							else{
 								document.getElementById("tidinput").value = "";
-								if(this.value != ""){
+								if(this.value != undefined && this.value != ""){
 									alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 								}
 							}

@@ -79,7 +79,7 @@ if($isEditor){
 								document.getElementById("daftid").value = "";
 								document.getElementById("dafauthor").value = "";
 								document.getElementById("daffamily").value = "";
-								if(this.value != ""){
+								if(this.value != undefined && this.value != ""){
 									alert("<?= $LANG['WARNING_TAXON_NOT_FOUND'] ?>");
 								}
 							}

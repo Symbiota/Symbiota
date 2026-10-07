@@ -2,10 +2,10 @@
 /*
  ------------------
  Language: Español(Spanish)
- Translated by: Google Translate
- Date Translated: 2024/04/02
+ Translated by: Google Translate (2024/04/02)
  ------------------
  */
+$LANG['SELECT_FROM_LIST'] = 'Debe seleccionar un taxón de la lista';
 $LANG['ATTRI_MINING_TOOL'] = 'Herramienta de minería de atributos';
 $LANG['OCC_ATTRI_MINING_TOOL'] = 'Herramienta de minería de atributos de ocurrencia';
 $LANG['MUST_SELECT_TRAIT'] = 'Debes seleccionar un rasgo';
@@ -22,9 +22,9 @@ $LANG['CLICK_DISPLAY_COLLEC_LIST'] = 'haga clic para mostrar la lista de colecci
 $LANG['OCC_TRAITS_MAPPING'] = 'Este módulo asigna rasgos de ocurrencia a especímenes basándose en el contenido del campo de texto textual.';
 $LANG['MORE'] = 'más';
 $LANG['PHENOLOGY_TRAIT_MAPPING'] = 'Por ejemplo, los rasgos fenológicos se pueden codificar en masa mapeando varios
-cadenas de texto que se muestran dentro del campo de texto Condición reproductiva a una fenología controlada definida dentro de los campos de rasgos de ocurrencia.
-Los atributos de rasgos codificados se pueden descargar y compartir a través de las herramientas de publicación y exportación del archivo Darwin Core (DwC).
-Los rasgos se incluyen dentro de un ';
+	cadenas de texto que se muestran dentro del campo de texto Condición reproductiva a una fenología controlada definida dentro de los campos de rasgos de ocurrencia.
+	Los atributos de rasgos codificados se pueden descargar y compartir a través de las herramientas de publicación y exportación del archivo Darwin Core (DwC).
+	Los rasgos se incluyen dentro de un ';
 $LANG['SEARCHING'] = 'Buscando';
 $LANG['COLLECTION'] = 'Colecciones';
 $LANG['MEASUREMENT_OR_FACT'] = 'Medición o hecho';
@@ -38,8 +38,6 @@ $LANG['SELECT_SOURCE_FIELD'] = 'Seleccionar campo de origen (obligatorio)';
 $LANG['FILTER_BY_TEXT'] = 'Filtrar por texto (opcional):';
 $LANG['GET_FEILD_VALUE'] = 'Obtener valores de campo';
 $LANG['FILTER_BY_TAXON'] = 'Filtrar por taxón (opcional):';
-$LANG['VERIFYING_TAXONOMY'] = 'verificando taxonomía...';
-$LANG['TAXON_NOT_VALID'] = 'taxón no válido...';
 $LANG['SELECT_SOURCE_FIELD_VALUES'] = 'Seleccionar valores de campo de origen';
 $LANG['HOLD_DOWN_BUTTONS_TO_SELECT'] = ' - mantenga presionados los botones de control o mayúsculas para seleccionar más de un valor';
 $LANG['TOGGLE_ATTRI_TREE'] = 'Activar/cerrar árbol de atributos';

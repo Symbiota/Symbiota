@@ -432,21 +432,6 @@ class OccurrenceAttributes extends Manager {
 		return $outStr;
 	}
 
-	public function getTaxonFilterSuggest($str,$exactMatch=false){
-		$retArr = array();
-		if($str){
-			$sql = 'SELECT tid, sciname FROM taxa ';
-			if($exactMatch) $sql .= 'WHERE sciname = "'.$str.'"';
-			else $sql .= 'WHERE sciname LIKE "'.$str.'%"';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[] = array('id' => $r->tid, 'value' => $r->sciname);
-			}
-			$rs->free();
-		}
-		return json_encode($retArr);
-	}
-
 	//Attribute review functions
 	public function getReviewUrls($traitID){
 		$retArr = array();

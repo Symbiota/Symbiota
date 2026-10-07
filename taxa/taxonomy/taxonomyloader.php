@@ -64,7 +64,7 @@ if($isEditor){
 						}
 						else{
 							document.getElementById("tidaccepted").value = "";
-							if(this.value != ""){
+							if(this.value != undefined && this.value != ""){
 								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 							}
 						}
@@ -87,7 +87,7 @@ if($isEditor){
 						}
 						else{
 							document.getElementById("parenttid").value = "";
-							if(this.value != ""){
+							if(this.value != undefined && this.value != ""){
 								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
 							}
 						}
