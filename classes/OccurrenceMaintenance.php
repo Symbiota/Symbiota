@@ -185,13 +185,13 @@ class OccurrenceMaintenance {
 		if(!empty($geoArr)) $this->batchUpdateCountyCode($geoArr);
 		unset($geoArr);
 
-		//Batch populate NULL or incorrect continent values
+		//Batch populate NULL
 		$this->outputMsg('Populating null continent values... ', 1);
 		$geoArr = array();
 		$sql = 'SELECT o.occid, p.geoTerm
 			FROM omoccurrences o INNER JOIN geographicthesaurus g ON o.countryCode = g.iso2
 			INNER JOIN geographicthesaurus p ON g.parentID = p.geoThesID
-			WHERE (o.continent IS NULL OR o.continent != p.geoTerm) AND g.geoLevel = 50 AND g.acceptedID IS NULL';
+			WHERE (o.continent IS NULL) AND g.geoLevel = 50 AND g.acceptedID IS NULL';
 		//if($this->collidStr) $sql .= 'AND collid IN('.$this->collidStr.')';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;
