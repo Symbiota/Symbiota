@@ -42,9 +42,12 @@ $dupClusterArr = $dupManager->getClusterArr($occid);
 			document.querySelectorAll('input[name="verbatimsciname"]').forEach(function(taxonInput) {
 				taxonInput.addEventListener('focus', (event) => {
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					//taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					//taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate(taxonInput);
 				});
 			});
+
 		});
 
 		function associationTypeChanged(selectElem){

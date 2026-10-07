@@ -30,11 +30,12 @@ if($isEditor){
 		$editorStatus = $_POST['editorstatus'];
 		$geographicScope = $_POST['geographicscope'];
 		$notes = $_POST['notes'];
-		if($utManager->addUser($uid, $tid, $editorStatus, $geographicScope, $notes)){
+		$status = $utManager->addUser($uid, $tid, $editorStatus, $geographicScope, $notes);
+		if($status === true){
 			$statusStr = $LANG['SUCCESS_ADDING_TAXON_INTEREST'];
 		}
 		else{
-			$statusStr = $LANG['ERROR_ADDING_TAXON_INTEREST'];
+			$statusStr = $LANG['ERROR_ADDING_TAXON_INTEREST'] . ': ' . $status;
 		}
 	}
 	elseif(array_key_exists('delutid',$_GET)){
@@ -43,7 +44,6 @@ if($isEditor){
 		$statusStr = $utManager->deleteUser($_GET['delutid'],$delUid,$editorStatus);
 	}
 }
-$editorArr = $utManager->getTaxonomyEditors();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -91,9 +91,8 @@ $editorArr = $utManager->getTaxonomyEditors();
 	</script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
 	<style>
-		.underlined-text {
-			text-decoration: underline;
-		}
+		.underlined-text { text-decoration: underline; }
+		.icon-img { border: 0px; width: 1em; }
 	</style>
 </head>
 <body>
@@ -123,7 +122,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			<h1 class="page-heading"><?= $LANG['TAX_PERMISSIONS']; ?></h1>
 			<div style="float:right;" title="Add a new taxonomic relationship">
 				<a href="#" onclick="toggle('addUserDiv')">
-					<img style='border:0px;width:1.3em;' src='../images/add.png' alt='<?= $LANG['ADD'] ?>'/>
+					<img class="icon-img" src='../images/add.png' alt='<?= $LANG['ADD'] ?>'/>
 				</a>
 			</div>
 			<div id="addUserDiv" style="display:none;">
@@ -175,6 +174,7 @@ $editorArr = $utManager->getTaxonomyEditors();
 			</div>
 			<div>
 				<?php
+				$editorArr = $utManager->getTaxonomyEditors();
 				foreach($editorArr as $editorStatus => $userArr){
 					$cat = 'Undefined';
 					if($editorStatus == 'RegionOfInterest') $cat = $LANG['REGION'];
@@ -189,17 +189,20 @@ $editorArr = $utManager->getTaxonomyEditors();
 						echo '<b>'.$username.'</b>';
 						$confirmStr = $LANG['REMOVE_LINKS'];
 						$titleStr = $LANG['DELETE_LINKS'];
-						echo '<a href="usertaxonomymanager.php?delutid=all&deluid=' . $uid . '&es=' . Sanitize::outString($editorStatus) . '" onclick="return confirm(\'' . Sanitize::outString($confirmStr) . '\'" title="' . Sanitize::outString($titleStr) . '">';
-						echo '<img src="../images/drop.png" style="width:1.3em;" alt="' . $LANG['DELETE_LINKS'] . '" />';
+						echo ' <a href="usertaxonomymanager.php?delutid=all&deluid=' . $uid . '&es=' . Sanitize::outString($editorStatus) . '" onclick="return confirm(\'' . Sanitize::outString($confirmStr) . '\'" title="' . Sanitize::outString($titleStr) . '">';
+						echo '<img class="icon-img" src="../images/drop.png" alt="' . $LANG['DELETE_LINKS'] . '" />';
 						echo '</a>';
 						foreach($uArr as $utid => $utArr){
-							echo '<li style="margin-left:15px;">'.$utArr['sciname'];
+							$sciname = $utArr['sciname'];
+							if($utArr['rankid'] >= 180) $sciname = '<i>' . $sciname . '</i>';
+							$sciname .= ' ' . $utArr['author'];
+							echo '<li style="margin-left:15px;">' . $sciname;
 							if($utArr['geoscope']) echo ' ('.$utArr['geoscope'].')';
 							if($utArr['notes']) echo ': '.$utArr['notes'];
 							$confirmStr2 = $LANG['REMOVE_ONE_LINK'];
 							$titleStr2 = $LANG['DELETE_A_LINK'];
-							echo '<a href="usertaxonomymanager.php?delutid=' . $utid . '" onclick="return confirm(\'' . Sanitize::outString($confirmStr2) . '\'" title="' . Sanitize::outString($titleStr2) . '">';
-							echo '<img src="../images/drop.png" style="width:1.3em; alt="' . $LANG['DELETE_LINKS'] . '" />';
+							echo ' <a href="usertaxonomymanager.php?delutid=' . $utid . '" onclick="return confirm(\'' . Sanitize::outString($confirmStr2) . '\'" title="' . Sanitize::outString($titleStr2) . '">';
+							echo '<img class="icon-img" src="../images/drop.png" alt="' . $LANG['DELETE_LINKS'] . '" />';
 							echo '</a>';
 							echo '</li>';
 						}

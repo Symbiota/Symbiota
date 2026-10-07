@@ -101,6 +101,9 @@ if(isset($SYMB_UID) && $SYMB_UID){
 			}
 
 		</script>
+		<style>
+			.icon-img{ border: 0px; width: 1em; }
+		</style>
 	</head>
 	<body>
 		<?php
@@ -338,8 +341,8 @@ if(isset($SYMB_UID) && $SYMB_UID){
 					<div>
 						<div>
 							<b><span style="text-decoration: underline;"><?= $LANG['TAXON_RELS'] ?></span></b>
-							<a href="#" onclick="toggle('addtaxonrelationdiv')" title="<?= $LANG['ADD_TAXON_REL'] ?>" aria-label="<?= $LANG['CREATE_TAXON_REL'] ?>" >
-								<img style='border:0px;width:1.3em;' src='../images/add.png' alt='<?= $LANG['ADD_ICON'] ?>'/>
+							<a href="#" onclick="toggle('addtaxonrelationdiv'); return false;" title="<?= $LANG['ADD_TAXON_REL'] ?>" aria-label="<?= $LANG['CREATE_TAXON_REL'] ?>" >
+								<img class="icon-img" src='../images/add.png' alt='<?= $LANG['ADD_ICON'] ?>'/>
 							</a>
 						</div>
 						<div id="addtaxonrelationdiv" style="display:none;">
@@ -388,10 +391,13 @@ if(isset($SYMB_UID) && $SYMB_UID){
 								echo '<ul style="margin:10px;">';
 								foreach($userTaxArr as $utid => $utArr){
 									echo '<li>';
-									echo $utArr['sciname'];
+									$sciname = $utArr['sciname'];
+									if($utArr['rankid'] >= 180) $sciname = '<i>' . $sciname . '</i>';
+									$sciname .= ' ' . $utArr['author'];
+									echo $sciname;
 									if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
 									if($utArr['notes']) echo ', '.$utArr['notes'];
-									echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . $utid . '&userid=' . $userId . '"><img src="../images/drop.png" style="width:1.2em;" /></a>';
+									echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . $utid . '&userid=' . $userId . '"><img class="icon-img" src="../images/drop.png" ></a>';
 									echo '</li>';
 								}
 								echo '</ul>';

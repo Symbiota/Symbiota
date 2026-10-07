@@ -77,10 +77,11 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET; ?>">
 	<title><?= $DEFAULT_TITLE.' '.$LANG['IMAGE_SUBMIT'] ?></title>
-	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-    ?>
+	include_once($SERVER_ROOT . '/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/javascript_lang_tags.php');
+	?>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.imageoccursubmit.js?ver=1" type="text/javascript"></script>
@@ -103,16 +104,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 
 		});
 
-		//Validate forms
-		function validateImgOccurForm(f){
-			if(f.imgurl.value == "" && f.imgfile.value == ""){
-				alert("Local image must be select or a image URL entered");
-				return false;
-			}
-
-			return true;
-		}
-
 		//Misc
 		function dwcDoc(dcTag){
 			dwcWindow=open("https://docs.symbiota.org/Editor_Guide/Editing_Searching_Records/symbiota_data_fields#"+dcTag,"dwcaid","width=1250,height=300,left=20,top=20,scrollbars=1");
@@ -123,7 +114,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 		}
 
 		function validateImgOccurForm(f){
-			if(f.imgfile.value == "" && f.imgurl.value == ""){
+			if(f.imgfile.value == "" && f.originalUrl.value == ""){
 				alert("<?= $LANG['SELECT_IMAGE'] ?>");
 				return false;
 			}
@@ -135,8 +126,8 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						return false;
 					}
 				}
-				else if(f.imgurl.value != ""){
-					var fileName = f.imgurl.value;
+				else if(f.originalUrl.value != ""){
+					var fileName = f.originalUrl.value;
 					if(fileName.substring(0,4).toLowerCase() != 'http'){
 						alert("<?= $LANG['IMAGE_PATH_URL'] ?> ("+fileName.substring(0,4).toLowerCase()+")");
 						return false
@@ -199,7 +190,6 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 						</div>
 						<div>
 							<b><?= $LANG['IMAGE_URL'] ?>:</b><br/>
-							<!-- <input type='text' name='imgurl' size='70' /> -->
 							<input type='text' name='originalUrl' size='70' />
 						</div>
 						<div>

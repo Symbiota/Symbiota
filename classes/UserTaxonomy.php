@@ -16,7 +16,7 @@ class UserTaxonomy {
 
 	public function getTaxonomyEditors(){
 		$retArr = array();
-		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, t.sciname, ut.editorstatus, ut.geographicscope, ut.notes, u.username '.
+		$sql = 'SELECT ut.idusertaxonomy, u.uid, CONCAT_WS(", ", u.lastname, u.firstname) as fullname, t.sciname, t.author, t.rankid, ut.editorstatus, ut.geographicscope, ut.notes, u.username '.
 			'FROM usertaxonomy ut INNER JOIN users u ON ut.uid = u.uid '.
 			'INNER JOIN taxa t ON ut.tid = t.tid '.
 			'ORDER BY u.lastname, u.firstname, t.sciname';
@@ -26,6 +26,8 @@ class UserTaxonomy {
 			if(!$editorStatus) $editorStatus = 'RegionOfInterest';
 			$retArr[$editorStatus][$r->uid]['username'] = $r->fullname.' ('.$r->username.')';
 			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['sciname'] = $r->sciname;
+			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['author'] = $r->author;
+			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['rankid'] = $r->rankid;
 			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['geoscope'] = $r->geographicscope;
 			$retArr[$editorStatus][$r->uid][$r->idusertaxonomy]['notes'] = $r->notes;
 		}
@@ -42,10 +44,12 @@ class UserTaxonomy {
 	}
 
 	public function addUser($uid, $tid, $editorStatus, $geographicScope, $notes){
-		$statusStr = '';
+		$statusStr = true;
 		$profileManager = new ProfileManager();
 		$profileManager->setUid($uid);
-		$statusStr = $profileManager->addUserTaxonomy($tid, $editorStatus, $geographicScope, $notes);
+		if(!$profileManager->addUserTaxonomy($tid, $editorStatus, $geographicScope, $notes)){
+			$statusStr = $profileManager->getErrorMessage();
+		}
 		return $statusStr;
 	}
 
