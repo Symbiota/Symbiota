@@ -17,4 +17,5 @@ includes/citationcollection.php
 includes/citationdataset.php
 includes/citationportal.php
 includes/donationButton.php
+misc/supporters.php
 temp/cap_storage.json
