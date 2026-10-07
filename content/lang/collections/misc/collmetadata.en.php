@@ -132,5 +132,7 @@ $LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['CREATE_COLL_2'] = 'Create New Collection';
 $LANG['TINYMCE_INFO'] = 'Collection description. You can access the text editing toolbar for this description
 						by pressing key combination ALT + F10 on Windows or OPTION + F10 on MacOS.';
+$LANG['VV_GEMINI_KEY'] = 'VoucherVision Gemini API Key';
+$LANG['VV_GEMINI_API_KEY_HINT'] = 'Use your own Gemini API key to run at your own cost. Otherwise, University of Michigan is currently allowing free access to VoucherVision.';
 
 ?>
