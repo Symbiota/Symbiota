@@ -2,7 +2,7 @@
 include_once('../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('templates/supporters');
+Language::load(['templates/index','templates/supporters']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ?>
@@ -10,10 +10,11 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 <html lang="en">
 
 <head>
-    <title><?php echo $DEFAULT_TITLE . $LANG['DATA_USAGE_GUIDELINES']; ?></title>
+    <title><?= $DEFAULT_TITLE . ' | ' . $LANG['SUPPORTERS_TITLE']?></title>
     <?php
     include_once($SERVER_ROOT . '/includes/head.php');
     ?>
+    <link href="<?= $CSS_BASE_PATH ?>/symbiota/supporters.css?ver=<?= $CSS_VERSION ?>" type="text/css" rel="stylesheet">
 </head>
 
 <body>
