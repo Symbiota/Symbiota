@@ -33,28 +33,107 @@ header("Content-Type: text/html; charset=" . $CHARSET);
         <div class="support-tiers">
             <!-- Tier 1 -->
             <h2 id="tier-1-heading"><?= $LANG['SUPPORTERS_TIER_1'] ?></h2>
-            <section name="support_tier_1" class="support-tier tier-1" aria-labelledby="tier-1-heading">
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization One</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Two</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Three</p></div>
-            </section>
+            <ul name="support_tier_1" class="tier-1 table-view" aria-labelledby="tier-1-heading">
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Two</p>
+                </li>
+                <li><a href="https://symbiota.org"><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Three</p></a>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization One</p>
+                </li>
+                <li class="nologo">
+                    <p>Organization Two</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Three</p>
+                </li>
+                
+            </ul>
+            <hr />
             <!-- Tier 2 -->
             <h2 id="tier-2-heading"><?= $LANG['SUPPORTERS_TIER_2'] ?></h2>
-            <section name="support_tier_2" class="support-tier tier-2" aria-labelledby="tier-2-heading">
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Four</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Five</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Six</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Seven</p></div>
-            </section>
+            <ul name="support_tier_2" class="tier-2 table-view" aria-labelledby="tier-2-heading">
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Four</p>
+                </li>
+                <li class="nologo">
+                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Six</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Seven</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Four</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Five</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Six</p>
+                </li>
+                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Organization Seven</p>
+                </li>
+            </ul>
+            <hr />
             <!-- Tier 3 -->
             <h2 id="tier-3-heading"><?= $LANG['SUPPORTERS_TIER_3'] ?></h2>
-            <section name="support_tier_3" class="support-tier tier-3" aria-labelledby="tier-3-heading">
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Eight</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Nine</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Ten</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Eleven</p></div>
-                <div class="support-item"><img src="<?= $CLIENT_ROOT?>/images/layout/logo_symbiota.png" alt=""><p class="supporter-name">Organization Twelve</p></div>
-            </section>
+            <ul id="support_tier_3" name="support_tier_3" class="tier-3 bullet-view" aria-labelledby="tier-3-heading">
+                <li>
+                    <p>Cheadle Center for Biodiversity and Ecological Restoration</p>
+                </li>
+                <li>
+                    <p>Herbario del Jardín Botánico BUAP, Puebla, Mexico</p>
+                </li>
+                <li>
+                    <p>Organization Ten</p>
+                </li>
+                <li>
+                    <p>Organization Eleven</p>
+                </li>
+                <li>
+                    <p>Organization Twelve</p>
+                </li>
+                <li>
+                    <p>Organization Eight</p>
+                </li>
+                <li>
+                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                </li>
+                <li>
+                    <p>Organization Ten</p>
+                </li>
+                <li>
+                    <p>Organization Eleven</p>
+                </li>
+                <li>
+                    <p>Organization Twelve</p>
+                </li>
+                <li>
+                    <p>Organization Eight</p>
+                </li>
+                <li>
+                    <p>Organization Nine</p>
+                </li>
+                <li>
+                    <p>Organization Ten</p>
+                </li>
+                <li>
+                    <p>Organization Eleven</p>
+                </li>
+                <li>
+                    <p>Organization Twelve</p>
+                </li>
+            </ul>
+            <hr />
         </div>
     </div>
     <?php
