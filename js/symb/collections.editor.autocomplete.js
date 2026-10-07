@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
 	//Add for all determination form objects, including central editor form (fullform)
-	document.querySelectorAll("form.det-form").forEach(function(form) {
+	document.querySelectorAll("form").forEach(function(form) {
 		const taxaInput = form.querySelector('input[name="sciname"]');
 		if (taxaInput) {
 			taxaInput.addEventListener("focus", function(event) {

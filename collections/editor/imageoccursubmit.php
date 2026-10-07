@@ -88,7 +88,7 @@ elseif(file_exists('includes/config/occurVarDefault.php')){
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/shared.js?ver=141119" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.autocomplete.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.autocomplete.js?v=2" type="text/javascript"></script>
 	<script type="text/javascript">
 		const TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
 		const TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;

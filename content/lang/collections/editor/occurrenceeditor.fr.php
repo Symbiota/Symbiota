@@ -27,7 +27,6 @@ $LANG['NEXT_REC'] = 'Enregistrement suivant';
 $LANG['LAST_REC'] = 'Dernier enregistrement';
 $LANG['NEW_REC'] = 'Nouvel enregistrement';
 $LANG['OCCEDITOR'] = "Éditeur d'occurrences";
-$LANG['TAXON_NOT_FOUND'] = 'AVERTISSEMENT : Taxon introuvable. Il est peut-être mal orthographié ou doit être ajouté au thésaurus taxonomique par un éditeur taxonomique. Vous pouvez poursuivre la saisie de ce spécimen en utilisant ce nom ; celui-ci sera résolu ultérieurement.';
 $LANG['SEARCH_FILTER'] = 'Activer/Désactiver Formulaire de Recherche';
 $LANG['EDITOR'] = 'Éditeur';
 $LANG['CENTRAL_CROWD'] = 'Crowdsourcing Central';
