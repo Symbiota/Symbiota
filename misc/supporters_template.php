@@ -34,106 +34,125 @@ header("Content-Type: text/html; charset=" . $CHARSET);
             <!-- Tier 1 -->
             <h2 id="tier-1-heading"><?= $LANG['SUPPORTERS_TIER_1'] ?></h2>
             <ul name="support_tier_1" class="tier-1 table-view" aria-labelledby="tier-1-heading">
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                <li>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Super Cali Fragilistick Expi Alidocous</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Two</p>
+                <li>
+                    <a href="https://symbiota.org">
+                    <p>Supporter Two</p></a>
                 </li>
-                <li><a href="https://symbiota.org"><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Three</p></a>
+                <li>
+                    <a href="https://symbiota.org">
+                    
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Three</p></a>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization One</p>
+                <li>
+                    <p>Supporter Four</p>
                 </li>
-                <li class="nologo">
-                    <p>Organization Two</p>
+                <li>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Super Cali Fragilistick Expi Alidocous</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Three</p>
+                <li>
+                    <p>Supporter Six Super Cali Fragilistick Expi Alidocous</p>
                 </li>
-                
+                 <li>
+                    <a href="https://symbiota.org">
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Seven</p></a>
+                </li>
             </ul>
-            <hr />
             <!-- Tier 2 -->
             <h2 id="tier-2-heading"><?= $LANG['SUPPORTERS_TIER_2'] ?></h2>
             <ul name="support_tier_2" class="tier-2 table-view" aria-labelledby="tier-2-heading">
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Four</p>
+                <li>
+                    <a href="https://symbiota.org">
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Eight</p></a>
                 </li>
-                <li class="nologo">
-                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                <li>
+                    <p>Supporter Nine Super Cali Fragilistick Expi Alidocous</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Six</p>
+                <li>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Ten</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Seven</p>
+                <li>
+                    <a href="https://symbiota.org">
+                    <p>Supporter Eleven</p></a>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Four</p>
+                <li>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Twelve</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Five</p>
+                <li>
+                    <p>Supporter Thirteen</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Six</p>
+                <li>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Fourteen</p>
                 </li>
-                <li><img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
-                    <p>Organization Seven</p>
+                <li>
+                    <p>Supporter Fifteen</p>
                 </li>
             </ul>
-            <hr />
             <!-- Tier 3 -->
             <h2 id="tier-3-heading"><?= $LANG['SUPPORTERS_TIER_3'] ?></h2>
-            <ul id="support_tier_3" name="support_tier_3" class="tier-3 bullet-view" aria-labelledby="tier-3-heading">
+            <ul id="support_tier_3" name="support_tier_3" class="tier-3 bullet-view" aria-labelledby="tier-3-heading"><!-- change bullet-view to table-view if desired -->
                 <li>
-                    <p>Cheadle Center for Biodiversity and Ecological Restoration</p>
+                    <p>Super Cali Fragilistick Expi Alidocous</p>
                 </li>
                 <li>
-                    <p>Herbario del Jardín Botánico BUAP, Puebla, Mexico</p>
+                    <a href="https://symbiota.org">
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Super Cali Fragilistick Expi Alidocous</p></a>
                 </li>
                 <li>
-                    <p>Organization Ten</p>
+                    <p>Supporter Eighteen</p>
                 </li>
                 <li>
-                    <p>Organization Eleven</p>
+                    <p>Supporter Nineteen</p>
                 </li>
                 <li>
-                    <p>Organization Twelve</p>
+                    <a href="https://symbiota.org">
+                    <p>Supporter Twenty  Super Cali Fragilistick Expi Alidocous</p></a>
                 </li>
                 <li>
-                    <p>Organization Eight</p>
+                    <p>Supporter Twenty-one</p>
                 </li>
                 <li>
-                    <p>Allison W. Cusick Botanical Research Fund at Carnegie Museum of Natural History</p>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Twenty-two Super Cali Fragilistick Expi Alidocous</p>
                 </li>
                 <li>
-                    <p>Organization Ten</p>
+                    <p>Supporter Twenty-three</p>
                 </li>
                 <li>
-                    <p>Organization Eleven</p>
+                    <p>Supporter Twenty-four</p>
                 </li>
                 <li>
-                    <p>Organization Twelve</p>
+                    <p>Supporter Twenty-five</p>
                 </li>
                 <li>
-                    <p>Organization Eight</p>
+                    <p>Supporter Twenty-six</p>
                 </li>
                 <li>
-                    <p>Organization Nine</p>
+                    <img src="<?= $CLIENT_ROOT ?>/images/layout/logo_symbiota.png" alt="">
+                    <p>Supporter Twenty-seven</p>
                 </li>
                 <li>
-                    <p>Organization Ten</p>
+                    <p>Supporter Twenty-eight  Super Cali Fragilistick Expi Alidocous</p>
                 </li>
                 <li>
-                    <p>Organization Eleven</p>
+                    <p>Supporter Twenty-nine  Super Cali Fragilistick Expi Alidocous</p>
                 </li>
                 <li>
-                    <p>Organization Twelve</p>
+                    <a href="https://symbiota.org">
+                    <p>Supporter Thirty</p></a>
                 </li>
             </ul>
-            <hr />
         </div>
     </div>
     <?php
