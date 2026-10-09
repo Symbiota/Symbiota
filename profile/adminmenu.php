@@ -4,9 +4,11 @@ Language::load(['profile/adminmenu']);
 if($IS_ADMIN){
 	?>
 	<ul>
+		<!-- NEON edit start
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/profile/usermanagement.php"><?= $LANG['USER_PERMISSIONS'] ?></a>
 		</li>
+		NEON edit end -->
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/collections/misc/collmetadata.php"><?= $LANG['CREATE_NEW_COLLECTION'] ?></a>
 		</li>
@@ -18,9 +20,11 @@ if($IS_ADMIN){
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/geothesaurus/index.php"><?= $LANG['GEO_THESAURUS']  ?></a>
 		</li>
+		<!-- NEON edit start
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/glossary/index.php"><?= $LANG['GLOSSARY']  ?></a>
 		</li>
+		NEON edit end -->
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/collections/admin/guidmapper.php"><?= $LANG['GUID_MAPPER'] ?></a>
 		</li>
@@ -32,15 +36,19 @@ if($IS_ADMIN){
 			<a href="<?= $CLIENT_ROOT ?>/imagelib/admin/mediatools.php"><?= $LANG['MEDIA_MIGRATION'] ?></a>
 		</li>
 		-->
+		<!-- NEON edit start
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/collections/map/staticmaphandler.php"><?= $LANG['MANAGE_TAXON_MAP_THUMBNAIL'] ?></a>
 		</li>
+		NEON edit end -->
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/admin/othercatalog.php"><?= $LANG['OTHER_CAT_TRANSFER'] ?></a>
 		</li>
+		<!-- NEON edit start
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/collections/specprocessor/salix/salixhandler.php"><?= $LANG['SALIX'] ?></a>
 		</li>
+		NEON edit end -->
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>"><?= $LANG['TAXONOMIC_CLEANER'] ?></a>
 		</li>
@@ -51,9 +59,11 @@ if($IS_ADMIN){
 		</li>
 		*/
 		?>
+		<!-- NEON edit start
 		<li>
 			<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php"><?= $LANG['BATCH_UPDATE_STATS'] ?></a>
 		</li>
+		NEON edit end -->
 	</ul>
 	<?php
 }

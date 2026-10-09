@@ -62,16 +62,16 @@ if(!$schemaVersion){
 				<li class="nested-li"><a href="collections/datasets/rsshandler.php" target="_blank"><?= $LANG['COLLECTIONS_RSS'] ?></a></li>
 				<li class="nested-li"><a href="collections/datasets/datapublisher.php"><?= $LANG['DARWINCORE'] ?></a> - <?= $LANG['PUBDATA'] ?></li>
 				<li class="nested-li"><a href="<?= $CLIENT_ROOT ?>/content/dwca/rss.xml" target="_blank"><?= $LANG['RSS'] ?></a></li>
-				<li><a href="collections/misc/protectedspecies.php"><?= $LANG['PROTECTED_SPECIES'] ?></a> - <?= $LANG['LISTOFTAXA'] ?></li>
+				<!-- <li><a href="collections/misc/protectedspecies.php"><?= $LANG['PROTECTED_SPECIES'] ?></a> - <?= $LANG['LISTOFTAXA'] ?></li> -->
 			</ul>
 			<div id="imglib">
 				<h2><?= $LANG['IMGLIB'] ?></h2>
 			</div>
 			<ul>
-				<li><a href="imagelib/index.php"><?= $LANG['IMGLIB'] ?></a></li>
+				<!-- <li><a href="imagelib/index.php"><?= $LANG['IMGLIB'] ?></a></li> -->
 				<li><a href="imagelib/search.php"><?= $LANG['IMAGE_SEARCH'] ?></a></li>
 				<li><a href="imagelib/contributors.php"><?= $LANG['CONTRIB'] ?></a></li>
-				<li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li>
+				<!-- <li><a href="includes/usagepolicy.php"><?= $LANG['USAGEPOLICY'] ?></a></li> -->
 			</ul>
 
 			<div id="resources">
@@ -82,7 +82,7 @@ if(!$schemaVersion){
 				<?php
 				if($smManager->hasGlossary()){
 					?>
-					<li><a href="glossary/index.php"><?= $LANG['GLOSSARY'] ?></a></li>
+					<!-- <li><a href="glossary/index.php"><?= $LANG['GLOSSARY'] ?></a></li> -->
 					<?php
 				}
 				?>
@@ -96,6 +96,7 @@ if(!$schemaVersion){
 			if($clList && isset($USER_RIGHTS['ClAdmin'])){
 				$clAdmin = array_intersect_key($clList,array_flip($USER_RIGHTS['ClAdmin']));
 			}
+			/*
 			?>
 			<div id="bioinventory">
 				<h2><?= $LANG['BIOTIC_INVENTORIES'] ?></h2>
@@ -112,13 +113,16 @@ if(!$schemaVersion){
 				?>
 				<li><a href="checklists/index.php"><?= $LANG['ALL_CHECKLISTS']  ?></a></li>
 			</ul>
-
+			 * NEON edit end
+			 */
+			?>
 			<div id="datasets">
 				<h2><?= $LANG['DATASETS'] ?></h2>
 			</div>
 			<ul>
 				<li><a href="collections/datasets/publiclist.php"><?= $LANG['ALLPUBDAT'] ?></a></li>
 			</ul>
+			<!-- NEON edit start
 			<div id="dynamiclists"><h2><?= $LANG['DYNAMIC'] ?></h2></div>
 			<ul>
 				<li>
@@ -132,7 +136,7 @@ if(!$schemaVersion){
 					</a> - <?= $LANG['BUILDDKEY'] ?>
 				</li>
 			</ul>
-
+			NEON edit end -->
 			<section id="admin" class="fieldset-like" style="padding: 1.6rem 0 0 0">
 				<h1>
 					<span>
@@ -192,6 +196,7 @@ if(!$schemaVersion){
 						<?php
 					}
 					?>
+					<!-- NEON edit start
 					<h2 class="subheader">
 						<span>
 							<?= $LANG['IMAGES'] ?>
@@ -226,6 +231,7 @@ if(!$schemaVersion){
 						}
 						?>
 					</ul>
+					NEON edit end -->
 					<h2 class="subheader">
 						<span>
 							<?= $LANG['BIOTIC_INVENTORIES'] ?>
@@ -250,6 +256,7 @@ if(!$schemaVersion){
 						}
 						?>
 					</ul>
+					NEON edit end -->
 					<h2 class="subheader">
 						<span>
 							<?= $LANG['DATASETS'] ?>
