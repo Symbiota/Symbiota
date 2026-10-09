@@ -43,9 +43,13 @@ if (file_exists($sitemapPath)) {
     <div class="container" id="innertext">
         <h1>Sitemap Generator</h1>
 
-        <?php if (!empty($sitemapExist)): ?>
+        <?php
+        if (!empty($sitemapExist)){
+        	?>
             <div class="info"><?php echo $sitemapExist; ?></div>
-        <?php endif; ?>
+        	<?php
+        }
+        ?>
 
         <form method="post">
             <button type="submit" class="button">Generate Sitemap</button>
