@@ -424,6 +424,8 @@ else{
 							<option value="minimumelevationinmeters" <?= ($qOrderBy=='minimumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MIN']; ?></option>
 							<option value="maximumelevationinmeters" <?= ($qOrderBy=='maximumelevationinmeters'?'SELECTED':''); ?>><?= $LANG['ELEV_MAX']; ?></option>
 							<option value="labelProject" <?= ($qOrderBy=='labelProject'?'SELECTED':''); ?>><?= $LANG['LAB_PROJECT']; ?></option>
+							<option value="identifierName" <?= ($qOrderBy=='identifierName'?'SELECTED':''); ?>>Additional Identifier Name</option>
+							<option value="identifierValue" <?= ($qOrderBy=='identifierValue'?'SELECTED':''); ?>>Additional Identifier Value</option>
 						</select>
 					</div>
 					<div>
