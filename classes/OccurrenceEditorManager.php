@@ -644,10 +644,12 @@ class OccurrenceEditorManager {
 			}
 			if ($sqlOrderBy) {
 				if ($orderBy == 'identifierName' || $orderBy == 'identifierValue') {
-					$sql .= 'ORDER BY (id.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, id.' . $sqlOrderBy . ' ASC' : $this->qryArr['orderbydir'];
+					$sql .= 'ORDER BY (id.' . $sqlOrderBy . ') ' . $direction . ' ';
 				}
 				else {
-					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : $this->qryArr['orderbydir'];
+					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $direction . ' ';
 				}
 			}
 		}
