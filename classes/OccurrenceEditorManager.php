@@ -642,7 +642,14 @@ class OccurrenceEditorManager {
 			} else {
 				$sqlOrderBy = $orderBy;
 			}
-			if ($sqlOrderBy) $sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+			if ($sqlOrderBy) {
+				if ($orderBy == 'identifierName' || $orderBy == 'identifierValue') {
+					$sql .= 'ORDER BY (id.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+				}
+				else {
+					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+				}
+			}
 		}
 	}
 
@@ -711,12 +718,12 @@ class OccurrenceEditorManager {
 		$localIndex = false;
 		$sqlFrag = '';
 		if($this->occid && !$this->direction){
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid WHERE (o.occid = '.$this->occid.')';
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid LEFT JOIN omoccuridentifiers id ON id.occid = o.occid WHERE (o.occid = '.$this->occid.')';
 		}
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
 			if (strpos($sqlFrag, 'LEFT JOIN omoccurpaleo') === false) {
-				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
