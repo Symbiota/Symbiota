@@ -643,12 +643,20 @@ class OccurrenceEditorManager {
 				$sqlOrderBy = $orderBy;
 			}
 			if ($sqlOrderBy) {
-				if ($orderBy == 'identifierName' || $orderBy == 'identifierValue') {
-					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, id.' . $sqlOrderBy . ' ASC' : $this->qryArr['orderbydir'];
-					$sql .= 'ORDER BY (id.' . $sqlOrderBy . ') ' . $direction . ' ';
+				if ($orderBy == 'identifierValue') {
+					if ($this->qryArr['orderbydir'] === 'ASC') {
+						$sql .= 'ORDER BY (id.identifierValue) IS NULL ASC, CAST(REGEXP_REPLACE(id.identifierValue, \'[^0-9]\', \'\') AS UNSIGNED) ASC ';
+					}
+					else {
+						$sql .= 'ORDER BY CAST(REGEXP_REPLACE(id.identifierValue, \'[^0-9]\', \'\') AS UNSIGNED) DESC ';
+					}
+				}	
+				else if ($orderBy == 'identifierName') {
+					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, id.identifierName ASC' : 'DESC';
+					$sql .= 'ORDER BY (id.identifierName) ' . $direction . ' ';
 				}
 				else {
-					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : $this->qryArr['orderbydir'];
+					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : 'DESC';
 					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $direction . ' ';
 				}
 			}
@@ -745,6 +753,7 @@ class OccurrenceEditorManager {
 		if($sqlFrag){
 			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])) . ',paleo.' . implode(',paleo.',($this->fieldArr['omoccurpaleo'])).', o.datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
+			print_r($sql);
 
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;
