@@ -163,4 +163,6 @@ $LANG['MEMBER'] = 'Membre';
 $LANG['STAGE'] = 'Étape';
 $LANG['EVENT_TIME'] = 'Heure de l\'événement';
 $LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
+$LANG['IDEN_NAME'] = 'Nom de l\'Identifiant';
+$LANG['IDEN_VALUE'] = 'Valeur de l\'Identifiant';
 ?>

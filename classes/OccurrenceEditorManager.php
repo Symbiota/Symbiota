@@ -753,7 +753,6 @@ class OccurrenceEditorManager {
 		if($sqlFrag){
 			$sql = 'SELECT DISTINCT o.occid, o.collid, o.'.implode(',o.',array_keys($this->fieldArr['omoccurrences'])) . ',paleo.' . implode(',paleo.',($this->fieldArr['omoccurpaleo'])).', o.datelastmodified FROM omoccurrences o '.$sqlFrag;
 			$previousOccid = 0;
-			print_r($sql);
 
 			$rs = $this->conn->query($sql);
 			$rsCnt = 0;
