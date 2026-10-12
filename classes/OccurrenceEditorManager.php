@@ -652,7 +652,7 @@ class OccurrenceEditorManager {
 					}
 				}	
 				else if ($orderBy == 'identifierName') {
-					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, id.identifierName ASC' : 'DESC';
+					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL OR id.identifierName = \'\' ASC, id.identifierName ASC' : 'DESC';
 					$sql .= 'ORDER BY (id.identifierName) ' . $direction . ' ';
 				}
 				else {
