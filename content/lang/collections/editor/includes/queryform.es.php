@@ -163,6 +163,4 @@ $LANG['MEMBER'] = 'Miembro';
 $LANG['STAGE'] = 'Etapa';
 $LANG['EVENT_TIME'] = 'Hora del evento';
 $LANG['OPENS_NEW_TAB'] = ' (se abre en una nueva pestaña)';
-$LANG['IDEN_NAME'] = 'Nombre del Identificador';
-$LANG['IDEN_VALUE'] = 'Valor del Identificador';
 ?>
