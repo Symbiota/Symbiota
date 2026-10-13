@@ -599,7 +599,7 @@ class OccurrenceEditorManager {
 		if ($customTerm == 'IS_NULL') {
 			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NULL) ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_NULL') {
-			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NOT NULL) ' . ($ccp ? $ccp . ' ' : '');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NOT NULL AND ' . $customField . ' != \'\') ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_EQUALS') {
 			if (!is_numeric($customValue)) $customValue = '"' . $customValue . '"';
 			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' ((' . $customField . ' != ' . $customValue . ') OR (' . $customField . ' IS NULL)) ' . ($ccp ? $ccp . ' ' : '');
