@@ -652,12 +652,12 @@ class OccurrenceEditorManager {
 					}
 				}	
 				else if ($orderBy == 'identifierName') {
-					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL OR id.identifierName = \'\' ASC, id.identifierName ASC' : 'DESC';
-					$sql .= 'ORDER BY (id.identifierName) ' . $direction . ' ';
+					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL OR id.identifierName = \'\' ASC, id.identifierName ASC' : 'DESC';
+					$sql .= 'ORDER BY (id.identifierName) ' . $orderbydir . ' ';
 				}
 				else {
-					$direction = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : 'DESC';
-					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $direction . ' ';
+					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : 'DESC';
+					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $orderbydir . ' ';
 				}
 			}
 		}
@@ -733,7 +733,10 @@ class OccurrenceEditorManager {
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
 			if (strpos($sqlFrag, 'LEFT JOIN omoccurpaleo') === false) {
-				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			}
+			if (strpos($sqlFrag, 'LEFT JOIN omoccuridentifiers') === false) {
+				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
