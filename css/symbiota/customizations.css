@@ -2,4 +2,65 @@
 Place your CSS customizations here.
 This stylesheet is defined last and will override all previously loaded sheets. You may reference variables defined in variables.css 
  */
- 
+
+ /* Universal */
+
+@import url('https://fonts.googleapis.com/css2?family=Gurajada&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Staatliches&display=swap');
+
+
+/* Top Heading */
+
+div.brand-name h1 {
+    font-family: "Staatliches", sans-serif;
+    font-weight: normal;
+}
+
+ div.brand-name h2 {
+    font-family: "Gurajada", sans-serif;
+    font-weight: normal;
+    margin-top: -0.5em;
+}
+
+.welcome-text {
+    margin-bottom: 0.75rem;
+}
+
+div.welcome-text.bottom-breathing-room-rel{
+    color: var(--light-color);
+    text-decoration: none;
+}
+
+nav.top-login span.button.button-secondary.bottom-breathing-room-rel{
+    white-space: nowrap;
+    padding: 0.8rem;
+    background-color: var(--light-color);
+}
+
+nav.top-login span.button.button-secondary.bottom-breathing-room-rel a:hover {
+    color: var(--bright-color);
+}
+
+
+nav.top-login span.button.button-tertiary.bottom-breathing-room-rel {
+    white-space: nowrap;
+    padding: 0.8rem;
+    border: 2px solid var(--light-color);
+}
+
+.ui-tabs-tab {
+  font-size: 1rem;
+}
+
+.button-tertiary {
+    background-color: transparent;
+    border: 3px solid white;
+    color: white;
+    padding: 0.5rem 0.9rem;
+  }
+
+  .button-secondary {
+    background-color: white;
+    color: black;
+    border: 3px solid white;
+    padding: 0.5rem 0.9rem;
+  }

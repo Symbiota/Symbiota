@@ -211,12 +211,15 @@ $creatorArray = Media::getCreatorArray(false);
 								if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 									if(substr($imgUrl, 0, 1) == '/'){
 										$imgUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgUrl;
+										$displayUrl = $imgUrl;
 									}
 									if($origUrl && substr($origUrl, 0, 1) == '/'){
 										$origUrl = $GLOBALS['MEDIA_DOMAIN'] . $origUrl;
+										$displayUrl = $origUrl;
 									}
 									if($tnUrl && substr($tnUrl, 0, 1) == '/'){
 										$tnUrl = $GLOBALS['MEDIA_DOMAIN'] . $tnUrl;
+										$displayUrl = $tnUrl;
 									}
 								}
 								echo '<a href="' . $imgUrl . '" target="_blank">';
@@ -300,8 +303,7 @@ $creatorArray = Media::getCreatorArray(false);
 									<a href="<?=  $imgUrl ?>"  title="<?=  $imgUrl ?>" target="_blank">
 										<?php
 										$urlDisplay = $imgArr["url"];
-										if($urlDisplay && strlen($urlDisplay) > 60) $urlDisplay = '...'.substr($urlDisplay,-60);
-										echo $urlDisplay;
+										echo ($urlDisplay && strlen($urlDisplay) > 60) ? $urlDisplay = '...'.substr($urlDisplay,-60) : $urlDisplay;
 										?>
 									</a>
 								</div>
@@ -309,16 +311,18 @@ $creatorArray = Media::getCreatorArray(false);
 									<b><?php echo $LANG['LARGE_IMG_URL']; ?>: </b>
 									<a href="<?= $origUrl ?>" title="<?= $origUrl ?>" target="_blank">
 										<?php
-										echo $origUrl && strlen($origUrl) > 60?
-										'...'.substr($origUrl,-60):
-										$origUrl;
+										$origUrlDisplay = $imgArr["originalUrl"];
+										echo ($origUrlDisplay && strlen($origUrlDisplay) > 60) ? $origUrlDisplay = '...'.substr($origUrlDisplay,-60) : $origUrlDisplay;
 										?>
 									</a>
 								</div>
 								<div>
 									<b><?php echo $LANG['THUMB_URL']; ?>: </b>
 									<a href="<?= $tnUrl ?>" title="<?= $tnUrl ?>" target="_blank">
-										<?= $tnUrl && strlen($tnUrl) > 60 ? '...' . substr($tnUrl,-60) : $tnUrl ?>
+										<?php
+										$tnUrlDisplay = $imgArr["thumbnailUrl"];
+										echo ($tnUrlDisplay && strlen($tnUrlDisplay) > 60) ? $tnUrlDisplay= '...'.substr($tnUrlDisplay,-60) : $tnUrlDisplay;
+										?>
 									</a>
 								</div>
 								<div>

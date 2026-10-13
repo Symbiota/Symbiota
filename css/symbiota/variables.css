@@ -1,12 +1,12 @@
 /* Variables
    ========================================================================== */
 :root {
-  --header-bg-image: url("../../images/layout/jonathan-borba-Ui73wdp0wok-unsplash.jpg");
-  --header-bg-color: #2f6e5378; /** Transparent color if adding header bg-image **/
+  --header-bg-image: url("../../images/layout/CCH2_poppy_banner.jpg");
+  --header-bg-color: #90b15b77; /** Transparent color if adding header bg-image **/
   --header-font-color: #fff;
-  --brand-font-size: 1.5rem;
+  --brand-font-size: 3.5rem;
   --logo-width: 120px;
-  --menu-top-bg-color: #1b3d2f;
+  --menu-top-bg-color: #5b5e61;
   --menu-font-size: 1rem;
   --body-bg-color: #fafafa;
   --body-text-color: #000000;
@@ -15,10 +15,10 @@
   --footer-bg-color: #f2f0e9;
   --heading-font-family: "Open Sans", sans-serif;
   --link-color: #126c00;
-  --darkest-color: #1b3d2f;
-  --medium-color: #5a5a53;
-  --light-color: #f2f0e9;
-  --bright-color: #b9d432;
+  --darkest-color: #5b5e61;
+  --medium-color: #A2A29C;
+  --light-color: #FFFFFF;
+  --bright-color: #F0C92B;
   --danger-color: #b31b1b;
   --max-innertext-width: 1024px;
 }

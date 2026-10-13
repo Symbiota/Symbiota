@@ -76,7 +76,6 @@ if($SYMB_UID){
 //Appy protections and build occurrence array
 $indManager->applyProtections($isSecuredReader);
 $occArr = $indManager->getOccData();
-
 $collMetadata = $indManager->getMetadata();
 $genticArr = $indManager->getGeneticArr();
 

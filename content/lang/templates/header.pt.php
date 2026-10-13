@@ -75,5 +75,7 @@ $LANG['F_CONTACT'] = 'ou contato o';
 $LANG['F_SSH'] = 'Symbiota Support Hub (SSH)';
 $LANG['F_POWERED_BY'] = 'Distribuído por';
 
+$LANG['DONATE'] = 'Doar';
+
 include('header.pt.override.php');
 ?>
