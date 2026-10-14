@@ -104,7 +104,7 @@ if (!$SYMB_UID && $GLOBAL_CAPTCHA){
 		// Redirect user to CAPTCHA validation
 		//http_response_code(403);
 		//exit('CAPTCHA verification required.');
-		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
+		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
 		$_SESSION['captcha_return_url'] = $referringUrl;
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php');
 		exit;
