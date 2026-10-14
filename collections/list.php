@@ -106,9 +106,7 @@ $_SESSION['citationvar'] = $searchVar;
 </head>
 
 <body>
-	<div id="all_collections_parent_container" data-config='<?= json_encode([
-		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
-	]) ?>'></div>
+	<div id="all_collections_parent_container" data-config='<?= json_encode(['CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI'])]) ?>'></div>
 	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<?php
 	$displayLeftMenu = (isset($collections_listMenu) ? $collections_listMenu : false);

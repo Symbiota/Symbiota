@@ -194,6 +194,11 @@ if (array_key_exists('last_message', $_SESSION)){
 			margin-right: auto;
 		}
 	</style>
+	<?php
+		if ($ENABLE_GLOBAL_CAPTCHA ?? false) {
+			include_once($SERVER_ROOT.'/includes/globalcaptchahead.php');
+		}
+	?>
 </head>
 <body>
 <?php
@@ -269,7 +274,7 @@ include($SERVER_ROOT.'/includes/header.php');
 			<?php
 		}
 		?>
-		<div class="flex-item-login" style="text-align:center">
+		<div class="flex-item-login bottom-breathing-room-rel" style="text-align:center">
 			<?php
 			$shouldBeAbleToCreatePublicUser = $SHOULD_BE_ABLE_TO_CREATE_PUBLIC_USER ?? true;
 			if($shouldBeAbleToCreatePublicUser){
@@ -310,6 +315,23 @@ include($SERVER_ROOT.'/includes/header.php');
 			}
 			?>
 		</div>
+		
+
+		<?php
+			if ($ENABLE_GLOBAL_CAPTCHA ?? false) {
+				?>
+				<div class="flex-item-login" style="text-align:center">
+					<fieldset class="profile-fieldset">
+						<legend class="profile-legend"><?= $LANG['CAPTCHA_INFO'] ?></legend>
+				<?php
+				include_once($SERVER_ROOT.'/includes/globalcaptchabody.php');
+				?>
+					</fieldset>
+				</div>
+				<?php
+			}
+		?>
+		
 	</div>
 </div>
 <?php include($SERVER_ROOT.'/includes/footer.php'); ?>
