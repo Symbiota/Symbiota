@@ -56,15 +56,22 @@ if($tid){
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
 				$sortPaginator = new Paginator(
-					Media::countByTid($tid), 10, 'mediaSortPage',
+					Media::countByTid($tid), (int)($_REQUEST['imagecount'] ?? 10), 'mediaSortPage',
 					'tpeditor.php', [
 						'tid' => $tid,
 						'tabindex' => 2,
+						'imagecount' => (int)($_REQUEST['imagecount'] ?? 10),
 						'mediaPage' => Paginator::getPageRequestVar('mediaPage')
 					]
 				);
 				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
+					<form action="tpeditor.php" method="post" target="_self">
+						<input name="imagecount" type="number" value="<?php echo (int)($_REQUEST['imagecount'] ?? 10); ?>"/>
+						<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
+						<input type="hidden" name="tabindex" value="2" />
+						<button type="submit">Submit</button>
+					</form>
 					<?php echo $sortPaginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
