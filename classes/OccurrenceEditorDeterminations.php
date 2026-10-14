@@ -1,17 +1,18 @@
 <?php
-include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('classes/OccurrenceEditorDeterminations');
 
-class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
+class OccurrenceEditorDeterminations extends Manager{
 
 	use TaxonomyTrait;
+	private $occid;
 
 	public function __construct(){
- 		parent::__construct();
+ 		parent::__construct('write');
 	}
 
 	public function __destruct(){
@@ -367,6 +368,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		return $retArr;
 	}
 
+	//Used in batchdeterminations
 	public function addNomAdjustment($detArr,$isEditor){
 		$sql = 'SELECT identificationQualifier FROM omoccurrences WHERE occid = '.$this->occid;
 		$rs = $this->conn->query($sql);
@@ -379,6 +381,7 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		$this->addDetermination($detArr, $isEditor);
 	}
 
+	//Used in rpc/getnewdetitem.php
 	public function getNewDetItem($catNum, $sciName, $allCatNum = 0){
 		$retArr = array();
 		if($catNum || $sciName){
@@ -431,10 +434,15 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 		return $retArr;
 	}
 
+	//Setter and getters
 	public function getCollName(){
 		$retStr = '';
 		if($this->collMap) $retStr = $this->collMap['collectionname'].' ('.$this->collMap['institutioncode'].($this->collMap['collectioncode']?':'.$this->collMap['collectioncode']:'').')';
 		return $retStr;
+	}
+
+	public function setOccid($occid){
+		if($occid) $this->occid = $occid;
 	}
 }
 ?>

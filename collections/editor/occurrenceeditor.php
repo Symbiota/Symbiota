@@ -1,6 +1,9 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceEditorDeterminations.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('collections/editor/occurrenceeditor');
 
@@ -21,25 +24,18 @@ if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$occId = array_key_exists('occid', $_REQUEST) ? filter_var($_REQUEST['occid'], FILTER_SANITIZE_NUMBER_INT) : '';
-$collId = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : false;
-$tabTarget = array_key_exists('tabtarget', $_REQUEST) ? filter_var($_REQUEST['tabtarget'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$goToMode = array_key_exists('gotomode', $_REQUEST) ? filter_var($_REQUEST['gotomode'], FILTER_SANITIZE_NUMBER_INT) : 0;
-$occIndex = array_key_exists('occindex', $_REQUEST) ? filter_var($_REQUEST['occindex'], FILTER_SANITIZE_NUMBER_INT) : false;
-$crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? filter_var($_REQUEST['csmode'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$occid = array_key_exists('occid', $_REQUEST) ? Sanitize::int($_REQUEST['occid']) : '';
+$collId = array_key_exists('collid', $_REQUEST) ? Sanitize::int($_REQUEST['collid']) : false;
+$tabTarget = array_key_exists('tabtarget', $_REQUEST) ? Sanitize::int($_REQUEST['tabtarget']) : 0;
+$goToMode = array_key_exists('gotomode', $_REQUEST) ? Sanitize::int($_REQUEST['gotomode']) : 0;
+$occIndex = array_key_exists('occindex', $_REQUEST) ? Sanitize::int($_REQUEST['occindex']) : false;
+$crowdSourceMode = array_key_exists('csmode', $_REQUEST) ? Sanitize::int($_REQUEST['csmode']) : 0;
 
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 if(!$action && array_key_exists('carryover', $_REQUEST)) $goToMode = 2;
 
 //Create Occurrence Manager
-$occManager = null;
-if(strpos($action,'Determination') || strpos($action,'Verification')){
-	include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
-	$occManager = new OccurrenceEditorDeterminations();
-} else{
-	include_once($SERVER_ROOT.'/classes/OccurrenceEditorManager.php');
-	$occManager = new OccurrenceEditorManager();
-}
+$occManager = new OccurrenceEditorManager();
 
 if($crowdSourceMode){
 	$occManager->setCrowdSourceMode(1);
@@ -64,10 +60,10 @@ $CATNUM_DUPE_CHECK = true;
 $OTHER_CATNUM_DUPE_CHECK = true;
 if($SYMB_UID){
 	//Set variables
-	if($occId && $collId) {
-		$_SESSION['occurrenceEditorFallbackUrl'] = GeneralUtil::getDomain() . '/collections/editor/occurrenceeditor.php?occid=' . $occId . '&collid=' . $collId;
+	if($occid && $collId) {
+		$_SESSION['occurrenceEditorFallbackUrl'] = GeneralUtil::getDomain() . '/collections/editor/occurrenceeditor.php?occid=' . $occid . '&collid=' . $collId;
 	}
-	$occManager->setOccId($occId);
+	$occManager->setOccId($occid);
 	$occManager->setCollId($collId);
 	$collMap = $occManager->getCollMap();
 	if($collId && isset($collMap['collid']) && $collId != $collMap['collid']){
@@ -129,7 +125,7 @@ if($SYMB_UID){
 	}
 	else{
 		if($isGenObs){
-			if(!$occId && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){
+			if(!$occid && array_key_exists('CollEditor',$USER_RIGHTS) && in_array($collId,$USER_RIGHTS['CollEditor'])){
 				//Approved General Observation editors can add records
 				$isEditor = 2;
 			}
@@ -154,7 +150,7 @@ if($SYMB_UID){
 			//Collection is set as allowing public edits
 			$isEditor = 4;
 		}
-		elseif(array_key_exists('CollTaxon',$USER_RIGHTS) && $occId){
+		elseif(array_key_exists('CollTaxon',$USER_RIGHTS) && $occid){
 			//Check to see if this user is authorized to edit this occurrence given their taxonomic editing authority
 			$isEditor = $occManager->isTaxonomicEditor();
 		}
@@ -180,17 +176,19 @@ if($SYMB_UID){
 	}
 	if($isEditor){
 		//Available to full editors and taxon editors
+		$detManager = new OccurrenceEditorDeterminations();
+		$detManager->setOccid($occid);
 		if($action == 'submitDetermination'){
 			//Adding a new determination
-			$statusStr = $occManager->addDetermination($_POST,$isEditor);
+			$statusStr = $detManager->addDetermination($_POST,$isEditor);
 			$tabTarget = 1;
 		}
 		elseif($action == 'submitDeterminationEdit'){
-			$statusStr = $occManager->editDetermination($_POST);
+			$statusStr = $detManager->editDetermination($_POST);
 			$tabTarget = 1;
 		}
 		elseif($action == 'Delete Determination'){
-			$statusStr = $occManager->deleteDetermination($_POST['detid']);
+			$statusStr = $detManager->deleteDetermination($_POST['detid']);
 			$tabTarget = 1;
 		}
 		//Only full editors can perform following actions
@@ -201,13 +199,13 @@ if($SYMB_UID){
 					$qryCnt = $occManager->getQueryRecordCount();
 					$qryCnt++;
 					if($goToMode) $occIndex = $qryCnt;			//Go to new record
-					else $occId = $occManager->getOccId();		//Stay on record and get $occId
+					else $occid = $occManager->getOccId();		//Stay on record and get $occid
 				}
 				else $statusStr = $occManager->getErrorStr();
 			}
 			elseif($action == 'Delete Occurrence'){
-				if($occManager->deleteOccurrence($occId)){
-					$occId = 0;
+				if($occManager->deleteOccurrence($occid)){
+					$occid = 0;
 					$occManager->setOccId(0);
 				}
 				else $statusStr = $occManager->getErrorStr();
@@ -215,7 +213,7 @@ if($SYMB_UID){
 			elseif($action == 'Transfer Record'){
 				$transferCollid = $_POST['transfercollid'];
 				if($transferCollid){
-					if($occManager->transferOccurrence($occId,$transferCollid)){
+					if($occManager->transferOccurrence($occid,$transferCollid)){
 						if(!isset($_POST['remainoncoll']) || !$_POST['remainoncoll']){
 							$occManager->setCollId($transferCollid);
 							$collId = $transferCollid;
@@ -232,11 +230,11 @@ if($SYMB_UID){
 				if($cloneArr){
 					$statusStr = (isset($LANG['CLONES_CREATED'])?$LANG['CLONES_CREATED']:'Success! The following new clone record(s) have been created').' ';
 					$statusStr .= '<div style="margin:5px 10px;color:black">';
-					$statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($occId, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars((isset($LANG['CLONE_SOURCE'])?$LANG['CLONE_SOURCE']:'clone source'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
-					$occId = current($cloneArr);
-					$occManager->setOccId($occId);
+					$statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($occid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> - ' . htmlspecialchars((isset($LANG['CLONE_SOURCE'])?$LANG['CLONE_SOURCE']:'clone source'), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</div>';
+					$occid = current($cloneArr);
+					$occManager->setOccId($occid);
 					foreach($cloneArr as $cloneOccid){
-						if($cloneOccid==$occId) $statusStr .= '<div>#'.$cloneOccid.' - '.(isset($LANG['THIS_RECORD'])?$LANG['THIS_RECORD']:'this record').'</div>';
+						if($cloneOccid==$occid) $statusStr .= '<div>#'.$cloneOccid.' - '.(isset($LANG['THIS_RECORD'])?$LANG['THIS_RECORD']:'this record').'</div>';
 						else $statusStr .= '<div><a href="occurrenceeditor.php?occid=' . htmlspecialchars($cloneOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '" target="_blank">#' . htmlspecialchars($cloneOccid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
 					}
 					$statusStr .= '</div>';
@@ -267,7 +265,7 @@ if($SYMB_UID){
 				}
 
 				try {
-					$occur_map = $occManager->getOccurMap()[$occId];
+					$occur_map = $occManager->getOccurMap()[$occid];
 					$path = get_occurrence_upload_path(
 						$occur_map['institutioncode'],
 						$occur_map['collectioncode'],
@@ -321,7 +319,7 @@ if($SYMB_UID){
 						$target_occur_map['catalognumber']
 					);
 
-					$occur_map = $occManager->getOccurMap()[$occId];
+					$occur_map = $occManager->getOccurMap()[$occid];
 					$current_path = get_occurrence_upload_path(
 						$occur_map['institutioncode'],
 						$occur_map['collectioncode'],
@@ -354,11 +352,11 @@ if($SYMB_UID){
 			elseif($action == "Apply Determination"){
 				$makeCurrent = 0;
 				if(array_key_exists('makecurrent',$_POST)) $makeCurrent = 1;
-				$statusStr = $occManager->applyDetermination($_POST['detid'],$makeCurrent);
+				$statusStr = $detManager->applyDetermination($_POST['detid'],$makeCurrent);
 				$tabTarget = 1;
 			}
 			elseif($action == "Make Determination Current"){
-				$statusStr = $occManager->makeDeterminationCurrent($_POST['detid']);
+				$statusStr = $detManager->makeDeterminationCurrent($_POST['detid']);
 				$tabTarget = 1;
 			}
 			elseif($action == "Submit Verification Edits"){
@@ -395,7 +393,7 @@ if($SYMB_UID){
 
 	if($goToMode){
 		//Adding new record, override query form and prime for current user's dataentry for the day
-		$occId = 0;
+		$occid = 0;
 		$occManager->setQueryVariables(array('eb'=>$PARAMS_ARR['un'],'de'=>date('Y-m-d')));
 		if(!$qryCnt){
 			$qryCnt = $occManager->getQueryRecordCount();
@@ -432,11 +430,11 @@ if($SYMB_UID){
 	}
 	$occManager->setOccIndex($occIndex);
 
-	if($occId || (!$goToMode && $occIndex !== false)){
+	if($occid || (!$goToMode && $occIndex !== false)){
 		$oArr = $occManager->getOccurMap();
 		if($oArr){
-			$occId = $occManager->getOccId();
-			$occArr = $oArr[$occId];
+			$occid = $occManager->getOccId();
+			$occArr = $oArr[$occid];
 			$occIndex = $occManager->getOccIndex();
 			if(!$collMap){
 				$collMap = $occManager->getCollMap();
@@ -450,7 +448,7 @@ if($SYMB_UID){
 				}
 			}
 			else if ($collMap && !empty($collMap['guidtarget']) && $collMap['guidtarget'] === "symbiotaUUID" && empty($occArr['occurrenceid'])){
-				$occArr['recordID'] = $occManager->getRecordIdByOccId($occId);
+				$occArr['recordID'] = $occManager->getRecordIdByOccId($occid);
 				$occArr['occurrenceid'] = $occArr['recordID'];
 				$readOnly = 'readonly style="background-color:lightgray"';
 			}
@@ -507,7 +505,7 @@ if($SYMB_UID){
 	}
 
 	$isLocked = false;
-	if($occId) $isLocked = $occManager->getLock();
+	if($occid) $isLocked = $occManager->getLock();
 }
 else{
 	header('Location: ../../profile/index.php?refurl=../collections/editor/occurrenceeditor.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -604,7 +602,7 @@ else{
 			?>
 		</div>
 		<?php
-		if($isEditor && ($occId || ($collId && $isEditor < 3))){
+		if($isEditor && ($occid || ($collId && $isEditor < 3))){
 			if(!$occArr && !$goToMode) $displayQuery = 1;
 			if($statusStr){
 				?>
@@ -624,7 +622,7 @@ else{
 				</div>
 				<?php
 			}
-			if($occId && $isLocked){
+			if($occid && $isLocked){
 				?>
 				<div style="margin:25px;border:2px double;padding:20px;width:90%;">
 					<div style="color:red;font-weight:bold;font-size:110%;">
@@ -675,7 +673,7 @@ else{
 										}
 									}
 								}
-								if($occId) echo '<a href="../individual/index.php?occid=' . $occManager->getOccId() . '">' . (isset($LANG['PUBLIC_DISPLAY'])?$LANG['PUBLIC_DISPLAY']:'Public Display') . '</a> &gt;&gt;';
+								if($occid) echo '<a href="../individual/index.php?occid=' . $occManager->getOccId() . '">' . (isset($LANG['PUBLIC_DISPLAY'])?$LANG['PUBLIC_DISPLAY']:'Public Display') . '</a> &gt;&gt;';
 								?>
 								<b><?php if($isEditor == 3) echo $LANG['TAXONOMIC_EDITOR']; ?></b>
 							</div>
@@ -696,13 +694,13 @@ else{
 								<li id="occTab" >
 									<a href="#occdiv">
 										<?php
-										if($occId) echo (isset($LANG['OCC_DATA'])?$LANG['OCC_DATA']:'Occurrence Data');
+										if($occid) echo (isset($LANG['OCC_DATA'])?$LANG['OCC_DATA']:'Occurrence Data');
 										else echo '<span style="color:red;">'.(isset($LANG['NEW_OCC_RECORD'])?$LANG['NEW_OCC_RECORD']:'New Occurrence Record').'</span>';
 										?>
 									</a>
 								</li>
 								<?php
-								if($occId && $isEditor){
+								if($occid && $isEditor){
 									// Get symbiota user email as the annotator email (for fp)
 									include_once($SERVER_ROOT . '/classes/ProfileManager.php');
 									$pHandler = new ProfileManager();
@@ -765,7 +763,7 @@ else{
 										<?php
 
 										// If it's a new record in a general observation collection, get the person info to autofill name, country & state
-										if($isGenObs && !$occId) {
+										if($isGenObs && !$occid) {
 											$pHandler = new ProfileManager();
 											$pHandler->setUid($SYMB_UID);
 											$user = $pHandler->getPerson();
@@ -778,7 +776,7 @@ else{
 											}
 										}
 
-										if($occId){
+										if($occid){
 											if($fragArr || $specImgArr){
 												?>
 												<div style="float:right;margin:-7px -4px 0px 0px;font-weight:bold;">
@@ -830,7 +828,7 @@ else{
 																	</div>
 																	<div class="divTableCell">
 																		<input class="idValueInput" name="idvalue[]" type="text" value="<?php echo $idArr['value']; ?>" onchange="fieldChanged('idvalue');" autocomplete="off" aria-label="<?php echo $LANG['IDENT_VALUE']; ?>"/>
-																		<button class="clear-icon-button" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occId; ?>);return false" aria-label="<?= $LANG['DELETE_VALUE'] ?>">
+																		<button class="clear-icon-button" onclick="confirmDeleteIdentifier(<?php echo "'".$idKey."',".$occid; ?>);return false" aria-label="<?= $LANG['DELETE_VALUE'] ?>">
 																			<img src="../../images/del.png" style="width:1em; height:1em;" alt=""/>
 																		</button>
 																	</div>
@@ -907,7 +905,7 @@ else{
 												</div>
 												<input type="text" id="verbatimeventdate" name="verbatimeventdate" maxlength="255" value="<?php echo array_key_exists('verbatimeventdate',$occArr)?$occArr['verbatimeventdate']:''; ?>" onchange="verbatimEventDateChanged(this)" />
 											</div>
-											<button id="eventTimeToggleDiv" onclick="toggle('eventTimeDiv');" 
+											<button id="eventTimeToggleDiv" onclick="toggle('eventTimeDiv');"
 												type="button" class="clear-icon-button" style="padding-top: 1.25rem; margin-left: 15px;" title="<?= $LANG['TOGG_ADD_FIELDS'] ?>" aria-label="<?= $LANG['TOGG_ADD_FIELDS'] ?>">
 												<img src="../../images/tochild.png" style="width:1.3em;height:1.3em" alt="">
 											</button>
@@ -936,7 +934,7 @@ else{
 										</div>
 										<?php
 										if(isset($ACTIVATE_EXSICCATI) && $ACTIVATE_EXSICCATI){
-											$exsArr = $occManager->getExsiccati($occId);
+											$exsArr = $occManager->getExsiccati($occid);
 											?>
 											<div id="exsDiv">
 												<div id="ometidDiv" class="field-div">
@@ -980,7 +978,7 @@ else{
 										</div>
 										<div style="clear:both;padding:3px 0px 0px 10px;">
 											<?php
-											if(!$occId){
+											if(!$occid){
 												echo '<div id="idRankDiv">';
 												echo $LANG['IDENTIFICATION_CONFIDENCE'];
 												echo ' <a href="#" onclick="return dwcDoc(\'idConfidence\')" tabindex="-1"><img class="docimg" src="../../images/qmark.png" /></a> ';
@@ -1571,7 +1569,7 @@ else{
 												<?php
 												$pStatus = '';
 												if(!empty($occArr['processingstatus'])) $pStatus = strtolower($occArr['processingstatus']);
-												if(!$pStatus && !$occId) $pStatus = 'pending review';
+												if(!$pStatus && !$occid) $pStatus = 'pending review';
 												?>
 												<select id="processingstatus" name="processingstatus" onchange="fieldChanged('processingstatus');">
 													<option value=''><?php echo $LANG['NO_SET_STATUS']; ?></option>
@@ -1592,12 +1590,12 @@ else{
 											</div>
 										</div>
 										<?php
-										if($occId){
+										if($occid){
 											?>
 											<div id="pkDiv">
 												<hr/>
 												<div style="float:left;" title="<?php echo $LANG['PRIMARY_KEY']; ?>">
-													<?php if($occId) echo 'Key: '.$occManager->getOccId(); ?>
+													<?php if($occid) echo 'Key: '.$occManager->getOccId(); ?>
 												</div>
 												<div style="float:left;margin-left:50px;">
 													<?php if(array_key_exists('datelastmodified',$occArr)) echo $LANG['MODIFIED'].': '.$occArr['datelastmodified']; ?>
@@ -1619,7 +1617,7 @@ else{
 									if($navStr){
 										//echo '<div style="float:right;margin-right:20px;">'.$navStr.'</div>'."\n";
 									}
-									if(!$occId){
+									if(!$occid){
 										$userChecklists = $occManager->getUserChecklists();
 										if($userChecklists){
 											?>
@@ -1647,7 +1645,7 @@ else{
 										<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
 										<input type="hidden" name="linkdupe" value="" />
 										<?php
-										if($occId){
+										if($occid){
 											?>
 											<div style="float:left">
 												<label for="autoprocessingstatus"><?php echo $LANG['STATUS_AUTO_SET']; ?>:</label>
@@ -1760,7 +1758,7 @@ else{
 						</div>
 						<?php endif ?>
 
-						<?php if($qryCnt == 0 && !$occId && array_key_exists('q_catalognumber',$_POST)): ?>
+						<?php if($qryCnt == 0 && !$occid && array_key_exists('q_catalognumber',$_POST)): ?>
 						<div style="clear:both;padding:20px;font-weight:bold;font-size:120%;">
 							<?php echo (isset($LANG['NONE_FOUND'])?$LANG['NONE_FOUND']:'No records found matching the query'); ?>
 						</div>
@@ -1768,7 +1766,7 @@ else{
 					</td>
 					<td id="imgtd" style="display:none;width:430px;" valign="top">
 						<?php
-						if($occId && ($fragArr || $specImgArr )){
+						if($occid && ($fragArr || $specImgArr )){
 							include_once('includes/imgprocessor.php');
 						}
 						?>
@@ -1778,7 +1776,7 @@ else{
 			}
 		}
 		else{
-			if(!$collId && !$occId) echo $LANG['ERROR_ID_NULL'];
+			if(!$collId && !$occid) echo $LANG['ERROR_ID_NULL'];
 			elseif(!$isEditor){
 				echo '<div style="margin:30px;">';
 				if($crowdSourceMode){
@@ -1787,7 +1785,7 @@ else{
 				else echo $LANG['ERROR_NOT_AUTHORIZED'];
 				echo '</div>';
 			}
-			elseif($isEditor == 4 && !$occId){
+			elseif($isEditor == 4 && !$occid){
 				echo '<b>'.$LANG['ERROR_CANT_ADD'];
 			}
 		}

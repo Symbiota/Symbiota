@@ -1803,7 +1803,7 @@ class OccurrenceEditorManager {
 
 				$parameters = str_repeat('?,', count($currentDeterminations) - 1) . '?';
 				$sql = <<<"SQL"
-				UPDATE omoccurdeterminations 
+				UPDATE omoccurdeterminations
 				SET isCurrent = 0
 				WHERE occid = ? AND isCurrent = 1 AND detid NOT IN ($parameters);
 				SQL;
