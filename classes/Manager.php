@@ -54,6 +54,64 @@ class Manager  {
 		return $propValue;
 	}
 
+	protected function getAdminPropertyValue($category, $propType, $propName, $tableName = null, $tablePK = null){
+		$propValue = '';
+		if($category && $propType && $propName){
+			$sql = 'SELECT propValue FROM adminproperties WHERE category = ? AND propType = ? AND propName = ? AND (tableName <=> ?) AND (tablePK <=> ?) ORDER BY propID DESC LIMIT 1';
+			if($stmt = $this->conn->prepare($sql)){
+				$tablePKValue = (is_numeric($tablePK) ? (int)$tablePK : null);
+				$stmt->bind_param('ssssi', $category, $propType, $propName, $tableName, $tablePKValue);
+				$stmt->execute();
+				$stmt->bind_result($propValue);
+				$stmt->fetch();
+				$stmt->close();
+			}
+		}
+		return ($propValue !== null ? $propValue : '');
+	}
+
+	protected function setAdminPropertyValue($category, $propType, $propName, $propValue, $tableName = null, $tablePK = null, $modifiedUid = null){
+		$status = false;
+		if($category && $propType && $propName){
+			if($modifiedUid === null && !empty($GLOBALS['SYMB_UID']) && is_numeric($GLOBALS['SYMB_UID'])){
+				$modifiedUid = (int)$GLOBALS['SYMB_UID'];
+			}
+			$tablePKValue = (is_numeric($tablePK) ? (int)$tablePK : null);
+			$propID = null;
+
+			$selectSql = 'SELECT propID FROM adminproperties WHERE category = ? AND propType = ? AND propName = ? AND (tableName <=> ?) AND (tablePK <=> ?) ORDER BY propID DESC LIMIT 1';
+			if($selectStmt = $this->conn->prepare($selectSql)){
+				$selectStmt->bind_param('ssssi', $category, $propType, $propName, $tableName, $tablePKValue);
+				$selectStmt->execute();
+				$selectStmt->bind_result($propID);
+				$selectStmt->fetch();
+				$selectStmt->close();
+			}
+
+			if($propID){
+				$updateSql = 'UPDATE adminproperties SET propValue = ?, modifiedUid = ? WHERE propID = ?';
+				if($updateStmt = $this->conn->prepare($updateSql)){
+					$updateStmt->bind_param('sii', $propValue, $modifiedUid, $propID);
+					$updateStmt->execute();
+					if($updateStmt->error) $this->errorMessage = 'ERROR updating admin property: '.$updateStmt->error;
+					else $status = true;
+					$updateStmt->close();
+				}
+			}
+			else{
+				$insertSql = 'INSERT INTO adminproperties(category, propType, propName, propValue, tableName, tablePK, modifiedUid, initialTimestamp) VALUES(?, ?, ?, ?, ?, ?, ?, NOW())';
+				if($insertStmt = $this->conn->prepare($insertSql)){
+					$insertStmt->bind_param('sssssii', $category, $propType, $propName, $propValue, $tableName, $tablePKValue, $modifiedUid);
+					$insertStmt->execute();
+					if($insertStmt->error) $this->errorMessage = 'ERROR inserting admin property: '.$insertStmt->error;
+					else $status = true;
+					$insertStmt->close();
+				}
+			}
+		}
+		return $status;
+	}
+
 	protected function setLogFH($logPath){
 		$this->logFH = fopen($logPath, 'a');
 	}

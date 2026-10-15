@@ -1,5 +1,38 @@
 var activeImgIndex = 1;
 var ocrFragIndex = 1;
+var vvAuthTokenStorageKey = 'vv-auth-token';
+
+document.addEventListener('DOMContentLoaded', function() {
+	var helpDialog = document.getElementById('vvAuthTokenHelpDialog');
+	if(!helpDialog || !window.jQuery || !$.fn.dialog) return;
+
+	$("#vvAuthTokenHelpDialog").dialog({
+		autoOpen: false,
+		position: { my: "left top", at: "right bottom", of: window }
+	});
+});
+
+document.addEventListener('click', function(e) {
+	var signupLink = e.target.closest('.vvAuthTokenSignupLink');
+	if(!signupLink) return;
+
+	e.preventDefault();
+	e.stopPropagation();
+	window.open(signupLink.href, '_blank', 'noopener');
+});
+
+document.addEventListener('click', function(e) {
+	var helpBtn = e.target.closest('.vvAuthTokenHelpBtn');
+	if(!helpBtn) return;
+
+	e.preventDefault();
+	$("#vvAuthTokenHelpDialog").dialog('option', 'position', {
+		my: "left top",
+		at: "right bottom",
+		of: helpBtn
+	});
+	$("#vvAuthTokenHelpDialog").dialog("open");
+});
 
 $(document).ready(function() {
 	//Remember image popout status 
@@ -7,7 +40,38 @@ $(document).ready(function() {
 	if(imgTd != "close") toggleImageTdOn();
 	//if(imgTd == "open" || csMode == 1) toggleImageTdOn();
 	initImgRes();
+	restoreVVCredentialsFromSession();
 });
+
+function getVVFieldValue(fieldId){
+	var $visibleField = $('#labelprocessingdiv [id="' + fieldId + '"]:visible').first();
+	if($visibleField.length) return $visibleField.val();
+	var $field = $('[id="' + fieldId + '"]').first();
+	return ($field.length ? $field.val() : '');
+}
+
+function setVVFieldValue(fieldId, value){
+	$('[id="' + fieldId + '"]').val(value);
+}
+
+function saveVVCredentialsToSession(){
+	try {
+		if(!window.sessionStorage) return;
+		sessionStorage.setItem(vvAuthTokenStorageKey, getVVFieldValue('vv-auth-token') || '');
+	}
+	catch(err) {
+	}
+}
+
+function restoreVVCredentialsFromSession(){
+	try {
+		if(!window.sessionStorage) return;
+		var authToken = sessionStorage.getItem(vvAuthTokenStorageKey);
+		if(authToken) setVVFieldValue('vv-auth-token', authToken);
+	}
+	catch(err) {
+	}
+}
 
 function toggleImageTdOn(){
 	var imgSpan = document.getElementById("imgProcOnSpan");
@@ -179,22 +243,47 @@ function ocrImage(ocrButton, target, imgidVar, imgCnt){
 
 // Function to run OCR via Vouchervision-Go API
 async function ocrVV(ocrButton, imgCnt){
+	saveVVCredentialsToSession();
 
 	// Get the busy indicator and image url
 	const busy = $('#workingcircle-vv-' + imgCnt);
-	const imgurl = $('#activeimg-' + imgCnt).attr('src');
+	const imgurlRaw = $('#activeimg-' + imgCnt).attr('src');
+	if(!imgurlRaw){
+		alert("Unable to determine image URL for VoucherVision request.");
+		return;
+	}
+	const imgurl = (new URL(imgurlRaw, window.location.origin)).toString();
+	const vvPanel = $('#labeldiv-' + imgCnt);
 
 	// Get user-selected parameters
-	const prompt = $('#prompt').val();
-	const llm_model = $('#llm-model').val();
-  const engines = $('#engines').val();
-  const ocrOnly = $('#ocrOnly').is(':checked');
+	const prompt = vvPanel.find('#prompt').val();
+	const llm_model = vvPanel.find('#llm-model').val();
+	const engines = vvPanel.find('#engines').val();
+	const ocrOnly = vvPanel.find('#ocrOnly').is(':checked');
+	const debugMode = vvPanel.find('#vv-debug').is(':checked');
+	const authToken = $.trim(vvPanel.find('#vv-auth-token').val());
+	const geminiApiKey = $.trim(vvPanel.find('#vv-gemini-api-key').val());
+	const sharedKeyEnabled = vvPanel.find('#vv-shared-key-enabled').val() === '1';
 
   // Show busy indicator
   busy.show();
 
   // Disable additional OCR Image button presses
   $(ocrButton).prop('disabled', true);
+
+	if(!engines || engines.length === 0){
+		alert("Please select at least one OCR engine.");
+		busy.hide();
+		$(ocrButton).prop('disabled', false);
+		return;
+	}
+
+	if(!authToken && !sharedKeyEnabled){
+		alert("Authorization token required. Get one from the VoucherVisionGO login page and try again.");
+		busy.hide();
+		$(ocrButton).prop('disabled', false);
+		return;
+	}
 
   // Symbiota field mappings for data returned by various prompts
 	const vvMapping = {
@@ -288,6 +377,16 @@ async function ocrVV(ocrButton, imgCnt){
 		ocr_only: ocrOnly
 	};
 
+	if(authToken){
+		vvData.auth_token = authToken;
+	}
+	if(geminiApiKey){
+		vvData.gemini_api_key = geminiApiKey;
+	}
+	if(debugMode){
+		vvData.vv_debug = true;
+	}
+
 	// Start a timer to check how long the API call took
 	var start = Date.now();
 
@@ -344,6 +443,7 @@ async function ocrVV(ocrButton, imgCnt){
 			let sourceStr = 'Vouchervision-Go: ' + yyyy + '-' + mm + '-' + dd;
 			sourceStr += '; OCR Model(s): ' + engines.join("+");
 			sourceStr += '; Transcription Model: ' + llm_model + "; Prompt: " + prompt;
+			sourceStr += '; Billing: ' + ((authToken || geminiApiKey) ? 'User credentials' : 'Shared credentials');
 
 			// Put the source string in the OCR source field
 			$('input[name="rawsource"]').val(sourceStr);
