@@ -23,6 +23,12 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+//Needed for proper HTTPS detection within SwaggerLume when routed via a proxy (e.g. cloudflare)
+\Symfony\Component\HttpFoundation\Request::setTrustedProxies(
+	['REMOTE_ADDR'],
+	\Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_PROTO
+);
+
 $app->withFacades();
 
 $app->withEloquent();
