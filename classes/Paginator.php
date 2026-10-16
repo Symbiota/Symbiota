@@ -70,7 +70,10 @@ class Paginator {
 	public static function getPageRequestVar(String $variableName): Int {
 		if(($page = $_REQUEST[$variableName] ?? false) && is_numeric($page)) {
 			return intval(filter_var($page, FILTER_SANITIZE_NUMBER_INT));
-		} else {
+		} else if ($variableName === 'imageCount') {
+			return 10;
+		}
+		else {
 			return 1;
 		}
 	}

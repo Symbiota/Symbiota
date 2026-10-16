@@ -11,7 +11,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
-$imageCount = (int)($_REQUEST['imageCount'] ?? 10);
+$imageCount = (int)($_REQUEST['imageCount']);
 
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
