@@ -48,6 +48,11 @@ if($tid){
 		.line-button:focus-visible {
 			outline: 2px solid blue !important;
 		}
+		.image-count-form {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+		}
 	</style>
 </head>
 <body>
@@ -67,13 +72,14 @@ if($tid){
 				);
 				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
-					<form action="tpeditor.php" method="post" target="_self">
+					<?php echo $sortPaginator->renderPagination() ?>
+					<form action="tpeditor.php" method="post" target="_self" class="image-count-form">
 						<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
 						<input type="hidden" name="tabindex" value="2" />
-						<input name="imageCount" type="number" value="<?php echo $imageCount; ?>"/>
-						<button type="submit">Submit</button>
+						<label for="imageCountqs"><?= $LANG['IMAGES_PER_PAGE'] ?></label>
+						<input name="imageCount" id="imageCountqs" type="number" value="<?php echo $imageCount; ?>" style="width:7ch;" />
+						<button type="submit"><?= $LANG['APPLY'] ?></button>
 					</form>
-					<?php echo $sortPaginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
@@ -271,13 +277,14 @@ if($tid){
 				);
 				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
-				<form action="tpeditor.php" method="post" target="_self">
+				<?php echo $paginator->renderPagination() ?>
+				<form action="tpeditor.php" method="post" target="_self" class="image-count-form">
 					<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
 					<input type="hidden" name="tabindex" value="1" />
-					<input name="imageCount" type="number" value="<?php echo $imageCount; ?>"/>
-					<button type="submit">Submit</button>
+					<label for="imageCount"><?= $LANG['IMAGES_PER_PAGE'] ?></label>
+					<input name="imageCount" id="imageCount" type="number" value="<?php echo $imageCount; ?>" style="width:7ch;" />
+					<button type="submit"><?= $LANG['APPLY'] ?></button>
 				</form>
-				<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<section class="gridlike-form">
 							<?php
