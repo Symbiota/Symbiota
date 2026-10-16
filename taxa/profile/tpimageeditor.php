@@ -11,6 +11,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
+$imageCount = (int)($_REQUEST['imageCount'] ?? 10);
 
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
@@ -56,20 +57,20 @@ if($tid){
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
 				$sortPaginator = new Paginator(
-					Media::countByTid($tid), (int)($_REQUEST['imagecount'] ?? 10), 'mediaSortPage',
+					Media::countByTid($tid), $imageCount, 'mediaSortPage',
 					'tpeditor.php', [
 						'tid' => $tid,
 						'tabindex' => 2,
-						'imagecount' => (int)($_REQUEST['imagecount'] ?? 10),
-						'mediaPage' => Paginator::getPageRequestVar('mediaPage')
+						'mediaPage' => Paginator::getPageRequestVar('mediaPage'),
+						'imageCount' => $imageCount,
 					]
 				);
 				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
 					<form action="tpeditor.php" method="post" target="_self">
-						<input name="imagecount" type="number" value="<?php echo (int)($_REQUEST['imagecount'] ?? 10); ?>"/>
 						<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
 						<input type="hidden" name="tabindex" value="2" />
+						<input name="imageCount" type="number" value="<?php echo $imageCount; ?>"/>
 						<button type="submit">Submit</button>
 					</form>
 					<?php echo $sortPaginator->renderPagination() ?>
@@ -260,15 +261,22 @@ if($tid){
 			}
 			else{
 				$paginator = new Paginator(
-					Media::countByTid($tid), 10, 'mediaPage',
+					Media::countByTid($tid), $imageCount, 'mediaPage',
 					'tpeditor.php', [
 						'tid' => $tid,
 						'tabindex' => 1,
-						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage')
+						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage'),
+						'imageCount' => $imageCount,
 					]
 				);
 				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
+				<form action="tpeditor.php" method="post" target="_self">
+					<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
+					<input type="hidden" name="tabindex" value="1" />
+					<input name="imageCount" type="number" value="<?php echo $imageCount; ?>"/>
+					<button type="submit">Submit</button>
+				</form>
 				<?php echo $paginator->renderPagination() ?>
 					<div style='clear:both;'>
 						<section class="gridlike-form">
