@@ -39,5 +39,7 @@ $LANG['TP_IMAGE_EDITOR'] = 'Taxon Profile Media Editor';
 $LANG['CREATOR'] = 'Creator';
 $LANG['NOT_SPECIFIED'] = 'Not Specified';
 $LANG['NOT_SET'] = 'Not Set';
+$LANG['IMAGES_PER_PAGE'] = 'Images per page:';
+$LANG['APPLY'] = 'Apply';
 
 ?>
