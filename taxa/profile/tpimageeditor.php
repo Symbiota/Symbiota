@@ -84,6 +84,7 @@ if($tid){
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
 							<input type="hidden" name="tabindex" value="2" />
+							<input type="hidden" name="imageCount" value="<?php echo $imageCount; ?>"/>
 							<table border='0' cellspacing='0'>
 								<tr>
 									<?php
