@@ -202,7 +202,7 @@ if($tid){
 										<input type='text' id='originalUrl' name='originalUrl' size='70'/>
 									</div>
 									<div style="margin-left:10px;">
-										<input type="checkbox" id="importurl" name="importurl" value="1" /> <label for="importurl"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
+										<input type="checkbox" id="copytoserver" name="copytoserver" value="1" /> <label for="copytoserver"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
 									</div>
 									<button type="button" class="line-button" onclick="toggle('targetdiv')">
 										<?php echo $LANG['UPLOAD_LOCAL']; ?>
@@ -436,7 +436,7 @@ if($tid){
 					<?php
 				}
 				else{
-					echo '<h2>' . $LANG['NO_IMAGES'] . '</h2>';
+					echo '<h2>' . $LANG['NO_IMAGES'] . '.</h2>';
 				}
 			}
 		}
