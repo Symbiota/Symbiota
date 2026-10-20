@@ -159,7 +159,7 @@ if($tid){
 								</tr>
 							</table>
 							<?php
-							if($imgCnt%5 != 0) echo "<div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
+							if($imgCnt%5 != 0) echo "<hr><div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
 							?>
 						</form>
 					</div>
