@@ -1,82 +1,65 @@
 <?php
-include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/data/OmDatasets.php');
 include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
-class OccurrenceDataset {
+class OccurrenceDataset extends OmDatasets {
 
-	private $conn;
-	private $collArr = array();
 	private $datasetId = 0;
+	private $collArr = array();
 	private $errorArr = array();
-	private $occurrenceCount = null;
 
-	public function __construct($type = 'write') {
-		$this->conn = MySQLiConnectionFactory::getCon($type);
+	function __construct() {
+		parent::__construct();
 	}
 
-	public function __destruct() {
-		if (!($this->conn === null)) $this->conn->close();
+	function __destruct(){
+		parent::__destruct();
 	}
 
-	public function getPublicDatasets() {
+	public function getDatasetList() {
 		$retArr = array();
-		$sql = 'SELECT datasetid, category, IFNULL(datasetName, name) as name, notes, description, uid, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE ispublic=1 ORDER BY category,name';
+		$sql = 'SELECT datasetID, category, IFNULL(datasetName, name) as name FROM omoccurdatasets WHERE ispublic=1 ORDER BY category,name';
 		$rs = $this->conn->query($sql);
-		while ($r = $rs->fetch_assoc()) {
-			$retArr[] = $r;
+		while ($r = $rs->fetch_object()) {
+			$category = 'UNDEFINED_CATEGORY';
+			if($r->category) $category = $r->category;
+			$retArr[$category][$r->datasetID] = $r->name;
 		}
 		$rs->free();
 		return $retArr;
 	}
 
-	public function getPublicDatasetMetadata($dsid) {
+	public function getDatasetMetadata($publicOnly = true) {
 		$retArr = array();
-		if ($dsid) {
-			//Get and return individual dataset
-			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, uid, sortsequence, initialtimestamp FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') AND ispublic=1';
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retArr['name'] = $r->datasetName;
-				$retArr['notes'] = $r->notes;
-				$retArr['description'] = $r->description;
-				$retArr['uid'] = $r->uid;
-				$retArr['sort'] = $r->sortsequence;
-				$retArr['ts'] = $r->initialtimestamp;
+		if ($this->datasetId) {
+			$sql = 'SELECT datasetid, datasetName, notes, description, bibliographicCitation, dynamicProperties, ispublic, uid, sortsequence, initialtimestamp
+				FROM omoccurdatasets WHERE (datasetid = ?) ';
+			if($publicOnly) $sql .= 'AND ispublic=1';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->datasetId);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while ($r = $rs->fetch_object()) {
+					$retArr['name'] = $r->datasetName;
+					$retArr['notes'] = $r->notes;
+					$retArr['description'] = $r->description;
+					$retArr['bibliographicCitation'] = $r->bibliographicCitation;
+					$retArr['dynamicProperties'] = $r->dynamicProperties;
+					$retArr['ispublic'] = $r->ispublic;
+					$retArr['uid'] = $r->uid;
+					$retArr['sort'] = $r->sortsequence;
+					$retArr['ts'] = $r->initialtimestamp;
+				}
+				$rs->free();
+				$stmt->close();
 			}
-			$rs->free();
 		}
 		return $retArr;
 	}
 
-	public function getDatasetMetadata($dsid) {
-		$retArr = array();
-		if ($GLOBALS['SYMB_UID'] && $dsid) {
-			//Get and return individual dataset
-			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, uid, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (datasetid = ' . $dsid . ') ';
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retArr['name'] = $r->datasetName;
-				$retArr['notes'] = $r->notes;
-				$retArr['description'] = $r->description;
-				$retArr['uid'] = $r->uid;
-				$retArr['sort'] = $r->sortsequence;
-				$retArr['ts'] = $r->initialtimestamp;
-				$retArr['ispublic'] = $r->ispublic;
-			}
-			$rs->free();
-			//Get roles for current user
-			$sql1 = 'SELECT role FROM userroles WHERE (tablename = "omoccurdatasets") AND (tablepk = ' . $dsid . ') AND (uid = ' . $GLOBALS['SYMB_UID'] . ') ';
-			$rs1 = $this->conn->query($sql1);
-			while ($r1 = $rs1->fetch_object()) {
-				$retArr['roles'][] = $r1->role;
-			}
-			$rs1->free();
-		}
-		return $retArr;
-	}
-
-	public function getDatasetArr() {
+	//Dataset management functions
+	public function getDatasetManagementArr() {
 		$retArr = array();
 		if ($GLOBALS['SYMB_UID']) {
 			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ') ORDER BY sortsequence,name';
@@ -200,7 +183,7 @@ class OccurrenceDataset {
 		return $status;
 	}
 
-	public function deleteDataset($dsid) {
+	public function deleteDatasetRecord($dsid) {
 		//Delete users
 		$sql1 = 'DELETE FROM userroles WHERE (role IN("DatasetAdmin","DatasetEditor","DatasetReader")) AND (tablename = "omoccurdatasets") AND (tablepk = ' . $dsid . ') ';
 		//echo $sql;
@@ -226,6 +209,7 @@ class OccurrenceDataset {
 		return true;
 	}
 
+	//User management functions
 	public function getUsers($datasetId) {
 		$retArr = array();
 		$sql = 'SELECT u.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username ' .
@@ -238,6 +222,27 @@ class OccurrenceDataset {
 			$retArr[$r->role][$r->uid] = $r->username;
 		}
 		$rs->free();
+		return $retArr;
+	}
+
+	public function getUserRoles(){
+		$retArr = array();
+		$symbUid = 0;
+		if(!empty($GLOBALS['SYMB_UID'])) $symbUid = $GLOBALS['SYMB_UID'];
+		if($this->datasetId && $symbUid){
+			//Get roles for current user
+			$sql = 'SELECT role FROM userroles WHERE (tablename = "omoccurdatasets") AND (tablepk = ?) AND (uid = ?) ';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $this->datasetId, $symbUid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while ($r = $rs->fetch_object()) {
+					$retArr[] = $r->role;
+				}
+				$rs->free();
+				$stmt->close();
+			}
+		}
 		return $retArr;
 	}
 
@@ -262,36 +267,21 @@ class OccurrenceDataset {
 		return $status;
 	}
 
-	public function setOccurrenceCount($datasetId) {
+	//Occurrence functions
+	public function getOccurrenceCount() {
 		$returnVal = 0;
-		if ($datasetId) {
-			$sql = 'SELECT COUNT(o.occid) FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid WHERE dl.datasetid = ? ';
+		if ($this->datasetId) {
+			$sql = 'SELECT COUNT(o.occid) as cnt FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid WHERE dl.datasetid = ? ';
 			$sql .= OccurrenceUtil::appendFullProtectionSQL();
-			$params[] = $datasetId;
-			try {
-				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
-				$countResponse = $result->fetch_array();
-				$result->free();
-			} catch (\Throwable  $e) {
-				error_log('ERROR fetching count for dataset: ' . $datasetId);
-			}
-			if ($countResponse) {
-				$returnVal = (int) $countResponse[0];
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->datasetId);
+				$stmt->execute();
+				$stmt->bind_result($returnVal);
+				$stmt->fetch();
+				$stmt->close();
 			}
 		}
-		$this->occurrenceCount = $returnVal;
 		return $returnVal;
-	}
-
-	public function getOccurrenceCount($datasetId) {
-		if (!$datasetId) {
-			return null;
-		}
-		if ($this->occurrenceCount) {
-			return $this->occurrenceCount;
-		} else {
-			return $this->setOccurrenceCount($datasetId);
-		}
 	}
 
 	public function getOccurrences($datasetId, $pageNumber = 1, $retLimit = 500) {
@@ -359,7 +349,7 @@ class OccurrenceDataset {
 		return $status;
 	}
 
-	//General setters and getters
+	//General data retrival functions
 	public function getUserList($term) {
 		$retArr = array();
 		$sql = 'SELECT uid, CONCAT(CONCAT_WS(", ", lastname, firstname)," - ", username," [#", uid,"]") AS username ' .
@@ -396,6 +386,7 @@ class OccurrenceDataset {
 		}
 	}
 
+	//Setters and getters
 	public function getErrorArr() {
 		return $this->errorArr;
 	}
@@ -404,15 +395,11 @@ class OccurrenceDataset {
 		return implode('; ', $this->errorArr);
 	}
 
-	public function getDatasetId() {
-		return $this->datasetId;
+	public function setDatasetId($id) {
+		if(is_numeric($id)) $this->datasetId = $id;
 	}
 
-	//Misc functions
-	private function cleanInStr($str) {
-		$newStr = trim($str);
-		$newStr = preg_replace('/\s\s+/', ' ', $newStr);
-		$newStr = $this->conn->real_escape_string($newStr);
-		return $newStr;
+	public function getDatasetId() {
+		return $this->datasetId;
 	}
 }

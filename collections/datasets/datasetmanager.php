@@ -10,86 +10,90 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 
 if (!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$datasetId = $_REQUEST['datasetid'];
+$datasetId = Sanitize::int($_REQUEST['datasetid']);
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['tabindex']) : 0;
 $pageNumber = array_key_exists('pagenumber', $_REQUEST) ? Sanitize::int($_REQUEST['pagenumber']) : 1;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
-$datasetManager = new OccurrenceDataset();
+if($datasetId){
+	$datasetManager = new OccurrenceDataset();
+	$datasetManager->setDatasetId($datasetId);
 
-$mdArr = $datasetManager->getDatasetMetadata($datasetId);
-$role = '';
-$roleLabel = '';
-$isEditor = 0;
-if ($SYMB_UID == $mdArr['uid']) {
-	$isEditor = 1;
-	$role = 'owner';
-} elseif (isset($mdArr['roles'])) {
-	if (in_array('DatasetAdmin', $mdArr['roles'])) {
+	$mdArr = $datasetManager->getDatasetMetadata(false);
+	$role = '';
+	$roleLabel = '';
+	$isEditor = 0;
+	if ($SYMB_UID == $mdArr['uid']) {
 		$isEditor = 1;
-		$role = $LANG['ADMINISTRATOR'];
-	} elseif (in_array('DatasetEditor', $mdArr['roles'])) {
-		$isEditor = 2;
-		$role = $LANG['EDITOR'];
-		$roleLabel = $LANG['ROLE_LABEL_EDITOR'];
-	} elseif (in_array('DatasetReader', $mdArr['roles'])) {
-		$isEditor = 3;
-		$role = $LANG['READ_ACCESS'];
+		$role = 'owner';
 	}
-} elseif ($IS_ADMIN) {
-	$isEditor = 1;
-	$role = $LANG['SUPERADMIN'];
-}
+	elseif($roles = $datasetManager->getUserRoles()) {
+		if (in_array('DatasetAdmin', $roles)) {
+			$isEditor = 1;
+			$role = $LANG['ADMINISTRATOR'];
+		} elseif (in_array('DatasetEditor', $roles)) {
+			$isEditor = 2;
+			$role = $LANG['EDITOR'];
+			$roleLabel = $LANG['ROLE_LABEL_EDITOR'];
+		} elseif (in_array('DatasetReader', $roles)) {
+			$isEditor = 3;
+			$role = $LANG['READ_ACCESS'];
+		}
+	} elseif ($IS_ADMIN) {
+		$isEditor = 1;
+		$role = $LANG['SUPERADMIN'];
+	}
 
-$statusStr = '';
-if ($isEditor) {
-	if ($isEditor < 3) {
-		if ($action == 'Remove Selected Occurrences') {
-			if ($datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
-				//$statusStr = 'Selected occurrences removed successfully';
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
+	$statusStr = '';
+	if ($isEditor) {
+		if ($isEditor < 3) {
+			if ($action == 'Remove Selected Occurrences') {
+				if ($datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
+					//$statusStr = 'Selected occurrences removed successfully';
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
 			}
 		}
-	}
-	if ($isEditor == 1) {
-		if ($action == 'Save Edits') {
-			$isPublic = (isset($_POST['ispublic']) && is_numeric($_POST['ispublic']) ? 1 : 0);
-			if ($datasetManager->editDataset($_POST['datasetid'], $_POST['name'], $_POST['notes'], $_POST['description'], $isPublic)) {
-				$mdArr = $datasetManager->getDatasetMetadata($datasetId);
-				$statusStr = $LANG['DS_EDITS_SAVED'];
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
-			}
-		} elseif ($action == 'Merge') {
-			if ($datasetManager->mergeDatasets($_POST['dsids[]'])) {
-				$statusStr = $LANG['DS_MERGED'];
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
-			}
-		} elseif ($action == 'Clone (make copy)') {
-			if ($datasetManager->cloneDatasets($_POST['dsids[]'])) {
-				$statusStr = $LANG['DS_CLONED'];
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
-			}
-		} elseif ($action == 'Delete Dataset') {
-			if ($datasetManager->deleteDataset($_POST['datasetid'])) {
-				header('Location: index.php');
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
-			}
-		} elseif ($action == 'addUser') {
-			if ($datasetManager->addUser($datasetId, $_POST['uid'], $_POST['role'])) {
-				$statusStr = $LANG['USER_ADDED'];
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
-			}
-		} elseif ($action == 'DelUser') {
-			if ($datasetManager->deleteUser($datasetId, $_POST['uid'], $_POST['role'])) {
-				$statusStr = $LANG['USER_REMOVED'];
-			} else {
-				$statusStr = implode(',', $datasetManager->getErrorArr());
+		if ($isEditor == 1) {
+			if ($action == 'Save Edits') {
+				$isPublic = (isset($_POST['ispublic']) && is_numeric($_POST['ispublic']) ? 1 : 0);
+				if ($datasetManager->editDataset($_POST['datasetid'], $_POST['name'], $_POST['notes'], $_POST['description'], $isPublic)) {
+					$mdArr = $datasetManager->getDatasetMetadata(false);
+					$statusStr = $LANG['DS_EDITS_SAVED'];
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+			} elseif ($action == 'Merge') {
+				if ($datasetManager->mergeDatasets($_POST['dsids[]'])) {
+					$statusStr = $LANG['DS_MERGED'];
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+			} elseif ($action == 'Clone (make copy)') {
+				if ($datasetManager->cloneDatasets($_POST['dsids[]'])) {
+					$statusStr = $LANG['DS_CLONED'];
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+			} elseif ($action == 'Delete Dataset') {
+				if ($datasetManager->deleteDatasetRecord($_POST['datasetid'])) {
+					header('Location: index.php');
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+			} elseif ($action == 'addUser') {
+				if ($datasetManager->addUser($datasetId, $_POST['uid'], $_POST['role'])) {
+					$statusStr = $LANG['USER_ADDED'];
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+			} elseif ($action == 'DelUser') {
+				if ($datasetManager->deleteUser($datasetId, $_POST['uid'], $_POST['role'])) {
+					$statusStr = $LANG['USER_REMOVED'];
+				} else {
+					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
 			}
 		}
 	}
@@ -193,14 +197,6 @@ if ($isEditor) {
 			return confirm(confirmStr);
 		}
 
-		function validateEditForm(f) {
-			if (f.name.value == '') {
-				alert("<?= $LANG['DS_NOT_NULL'] ?>");
-				return false;
-			}
-			return true;
-		}
-
 		function validateOccurForm(f) {
 			var occidChecked = false;
 			var dbElements = document.getElementsByName("occid[]");
@@ -298,13 +294,10 @@ if ($isEditor) {
 	?>
 	<div class='navpath'>
 		<a href='../../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
-		<a href="../../profile/viewprofile.php?tabindex=1"><?= $LANG['MY_PROF'] ?></a> &gt;&gt;
-		<a href="index.php">
-			<?= $LANG['RETURN_DS_LISTING'] ?>
-		</a> &gt;&gt;
+		<a href="index.php"><?= $LANG['PUB_DAT_LIST'] ?></a> &gt;&gt;
+		<a href="datasetuserlist.php"><?= $LANG['USER_LIST'] ?></a> &gt;&gt;
 		<b><?= $LANG['DS_MANAGER'] ?></b>
 	</div>
-	<!-- This is inner text! -->
 	<div role="main" id="innertext">
 		<h1 class="page-heading"><?= $LANG['DS_OCC_MANAGER'] ?></h1>
 		<?php
@@ -468,25 +461,30 @@ if ($isEditor) {
 						<div id="admintab">
 							<section class="fieldset-like">
 								<h2><span><b><?= $LANG['EDITOR'] ?></b></span></h2>
-								<form name="editform" action="datasetmanager.php" method="post" onsubmit="return validateEditForm(this)">
+								<form name="editform" action="datasetmanager.php" method="post">
 									<div>
 										<label for="name"><?= $LANG['NAME'] ?></label>
-										<input name="name" id="name" type="text" value="<?= $mdArr['name'] ?>" aria-label="<?= $LANG['NAME'] ?>" style="width:70%" />
+										<input name="name" id="name" type="text" value="<?= $mdArr['name'] ?>" aria-label="<?= $LANG['NAME'] ?>" style="width:70%" required />
 									</div>
 									<div>
-										<p>
-											<input type="checkbox" name="ispublic" id="ispublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['ispublic'] ? 'CHECKED' : '') ?> />
-											<!-- <b><?= $LANG['PUB_VISIBLE'] ?></b> -->
-											<label for="ispublic"><?= $LANG['PUB_VISIBLE'] ?></label>
-										</p>
-									</div>
-									<div>
-										<label for="notes"><?= $LANG['NOTES_INTERNAL'] ?></label>
-										<input name="notes" id="notes" type="text" value="<?= $mdArr['notes'] ?>" style="width:70%" aria-label="<?= $LANG['NOTES_INTERNAL'] ?>" />
+										<input type="checkbox" name="ispublic" id="ispublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['ispublic'] ? 'CHECKED' : '') ?> />
+										<label for="ispublic"><?= $LANG['PUB_VISIBLE'] ?></label>
 									</div>
 									<div>
 										<label for="description"><?= $LANG['DESCRIPTION'] ?></label>
-										<textarea name="description" id="description" cols="100" rows="10" style="width: 70%;" aria-label="<?= $LANG['DESCRIPTION'] ?>"><?= $mdArr['description'] ?></textarea>
+										<textarea name="description" id="description" cols="100" rows="10" style="width: 100%;" aria-label="<?= $LANG['DESCRIPTION'] ?>"><?= $mdArr['description'] ?></textarea>
+									</div>
+									<div>
+										<label for="bibliographicCitation"><?= $LANG['CITATION'] ?></label>
+										<input name="bibliographicCitation" id="bibliographicCitation" type="text" value="<?= $mdArr['bibliographicCitation'] ?>" style="width:100%" aria-label="<?= $LANG['CITATION'] ?>" />
+									</div>
+									<div>
+										<label for="dynamicProperties"><?= $LANG['DYNAMIC_PROPERTIES'] ?></label>
+										<input name="dynamicProperties" id="dynamicProperties" type="text" value="" style="width:100%" aria-label="<?= $LANG['DYNAMIC_PROPERTIES'] ?>" />
+									</div>
+									<div>
+										<label for="notes"><?= $LANG['NOTES_INTERNAL'] ?></label>
+										<input name="notes" id="notes" type="text" value="<?= $mdArr['notes'] ?>" style="width:100%" aria-label="<?= $LANG['NOTES_INTERNAL'] ?>" />
 									</div>
 									<div style="margin:15px;">
 										<input name="tabindex" type="hidden" value="1" />

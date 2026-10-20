@@ -4,6 +4,8 @@
 Language: Español (Spanish)
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.es.php');
+
 $LANG['PROPIETARIO'] = 'Propietario';
 $LANG['ADMIN'] = 'Administrador';
 $LANG['EDITOR'] = 'Editor';
@@ -24,10 +26,6 @@ $LANG['SURE_DEL_DS'] = '¿Está seguro de que desea eliminar los conjuntos de da
 $LANG['DS_NOT_NULL'] = 'El nombre del conjunto de datos no puede ser nulo';
 $LANG['PLS_SEL_SPC'] = '¡Por favor seleccione al menos un espécimen!';
 $LANG['SEL_USER_LIST'] = 'Seleccione un usuario de la lista';
-$LANG['HOME'] = 'Inicio';
-$LANG['MY_PROF'] = 'Mi Perfil';
-$LANG['RETURN_DS_LISTING'] = 'Volver al listado del conjunto de datos';
-$LANG['DS_MANAGER'] = 'Administrador de conjuntos de datos';
 $LANG['ERROR'] = 'ERROR';
 $LANG['WARNING'] = 'ADVERTENCIA';
 $LANG['NOTICE'] = 'AVISO';
@@ -48,11 +46,6 @@ $LANG['NO_OCCS_DS'] = 'No hay ocurrencias vinculadas a este conjunto de datos';
 $LANG['LINK_OCCS_VIA'] = 'Puedes vincular ocurrencias a través de';
 $LANG['OCC_SEARCH'] = 'página de búsqueda de ocurrencias';
 $LANG['OR_VIA_OCC_PROF'] = 'o mediante cualquiera de las páginas de perfil de ocurrencia';
-$LANG['NAME'] = 'Nombre';
-$LANG['PUB_VISIBLE'] = 'Públicamente Visible';
-$LANG['NOTES_INTERNAL'] = 'Notas (uso interno, no mostradas públicamente)';
-$LANG['DESCRIPTION'] = 'Descripción';
-$LANG['SAVE_EDITS'] = 'Guardar Ediciones';
 $LANG['DEL_DS'] = 'Eliminar Conjunto de Datos';
 $LANG['SURE_DEL_DS_PERM'] = '¿Está seguro de que desea eliminar permanentemente este conjunto de datos?';
 $LANG['SURE_REM_USER'] = '¿Está seguro de que desea eliminar?';

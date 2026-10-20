@@ -4,6 +4,7 @@
 Language: English
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.en.php');
 
 $LANG['OWNER'] = 'Owner';
 $LANG['ADMIN'] = 'Administrator';
@@ -25,10 +26,6 @@ $LANG['SURE_DEL_DS'] = 'Are you sure you want to delete selected datasets?';
 $LANG['DS_NOT_NULL'] = 'Dataset name cannot be null';
 $LANG['PLS_SEL_SPC'] = 'Please select at least one specimen!';
 $LANG['SEL_USER_LIST'] = 'Select a user from the list';
-$LANG['HOME'] = 'Home';
-$LANG['MY_PROF'] = 'My Profile';
-$LANG['RETURN_DS_LISTING'] = 'Return to Dataset Listing';
-$LANG['DS_MANAGER'] = 'Dataset Manager';
 $LANG['ERROR'] = 'ERROR';
 $LANG['WARNING'] = 'WARNING';
 $LANG['NOTICE'] = 'NOTICE';
@@ -49,11 +46,6 @@ $LANG['NO_OCCS_DS'] = 'There are no occurrences linked to this dataset';
 $LANG['LINK_OCCS_VIA'] = 'You can link occurrences via the';
 $LANG['OCC_SEARCH'] = 'occurrence search page';
 $LANG['OR_VIA_OCC_PROF'] = 'or via any of the occurrence profile pages';
-$LANG['NAME'] = 'Name';
-$LANG['PUB_VISIBLE'] = 'Publicly Visible';
-$LANG['NOTES_INTERNAL'] = 'Notes (Internal usage, not displayed publicly)';
-$LANG['DESCRIPTION'] = 'Description';
-$LANG['SAVE_EDITS'] = 'Save Edits';
 $LANG['DEL_DS'] = 'Delete Dataset';
 $LANG['SURE_DEL_DS_PERM'] = 'Are you sure you want to permanently delete this dataset?';
 $LANG['SURE_REM_USER'] = 'Are you sure you want to remove';
