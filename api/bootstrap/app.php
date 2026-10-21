@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Middleware\TrustProxies;
+
 require_once __DIR__.'/../vendor/autoload.php';
 
 (new Laravel\Lumen\Bootstrap\LoadEnvironmentVariables(
@@ -24,10 +26,14 @@ $app = new Laravel\Lumen\Application(
 );
 
 //Needed for proper HTTPS detection within SwaggerLume when routed via a proxy (e.g. cloudflare)
-\Symfony\Component\HttpFoundation\Request::setTrustedProxies(
-	['REMOTE_ADDR'],
-	\Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_PROTO
-);
+$trusted_proxies = env('TRUSTED_PROXIES');
+if ($trusted_proxies){
+    $trusted_proxies = explode(',', $trusted_proxies);
+    \Symfony\Component\HttpFoundation\Request::setTrustedProxies(
+        $trusted_proxies,
+        \Symfony\Component\HttpFoundation\Request::HEADER_X_FORWARDED_PROTO
+    );
+}
 
 $app->withFacades();
 
