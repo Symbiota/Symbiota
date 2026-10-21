@@ -11,7 +11,7 @@ header("Content-Type: text/html; charset=".$CHARSET);
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? Sanitize::int($_REQUEST['datasetid']) : 0;
 
 $datasetManager = new OccurrenceDataset();
-$datasetManager->setDatasetId($datasetid);
+$datasetManager->setDatasetID($datasetid);
 $dsMetaArr = $datasetManager->getDatasetMetadata();
 ?>
 <!DOCTYPE html>
@@ -30,7 +30,7 @@ $dsMetaArr = $datasetManager->getDatasetMetadata();
 			<a href="<?= $CLIENT_ROOT ?>/index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
 			<a href="<?= $CLIENT_ROOT ?>/collections/datasets/index.php"><?= $LANG['PUB_DAT_LIST'] ?></a> &gt;&gt;
 			<?php
-			if($datasetid) echo '<b>' . $dsMetaArr['name'] . '</b>';
+			if($datasetid) echo '<b>' . $dsMetaArr['datasetName'] . '</b>';
 			?>
 		</div>
 		<div role="main" id="innertext">
@@ -40,7 +40,7 @@ $dsMetaArr = $datasetManager->getDatasetMetadata();
 				$tableUrl = $CLIENT_ROOT . '/collections/listtabledisplay.php?datasetid=' . $datasetid;
 				$taxaUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid . '&tabindex=0';
 				?>
-				<h1 class="page-heading"><?= $dsMetaArr['name'] ?></h1>
+				<h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1>
 				<div><?= $dsMetaArr['description'] ;?></div>
 				<p><?= $LANG['INCLUDES'] ?> <?= $datasetManager->getOccurrenceCount() ?> <?= $LANG['RECORDS'] ?></p>
 				<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_AND_DOWNLOAD'] ?></a></p>

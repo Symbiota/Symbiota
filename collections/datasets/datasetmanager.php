@@ -10,14 +10,29 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 
 if (!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$datasetId = Sanitize::int($_REQUEST['datasetid']);
+$datasetId = array_key_exists('datasetid', $_REQUEST) ? Sanitize::int($_REQUEST['datasetid']) : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['tabindex']) : 0;
 $pageNumber = array_key_exists('pagenumber', $_REQUEST) ? Sanitize::int($_REQUEST['pagenumber']) : 1;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
+$datasetManager = new OccurrenceDataset();
+$statusStr = '';
+if($action == 'createNewDataset'){
+	if($IS_ADMIN || array_key_exists('ClCreate', $USER_RIGHTS)){
+		if($datasetManager->insertDataset($_POST)){
+			$datasetId = $datasetManager->getDatasetID();
+		}
+		else{
+			$statusStr = $datasetManager->getErrorMessage();
+		}
+	}
+	else {
+		$statusStr = "You don't have permission to create a dataset";
+	}
+}
+
 if($datasetId){
-	$datasetManager = new OccurrenceDataset();
-	$datasetManager->setDatasetId($datasetId);
+	$datasetManager->setDatasetID($datasetId);
 
 	$mdArr = $datasetManager->getDatasetMetadata(false);
 	$role = '';
@@ -44,55 +59,54 @@ if($datasetId){
 		$role = $LANG['SUPERADMIN'];
 	}
 
-	$statusStr = '';
 	if ($isEditor) {
 		if ($isEditor < 3) {
 			if ($action == 'Remove Selected Occurrences') {
 				if ($datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
 					//$statusStr = 'Selected occurrences removed successfully';
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			}
 		}
 		if ($isEditor == 1) {
 			if ($action == 'Save Edits') {
-				$isPublic = (isset($_POST['ispublic']) && is_numeric($_POST['ispublic']) ? 1 : 0);
-				if ($datasetManager->editDataset($_POST['datasetid'], $_POST['name'], $_POST['notes'], $_POST['description'], $isPublic)) {
+				if($datasetManager->updateDataset($_POST)){
 					$mdArr = $datasetManager->getDatasetMetadata(false);
 					$statusStr = $LANG['DS_EDITS_SAVED'];
-				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+				}
+				else{
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'Merge') {
 				if ($datasetManager->mergeDatasets($_POST['dsids[]'])) {
 					$statusStr = $LANG['DS_MERGED'];
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'Clone (make copy)') {
 				if ($datasetManager->cloneDatasets($_POST['dsids[]'])) {
 					$statusStr = $LANG['DS_CLONED'];
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'Delete Dataset') {
 				if ($datasetManager->deleteDatasetRecord($_POST['datasetid'])) {
 					header('Location: index.php');
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'addUser') {
 				if ($datasetManager->addUser($datasetId, $_POST['uid'], $_POST['role'])) {
 					$statusStr = $LANG['USER_ADDED'];
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'DelUser') {
 				if ($datasetManager->deleteUser($datasetId, $_POST['uid'], $_POST['role'])) {
 					$statusStr = $LANG['USER_REMOVED'];
 				} else {
-					$statusStr = implode(',', $datasetManager->getErrorArr());
+					$statusStr = $datasetManager->getErrorMessage();
 				}
 			}
 		}
@@ -311,7 +325,7 @@ if($datasetId){
 			echo '</div>';
 		}
 		if ($datasetId) {
-			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">' . $mdArr['name'] . '</div>';
+			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">' . $mdArr['datasetName'] . '</div>';
 			if ($role) echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '"' . $roleLabel . '>' . $LANG['ROLE'] . ': ' . $role . '</div>';
 			if ($isEditor) {
 				?>
@@ -463,12 +477,12 @@ if($datasetId){
 								<h2><span><b><?= $LANG['EDITOR'] ?></b></span></h2>
 								<form name="editform" action="datasetmanager.php" method="post">
 									<div>
-										<label for="name"><?= $LANG['NAME'] ?></label>
-										<input name="name" id="name" type="text" value="<?= $mdArr['name'] ?>" aria-label="<?= $LANG['NAME'] ?>" style="width:70%" required />
+										<label for="datasetName"><?= $LANG['NAME'] ?></label>
+										<input name="datasetName" id="datasetName" type="text" value="<?= $mdArr['datasetName'] ?>" aria-label="<?= $LANG['NAME'] ?>" style="width:70%" required />
 									</div>
 									<div>
-										<input type="checkbox" name="ispublic" id="ispublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['ispublic'] ? 'CHECKED' : '') ?> />
-										<label for="ispublic"><?= $LANG['PUB_VISIBLE'] ?></label>
+										<input type="checkbox" name="isPublic" id="isPublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['isPublic'] ? 'CHECKED' : '') ?> />
+										<label for="isPublic"><?= $LANG['PUB_VISIBLE'] ?></label>
 									</div>
 									<div>
 										<label for="description"><?= $LANG['DESCRIPTION'] ?></label>

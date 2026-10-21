@@ -4,7 +4,7 @@ include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class OmDatasets extends DataCore{
 
-	private $datasetID = 0;
+	protected $datasetID = 0;
 
 	function __construct() {
 		parent::__construct();
@@ -19,24 +19,17 @@ class OmDatasets extends DataCore{
 		return $this->getRecordArr('omoccurdatasets', $conditionArr, $orderByArr);
 	}
 
-	public function getDatasetArrByID(){
-		if(!$this->cid){
-			$this->errorMessage = 'ID_NOT_SET';
-			return false;
-		}
-		$this->setFieldMap();
-		$pkArr = array('datasetID' => $this->datasetID);
-		$recordArr = $this->getRecordArr('omoccurdatasets', $pkArr);
-		return $recordArr[$this->datasetID];
-	}
-
 	public function insertDataset($inputArr){
 		$this->setFieldMap();
 		if(empty($inputArr['uid'])){
 			$inputArr['uid'] = $GLOBALS['SYMB_UID'];
 		}
 		$inputArr['recordID'] = UuidFactory::getUuidV4();
-		return $this->insertRecord('omoccurdatasets', $inputArr);
+		if($this->insertRecord('omoccurdatasets', $inputArr)){
+			$this->datasetID = $this->primaryKey;
+			return true;
+		}
+		return false;
 	}
 
 	public function updateDataset($inputArr){
@@ -54,9 +47,8 @@ class OmDatasets extends DataCore{
 			$this->errorMessage = 'ID_NOT_SET';
 			return false;
 		}
-		$this->setCharacterFieldMap();
-		$pkArr = array('datasetID' => $this->datasetID);
-		return $this->deleteRecord('omoccurdatasets', $pkArr);
+		$this->setFieldMap();
+		return $this->deleteRecord('omoccurdatasets', $this->datasetID);
 	}
 
 	private function setFieldMap(){
@@ -66,7 +58,7 @@ class OmDatasets extends DataCore{
 
 	//Setters and getters
 	public function getDatasetID(){
-		return $this->cid;
+		return $this->datasetID;
 	}
 
 	public function setDatasetID($id){

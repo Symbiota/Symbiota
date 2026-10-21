@@ -10,29 +10,10 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetuserlist.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$isPublic = (empty($_POST['ispublic']) ? 0 : 1);
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $datasetManager = new OccurrenceDataset();
 
-$statusStr = '';
-if($action == 'createNewDataset'){
-	if($IS_ADMIN || array_key_exists('ClCreate', $USER_RIGHTS)){
-		if(!$datasetManager->createDataset($_POST['name'], $_POST['notes'], $_POST['description'], $isPublic, $SYMB_UID)){
-			$statusStr = implode(',', $datasetManager->getErrorArr());
-		}
-	}
-	else {
-		$statusStr = "You don't have permission to create a dataset";
-	}
-}
-elseif($action == 'addSelectedToDataset'){
-	$datasetID = $_POST['datasetid'];
-	if(!$datasetID && $_POST['name']) $datasetManager->createDataset($_POST['name'], '', $SYMB_UID);
-}
-elseif($action == 'addAllToDataset'){
-
-}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -113,15 +94,6 @@ elseif($action == 'addAllToDataset'){
 	</div>
 	<div role="main" id="innertext">
 		<?php
-		if($statusStr){
-			$color = 'green';
-			if(strpos($statusStr,'ERROR') !== false) $color = 'red';
-			elseif(strpos($statusStr,'WARNING') !== false) $color = 'orange';
-			elseif(strpos($statusStr,'NOTICE') !== false) $color = 'yellow';
-			echo '<div style="margin:15px;color:'.$color.';">';
-			echo $statusStr;
-			echo '</div>';
-		}
 		$dataSetArr = $datasetManager->getDatasetManagementArr();
 		?>
 		<div>
@@ -133,13 +105,13 @@ elseif($action == 'addAllToDataset'){
 		<div id=adddiv style="display:none">
 			<fieldset>
 				<legend><b> <?= $LANG['CRT_NEW_DAT'] ?> </b></legend>
-				<form name="adminform" action="index.php" method="post" onsubmit="return validateEditForm(this)">
+				<form name="adminform" action="datasetmanager.php" method="post" onsubmit="return validateEditForm(this)">
 					<div>
-						<label for="name"><?= $LANG['NAME'] ?></label>
-						<input id="name" name="name" type="text" style="width:90%" />
+						<label for="datasetName"><?= $LANG['NAME'] ?></label>
+						<input id="datasetName" name="datasetName" type="text" style="width:90%" />
 					</div>
 					<div>
-						<input type="checkbox" name="ispublic" id="ispublic" value="1" />
+						<input type="checkbox" name="isPublic" id="isPublic" value="1" />
 						<label for="ispublic"><?= $LANG['PUB_VISIBLE'] ?></label>
 					</div>
 					<div>
