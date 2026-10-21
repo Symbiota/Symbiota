@@ -107,7 +107,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 						$clOccidArr[] = $r->occid;
 					}
 					$rs->free();
-			}
+				}
 				if($clOccidArr) $sqlWhere .= 'AND (o.occid NOT IN('.implode(',',$clOccidArr).')) ';
 			}
 			//$this->displaySearchArr[] = $this->voucherManager->getQueryVariableStr();
@@ -145,7 +145,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
 		}
-
 
 		//Country term
 		//Note: $this->displaySearchArr is set within the readRequestVariables function
