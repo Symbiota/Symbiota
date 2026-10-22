@@ -9,6 +9,26 @@ include_once($SERVER_ROOT . '/classes/utilities/UploadUtil.php');
  * modified by Greg Post
  */
 
+if (!$SYMB_UID) {
+    header('HTTP/1.1 401 Unauthorized', true, 401);
+    echo 'Unauthorized Access';
+    exit;
+}
+
+$isEditor = 0;
+if ($IS_ADMIN) $isEditor = 1;
+elseif ($collid) {
+	if (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) {
+		$isEditor = 1;
+	}
+}
+
+if (!$isEditor) {
+    header('HTTP/1.1 403 Forbidden', true, 403);
+    echo 'Insufficient Permissions:';
+    exit;
+}
+
 /***************************************************
  * Only these origins are allowed to upload images *
  ***************************************************/
