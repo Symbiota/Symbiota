@@ -1,5 +1,4 @@
 <?php global $SERVER_ROOT;
-include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
@@ -596,13 +595,13 @@ class UploadUtil {
 
 		// Use filename sent in response header.  Otherwise fallback to contents of URL.
 		if(!empty($response_file_name)){
-			$parsed_file = Media::parseFileName($response_file_name);
+			$parsed_file = self::parseFileName($response_file_name);
 		}
 		else {
-			$parsed_file = Media::parseFileName($url);
+			$parsed_file = self::parseFileName($url);
 		}
 
-		$parsed_file['name'] = Media::cleanFileName($parsed_file['name']);
+		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 		$parsed_file['extension'] = self::mime2ext($file_type_mime);
 
 		return [
@@ -711,5 +710,56 @@ class UploadUtil {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Pulls file name out of directory path or url
+	 *
+	 * Note: The url parsing expects the filename to not be in the query or hash
+	 *
+	 * @param string $filepath Can be a file or url path
+	 * return array<string,mixed>
+	 * @return array<string,mixed>
+	 */
+	public static function parseFileName(string $filepath): array {
+		$file_name = $filepath;
+
+		//Filepath maybe a url so clear out url query if it exists
+		$query_pos = strpos($file_name,'?');
+		if($query_pos) $file_name = substr($file_name, 0, $query_pos);
+
+		$file_parts = pathinfo($file_name);
+
+		return [
+			'name' => $file_parts['filename'],
+			'tmp_name' => $filepath,
+			'extension' => (!empty($file_parts['extension'])) ? strtolower($file_parts['extension']) : ''
+		];
+	}
+
+	/**
+	 * Strips out undesired characters from from a pure file name string
+	 *
+	 * @param string $file_name A file name without the extension
+	 * return string
+	 */
+	public static function cleanFileName(string $file_name):string {
+		$file_name = str_replace(".","", $file_name);
+		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
+		$file_name = str_replace("__","_",$file_name);
+		$file_name = str_replace(array(chr(231),chr(232),chr(233),chr(234),chr(260)),"a",$file_name);
+		$file_name = str_replace(array(chr(230),chr(236),chr(237),chr(238)),"e",$file_name);
+		$file_name = str_replace(array(chr(239),chr(240),chr(241),chr(261)),"i",$file_name);
+		$file_name = str_replace(array(chr(247),chr(248),chr(249),chr(262)),"o",$file_name);
+		$file_name = str_replace(array(chr(250),chr(251),chr(263)),"u", $file_name);
+		$file_name = str_replace(array(chr(264),chr(265)),"n",$file_name);
+		$file_name = preg_replace("/[^a-zA-Z0-9\-_]/", "", $file_name);
+		$file_name = trim($file_name,' _-');
+
+		if(strlen($file_name) > 30) {
+			$file_name = substr($file_name, 0, 30);
+		}
+
+		return $file_name;
 	}
 }
