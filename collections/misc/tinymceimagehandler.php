@@ -17,10 +17,8 @@ if (!$SYMB_UID) {
 
 $isEditor = 0;
 if ($IS_ADMIN) $isEditor = 1;
-elseif ($collid) {
-	if (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin'])) {
-		$isEditor = 1;
-	}
+elseif (array_key_exists('CollAdmin', $USER_RIGHTS)) {
+    $isEditor = 1;
 }
 
 if (!$isEditor) {
