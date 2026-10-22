@@ -736,7 +736,7 @@ class OccurrenceEditorManager {
 				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 			}
 			if (strpos($sqlFrag, 'LEFT JOIN omoccuridentifiers') === false) {
-				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
+				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON id.idomoccuridentifiers=(SELECT MIN(id2.idomoccuridentifiers) FROM omoccuridentifiers id2 WHERE o.occid = id2.occid) ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
@@ -1216,7 +1216,7 @@ class OccurrenceEditorManager {
 	private function getIdentifiers($occidStr) {
 		$retArr = array();
 		if ($occidStr) {
-			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY initialTimestamp';
+			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY idomoccuridentifiers';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr[$r->occid][$r->idomoccuridentifiers]['name'] = $r->identifierName;
