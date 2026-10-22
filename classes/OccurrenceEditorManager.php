@@ -645,14 +645,14 @@ class OccurrenceEditorManager {
 			if ($sqlOrderBy) {
 				if ($orderBy == 'identifierValue') {
 					if ($this->qryArr['orderbydir'] === 'ASC') {
-						$sql .= 'ORDER BY (id.identifierValue) IS NULL ASC, CAST(REGEXP_REPLACE(id.identifierValue, \'[^0-9]\', \'\') AS UNSIGNED) ASC ';
+						$sql .= "ORDER BY (id.identifierValue) IS NULL ASC, CAST(REGEXP_REPLACE(id.identifierValue, '[^0-9]', '') AS UNSIGNED) ASC ";
 					}
 					else {
-						$sql .= 'ORDER BY CAST(REGEXP_REPLACE(id.identifierValue, \'[^0-9]\', \'\') AS UNSIGNED) DESC ';
+						$sql .= "ORDER BY CAST(REGEXP_REPLACE(id.identifierValue, '[^0-9]', '') AS UNSIGNED) DESC ";
 					}
 				}	
 				else if ($orderBy == 'identifierName') {
-					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL OR id.identifierName = \'\' ASC, id.identifierName ASC' : 'DESC';
+					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? " IS NULL OR id.identifierName = '' ASC, id.identifierName ASC" : 'DESC';
 					$sql .= 'ORDER BY (id.identifierName) ' . $orderbydir . ' ';
 				}
 				else {
