@@ -11,36 +11,6 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('classes/Media');
 
-function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
-	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
-
-	if($catalognumber) {
-		//Clean out Symbols that would interfere with
-		$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
-
-		//Grab any characters in the range of 0-8 then any amount digits
-		if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
-			//Truncate cat number to keep directories from getting out of hand
-			$derived_cat_num = substr($matches[1], 0, -3);
-
-			//If derived catalog number is a number less then five pad front with 0's
-			if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
-				$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
-			}
-
-			$root .= $derived_cat_num . '/';
-			//backup catalogNumber
-		} else {
-			$root .= '00000/';
-		}
-		//Use date as a backup so that main directory doesn't get filled up but can debug
-	} else {
-		$root .= date('Ym') . '/';
-	}
-
-	return str_replace(' ', '_', $root);
-}
-
 class Media {
 	private static $mediaRootPath;
 	private static $mediaRootUrl;
@@ -109,6 +79,44 @@ class Media {
 			return self::$mediaRootUrl = $GLOBALS['MEDIA_ROOT_URL'];
 		}
 	}
+
+	/**
+	 * 
+	 * @param mixed $institutioncode
+	 * @param mixed $collectioncode
+	 * @param mixed $catalognumber Optional; defaults to null.
+	 * @return string
+	 */
+	public static function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
+		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
+
+		if($catalognumber) {
+			//Clean out Symbols that would interfere with
+			$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
+
+			//Grab any characters in the range of 0-8 then any amount digits
+			if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
+				//Truncate cat number to keep directories from getting out of hand
+				$derived_cat_num = substr($matches[1], 0, -3);
+
+				//If derived catalog number is a number less then five pad front with 0's
+				if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
+					$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
+				}
+
+				$root .= $derived_cat_num . '/';
+				//backup catalogNumber
+			} else {
+				$root .= '00000/';
+			}
+			//Use date as a backup so that main directory doesn't get filled up but can debug
+		} else {
+			$root .= date('Ym') . '/';
+		}
+
+		return str_replace(' ', '_', $root);
+	}
+
 
 	/**
 	 * @return string

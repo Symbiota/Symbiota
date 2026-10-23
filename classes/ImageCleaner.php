@@ -136,7 +136,7 @@ class ImageCleaner extends Manager{
 		//Build target path
 		$targetPath = '';
 		if($this->collid){
-			$targetPath = get_occurrence_upload_path($this->collMetaArr[$this->collid]['institutioncode'], $this->collMetaArr[$this->collid]['collectioncode'], $catNum);
+			$targetPath = Media::get_occurrence_upload_path($this->collMetaArr[$this->collid]['institutioncode'], $this->collMetaArr[$this->collid]['collectioncode'], $catNum);
 		}
 		else $targetPath = 'misc/'.date('Ym').'/';
 		$this->imgManager->setTargetPath($targetPath);
