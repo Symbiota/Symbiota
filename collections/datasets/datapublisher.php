@@ -282,7 +282,7 @@ if ($isEditor) {
 				// Gets information for citation file
 				if ($publishGBIF) {
 					$datasetKey = $collManager->getDatasetKey();
-					$gbifUrl = 'http://api.gbif.org/v1/dataset/' . $datasetKey;
+					$gbifUrl = 'https://api.gbif.org/v1/dataset/' . $datasetKey;
 					$responseData = json_decode(file_get_contents($gbifUrl));
 					$collArr['gbiftitle'] = $responseData->title;
 					$collArr['doi'] = $responseData->doi;
