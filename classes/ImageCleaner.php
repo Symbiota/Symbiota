@@ -200,13 +200,13 @@ class ImageCleaner extends Manager{
 				if($recUrlOrig){
 					if($this->buildMediumDerivative && $webIsEmpty){
 						if($sourceWidth && $sourceWidth < $this->imgManager->getWebPixWidth()){
-							if(copy($this->imgManager->getSourcePath(),$this->imgManager->getTargetPath().$this->imgManager->getImgName().'_web'.$this->imgManager->getImgExt())){
-								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_web'.$this->imgManager->getImgExt();
+							if(copy($this->imgManager->getSourcePath(),$this->imgManager->getTargetPath().$this->imgManager->getImgName().'_lg'.$this->imgManager->getImgExt())){
+								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_lg'.$this->imgManager->getImgExt();
 							}
 						}
 						if(!$webFullUrl){
-							if($this->imgManager->createNewImage('_web',$this->imgManager->getWebPixWidth())){
-								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_web.jpg';
+							if($this->imgManager->createNewImage('_lg',$this->imgManager->getWebPixWidth())){
+								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_lg.jpg';
 							}
 						}
 					}
