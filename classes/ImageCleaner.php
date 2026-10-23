@@ -2,6 +2,7 @@
 include_once('Manager.php');
 include_once('ImageShared.php');
 include_once('utilities/GeneralUtil.php');
+include_once('Media.php');
 
 class ImageCleaner extends Manager{
 
@@ -108,10 +109,11 @@ class ImageCleaner extends Manager{
 
 	private function setCollectionCode(){
 		if($this->collid && !$this->collMetaArr){
-			$sql = 'SELECT collid, CONCAT_WS("_",institutioncode, collectioncode) AS code, collectionname, managementType FROM omcollections WHERE collid = '.$this->collid;
+			$sql = 'SELECT collid, institutioncode, collectioncode, collectionname, managementType FROM omcollections WHERE collid = '.$this->collid;
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
-				$this->collMetaArr[$r->collid]['code'] = $r->code;
+				$this->collMetaArr[$r->collid]['institutioncode'] = $r->institutioncode;
+				$this->collMetaArr[$r->collid]['collectioncode'] = $r->collectioncode;
 				$this->collMetaArr[$r->collid]['name'] = $r->collectionname;
 				$this->collMetaArr[$r->collid]['managementType'] = $r->managementType;
 			}
@@ -134,18 +136,7 @@ class ImageCleaner extends Manager{
 		//Build target path
 		$targetPath = '';
 		if($this->collid){
-			if(!array_key_exists($this->collid, $this->collMetaArr)) $this->setCollectionCode();
-			$targetPath = $this->collMetaArr[$this->collid]['code'].'/';
-			if($catNum){
-				$catNum = str_replace(array('/','\\',' '), '', $catNum);
-				if(preg_match('/^(\D{0,8}\d{4,})/', $catNum, $m)){
-					$catPath = substr($m[1], 0, -3);
-					if(is_numeric($catPath) && strlen($catPath)<5) $catPath = str_pad($catPath, 5, "0", STR_PAD_LEFT);
-					$targetPath .= $catPath.'/';
-				}
-				else $targetPath .= '00000/';
-			}
-			else $targetPath .= date('Ym').'/';
+			$targetPath = Media::get_occurrence_upload_path($this->collMetaArr[$this->collid]['institutioncode'], $this->collMetaArr[$this->collid]['collectioncode'], $catNum);
 		}
 		else $targetPath = 'misc/'.date('Ym').'/';
 		$this->imgManager->setTargetPath($targetPath);
@@ -209,13 +200,13 @@ class ImageCleaner extends Manager{
 				if($recUrlOrig){
 					if($this->buildMediumDerivative && $webIsEmpty){
 						if($sourceWidth && $sourceWidth < $this->imgManager->getWebPixWidth()){
-							if(copy($this->imgManager->getSourcePath(),$this->imgManager->getTargetPath().$this->imgManager->getImgName().'_web'.$this->imgManager->getImgExt())){
-								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_web'.$this->imgManager->getImgExt();
+							if(copy($this->imgManager->getSourcePath(),$this->imgManager->getTargetPath().$this->imgManager->getImgName().'_lg'.$this->imgManager->getImgExt())){
+								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_lg'.$this->imgManager->getImgExt();
 							}
 						}
 						if(!$webFullUrl){
-							if($this->imgManager->createNewImage('_web',$this->imgManager->getWebPixWidth())){
-								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_web.jpg';
+							if($this->imgManager->createNewImage('_lg',$this->imgManager->getWebPixWidth())){
+								$webFullUrl = $this->imgManager->getUrlBase().$this->imgManager->getImgName().'_lg.jpg';
 							}
 						}
 					}
