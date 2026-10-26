@@ -16,5 +16,8 @@ $LANG['CITATION'] = 'Bibliographic Citation';
 $LANG['DYNAMIC_PROPERTIES'] = 'Dynamic Properties';
 $LANG['NOTES_INTERNAL'] = 'Notes (Internal usage, not displayed publicly)';
 $LANG['SAVE_EDITS'] = 'Save Edits';
+$LANG['DS_ADMIN'] = 'Administator';
+$LANG['DS_EDITOR'] = 'Editor - Add and remove occurrences only';
+$LANG['DS_READER'] = 'Reader';
 
 ?>

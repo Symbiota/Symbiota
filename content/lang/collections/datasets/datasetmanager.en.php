@@ -7,11 +7,8 @@ Language: English
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.en.php');
 
 $LANG['OWNER'] = 'Owner';
-$LANG['ADMIN'] = 'Administrator';
 $LANG['EDITOR'] = 'Editor';
-$LANG['ROLE_LABEL_EDITOR'] = 'Can add and remove occurrences only';
-$LANG['READ_ACCESS'] = 'read access only';
-$LANG['SUPERADMIN'] = 'SuperAdmin';
+$LANG['OCCUR_REMOVED'] = 'occurrences successfully removed';
 $LANG['DS_EDITS_SAVED'] = 'Success! Dataset edits saved. ';
 $LANG['DS_MERGED'] = 'Datasets merged successfully';
 $LANG['DS_CLONED'] = 'Datasets cloned successfully';
@@ -53,9 +50,6 @@ $LANG['NONE_ASSIGNED'] = 'None Assigned';
 $LANG['ADD_USER'] = 'Add User';
 $LANG['TYPE_LOGIN'] = 'Type login or last name and then select from list';
 $LANG['LOGIN_NAME'] = 'Login/Last Name';
-$LANG['FULL_ACCESS'] = 'Full Access';
-$LANG['READ_WRITE_ACCESS'] = 'Read/Write Access';
-$LANG['READ_ACCESS'] = 'Read-Only Access';
 $LANG['ADD_USER'] = 'Add User';
 $LANG['NOT_AUTH'] = 'You are not authorized to view this dataset';
 $LANG['DS_NOT_IDENTIFIED'] = 'ERROR: dataset id not identified';

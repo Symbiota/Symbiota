@@ -28,7 +28,7 @@ if($SYMB_UID){
 			if($sourcePage == 'individual') $targetLink = '../individual/index.php?occid=' . Sanitize::int($occid);
 			if($action == 'addSelectedToDataset'){
 				if($occid){
-					if($datasetManager->addSelectedOccurrences($datasetID, $occid)){
+					if($datasetManager->insertOccurrences($datasetID, $occid)){
 						header('Location: '.$targetLink);
 					}
 					else echo $datasetManager->getErrorMessage();

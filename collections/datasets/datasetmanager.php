@@ -35,35 +35,26 @@ if($datasetId){
 	$datasetManager->setDatasetID($datasetId);
 
 	$mdArr = $datasetManager->getDatasetMetadata(false);
-	$role = '';
-	$roleLabel = '';
+
 	$isEditor = 0;
 	if ($SYMB_UID == $mdArr['uid']) {
 		$isEditor = 1;
-		$role = 'owner';
 	}
 	elseif($roles = $datasetManager->getUserRoles()) {
 		if (in_array('DatasetAdmin', $roles)) {
 			$isEditor = 1;
-			$role = $LANG['ADMINISTRATOR'];
 		} elseif (in_array('DatasetEditor', $roles)) {
 			$isEditor = 2;
-			$role = $LANG['EDITOR'];
-			$roleLabel = $LANG['ROLE_LABEL_EDITOR'];
 		} elseif (in_array('DatasetReader', $roles)) {
 			$isEditor = 3;
-			$role = $LANG['READ_ACCESS'];
 		}
-	} elseif ($IS_ADMIN) {
-		$isEditor = 1;
-		$role = $LANG['SUPERADMIN'];
 	}
 
 	if ($isEditor) {
 		if ($isEditor < 3) {
-			if ($action == 'Remove Selected Occurrences') {
-				if ($datasetManager->removeSelectedOccurrences($datasetId, $_POST['occid'])) {
-					//$statusStr = 'Selected occurrences removed successfully';
+			if ($action == 'deleteOccurrences') {
+				if(!$datasetManager->deleteOccurrences($_POST['occid'])) {
+					$statusStr = count($_POST['occid']) . ' ' . $LANG['OCCUR_REMOVED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
 				}
@@ -78,20 +69,20 @@ if($datasetId){
 				else{
 					$statusStr = $datasetManager->getErrorMessage();
 				}
-			} elseif ($action == 'Merge') {
-				if ($datasetManager->mergeDatasets($_POST['dsids[]'])) {
+			} elseif ($action == 'transferOccurrences') {
+				if ($datasetManager->transferOccurrences($_POST['occid'])) {
 					$statusStr = $LANG['DS_MERGED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
 				}
-			} elseif ($action == 'Clone (make copy)') {
-				if ($datasetManager->cloneDatasets($_POST['dsids[]'])) {
+			} elseif ($action == 'cloneDataset') {
+				if ($datasetManager->cloneDataset()) {
 					$statusStr = $LANG['DS_CLONED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'Delete Dataset') {
-				if ($datasetManager->deleteDatasetRecord($_POST['datasetid'])) {
+				if ($datasetManager->deleteDatasetRecord()) {
 					header('Location: index.php');
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
@@ -326,8 +317,15 @@ if($datasetId){
 		}
 		if ($datasetId) {
 			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">' . $mdArr['datasetName'] . '</div>';
-			if ($role) echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '"' . $roleLabel . '>' . $LANG['ROLE'] . ': ' . $role . '</div>';
+
 			if ($isEditor) {
+				$role = $LANG['DS_READER'];
+				if($isEditor == 1){
+					$role = $LANG['DS_ADMIN'];
+					if($SYMB_UID == $mdArr['uid']) $role = ' (' . $LANG['OWNER'] . ')';
+				}
+				elseif($isEditor == 2) $role = $LANG['DS_EDITOR'];
+				echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '">' . $LANG['ROLE'] . ': ' . $role . '</div>';
 				?>
 				<div id="tabs" style="margin:10px;">
 					<ul>
@@ -345,7 +343,7 @@ if($datasetId){
 						<?php
 						$retLimit = 200;
 						$maxNumberOfPagesBeforeShowPageJump = 10;
-						if ($occArr = $datasetManager->getOccurrences($datasetId, $pageNumber, $retLimit)) {
+						if ($occArr = $datasetManager->getOccurrenceDetails($datasetId, $pageNumber, $retLimit)) {
 							$recordCount = $datasetManager->getOccurrenceCount($datasetId);
 							?>
 							<div class="gridlike-form-row" style="justify-content: space-between;padding-bottom: 5px;">
@@ -447,7 +445,7 @@ if($datasetId){
 									<?php
 									if ($occArr && $isEditor < 3) {
 										?>
-										<button type="submit" name="submitaction" value="Remove Selected Occurrences"><?= $LANG['REM_SEL_OCCS'] ?></button>
+										<button type="submit" name="submitaction" value="deleteOccurrences"><?= $LANG['REM_SEL_OCCS'] ?></button>
 										<?php
 									}
 									?>
@@ -521,11 +519,13 @@ if($datasetId){
 						<div id="accesstab">
 							<div style="margin:25px 10px;">
 								<?php
-								$userArr = $datasetManager->getUsers($datasetId);
-								$roleArr = array('DatasetAdmin' => 'Full Access Users', 'DatasetEditor' => 'Read/Write Users', 'DatasetReader' => 'Read Only Users');
+								$userArr = array();
+								$userRoleArr = $datasetManager->getUserRoles($datasetId);
+								if($userRoleArr) $userArr = $userRoleArr[$datasetId];
+								$roleArr = array('DatasetAdmin' => 'DS_ADMIN', 'DatasetEditor' => 'DS_EDITOR', 'DatasetReader' => 'DS_READER');
 								foreach ($roleArr as $roleStr => $labelStr) {
 									?>
-									<div class="section-title"><?= $labelStr ?></div>
+									<div class="section-title"><?= $LANG[$labelStr] ?></div>
 									<div style="margin:15px;">
 										<?php
 										if (array_key_exists($roleStr, $userArr)) {
@@ -569,9 +569,9 @@ if($datasetId){
 										</div>
 										<label for="role"><?= $LANG['ROLE'] ?>:</label>
 										<select name="role" id="role">
-											<option value="DatasetAdmin"><?= $LANG['FULL_ACCESS'] ?></option>
-											<option value="DatasetEditor"><?= $LANG['READ_WRITE_ACCESS'] ?></option>
-											<option value="DatasetReader"><?= $LANG['READ_ACCESS'] ?></option>
+											<option value="DatasetAdmin"><?= $LANG['DS_ADMIN'] ?></option>
+											<option value="DatasetEditor"><?= $LANG['DS_EDITOR'] ?></option>
+											<option value="DatasetReader"><?= $LANG['DS_READER'] ?></option>
 										</select>
 										<div style="margin:10px;">
 											<input name="tabindex" type="hidden" value="2" />

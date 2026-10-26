@@ -94,7 +94,7 @@ $datasetManager = new OccurrenceDataset();
 	</div>
 	<div role="main" id="innertext">
 		<?php
-		$dataSetArr = $datasetManager->getDatasetManagementArr();
+		$dataSetArr = $datasetManager->getDatasetsByUser();
 		?>
 		<div>
 		<div style="float:right;margin:10px;" title="<?= $LANG['CRT_NEW_DAT'] ?>" >
@@ -142,30 +142,30 @@ $datasetManager = new OccurrenceDataset();
 			<fieldset>
 				<legend><b> <?= $LANG['OWNED'] ?> </b></legend>
 				<?php
-				if(array_key_exists('owner', $dataSetArr)){
-					$ownerArr = $dataSetArr['owner'];
-					unset($dataSetArr['owner']);
-					foreach($ownerArr as $dsid => $dsArr){
+				$ownedByExists = false;
+				foreach($dataSetArr as $dsid => $dsArr){
+					if($dsArr['role'] == 'owner'){
+						$ownedByExists = true;
 						?>
 						<div class="dataset-item">
 							<div>
 								<a href="datasetmanager.php?datasetid=<?= $dsid; ?>" title="<?= $LANG['MNG_EDIT'] ?>">
 									<?php
-									echo '<b>' . $dsArr['name'] . ' (#' . $dsid . ')</b>';
+									echo '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>';
 									?>
 								</a>
 							</div>
 							<div style="margin-left:15px;">
 								<?php
 								echo ($dsArr['notes'] ? '<div>' . $dsArr['notes'] . '</div>' : '');
-								echo '<div>Created: ' . $dsArr["ts"] . '</div>';
+								echo '<div>Created: ' . $dsArr['initialTimestamp'] . '</div>';
 								?>
 							</div>
 						</div>
 						<?php
 					}
 				}
-				else{
+				if(!$ownedByExists){
 					echo '<div style="font-weight:bold;">' . $LANG['NO_OWNED'] . '</div>';
 				}
 				?>
@@ -173,30 +173,32 @@ $datasetManager = new OccurrenceDataset();
 			<fieldset>
 				<legend><?= $LANG['SHARED'] ?> </legend>
 				<?php
-				if(array_key_exists('other',$dataSetArr)){
-					$otherArr = $dataSetArr['other'];
-					foreach($otherArr as $dsid => $dsArr){
+				$sharedByExists = false;
+				foreach($dataSetArr as $dsid => $dsArr){
+					if($dsArr['role'] != 'owner'){
+						$sharedByExists = true;
 						?>
 						<div>
-							<a href="datasetmanager.php?datasetid=<?= $dsid ?>" title="Access Dataset">
+							<a href="datasetmanager.php?datasetid=<?= $dsid ?>" title="Access Dataset"><?= '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>' ?></a>
 								<?php
-								$role = 'Dataset reader';
-								if($dsArr['role'] == 'DatasetAdmin') $role = 'Dataset Administator';
-								elseif($dsArr['role'] == 'DatasetEditor') $role = 'Dataset Editor';
-								echo '<b>' . $dsArr["name"] . ' (#' . $dsid . ')</b> - ' . $role;
+								$role = $LANG['DS_READER'];
+								if($dsArr['role'] == 'DatasetAdmin') $role = $LANG['DS_ADMIN'];
+								elseif($dsArr['role'] == 'DatasetEditor') $role = $LANG['DS_EDITOR'];
+								echo ' - ' . $role;
 								?>
-							</a>
 						</div>
 						<div style="margin-left:15px;">
 							<?php
-							echo ($dsArr["notes"] ? $dsArr["notes"] . '<br/>' : '');
-							echo 'Created: ' . $dsArr["ts"];
+							echo ($dsArr['notes'] ? $dsArr['notes'] . '<br/>' : '');
+							echo 'Created: ' . $dsArr['initialTimestamp'];
 							?>
 						</div>
 						<?php
 					}
 				}
-				else echo '<div style="font-weight:bold;">' . $LANG['NO_SHARED'] . '</div>';
+				if(!$sharedByExists){
+					echo '<div style="font-weight:bold;">' . $LANG['NO_SHARED'] . '</div>';
+				}
 				?>
 			</fieldset>
 			<?php

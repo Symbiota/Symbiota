@@ -6,12 +6,9 @@ Language: Español (Spanish)
 */
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.es.php');
 
-$LANG['PROPIETARIO'] = 'Propietario';
-$LANG['ADMIN'] = 'Administrador';
+$LANG['OWNER'] = 'Propietario';
 $LANG['EDITOR'] = 'Editor';
-$LANG['ROLE_LABEL_EDITOR'] = 'Solo se pueden agregar y eliminar apariciones';
-$LANG['READ_ACCESS'] = 'acceso de lectura sólo';
-$LANG['SUPERADMIN'] = 'SuperAdministrador';
+$LANG['OCCUR_REMOVED'] = 'apariciones eliminadas correctamente';
 $LANG['DS_EDITS_SAVED'] = '¡Éxito! Se guardaron las ediciones del conjunto de datos. ';
 $LANG['DS_MERGED'] = 'Los conjuntos de datos se fusionaron correctamente';
 $LANG['DS_CLONED'] = 'Conjuntos de datos clonados exitosamente';
@@ -53,9 +50,6 @@ $LANG['NONE_ASSIGNED'] = 'Ninguno Asignado';
 $LANG['ADD_USER'] = 'Agregar Usuario';
 $LANG['TYPE_LOGIN'] = 'Escriba nombre de usuario o apellido y luego seleccione de la lista';
 $LANG['LOGIN_NAME'] = 'Inicio de Sesión/Apellido';
-$LANG['FULL_ACCESS'] = 'Acceso Completo';
-$LANG['READ_WRITE_ACCESS'] = 'Acceso de Lectura/Escritura';
-$LANG['READ_ACCESS'] = 'Acceso de Sólo Lectura';
 $LANG['ADD_USER'] = 'Agregar Usuario';
 $LANG['NOT_AUTH'] = 'No está autorizado a ver este conjunto de datos';
 $LANG['DS_NOT_IDENTIFIED'] = 'ERROR: ID del conjunto de datos no identificado';

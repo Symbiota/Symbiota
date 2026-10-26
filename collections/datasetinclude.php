@@ -1,3 +1,6 @@
+<?php
+include_once($SERVER_ROOT . '/classes/data/OmDatasets.php');
+?>
 <script>
 	function selectAllDataset(cbElem){
 		var boxesChecked = true;
@@ -10,34 +13,32 @@
 </script>
 <div id="dataset-tools" class="dataset-div" style="clear:both;display:none">
 	<fieldset>
-		<legend><?php echo (isset($LANG['DATASET_MANAGEMENT'])?$LANG['DATASET_MANAGEMENT']:'Dataset Management'); ?></legend>
-		<?php
-		$datasetArr = $collManager->getDatasetArr();
-		?>
-		<div style="padding:5px;float:left;"><?php echo (isset($LANG['DATASET_TARGET'])?$LANG['DATASET_TARGET']:'Dataset target'); ?>: </div>
+		<legend><?= $LANG['DATASET_MANAGEMENT'] ?></legend>
+		<div style="padding:5px;float:left;"><?= $LANG['DATASET_TARGET'] ?>: </div>
 		<div style="padding:5px;float:left;">
 			<select name="targetdatasetid" onchange="datasetSelectChanged(this)">
 				<option value="">------------------------</option>
 				<?php
-				if($datasetArr){
-					foreach($datasetArr as $datasetID => $datasetName){
-						echo '<option value="'.$datasetID.'">'.$datasetName.'</option>';
+				$dsManager = new OmDatasets();
+				if($datasetArr = $dsManager->getDatasetsByUser()){
+					foreach($datasetArr as $datasetID => $datasetArr){
+						echo '<option value="' . $datasetID.'">' . $datasetArr['datasetName'] . '</option>';
 					}
 				}
-				else echo '<option value="">'.(isset($LANG['NO_DATASETS'])?$LANG['NO_DATASETS']:'no existing datasets available').'</option>';
+				else echo '<option value="">' . $LANG['NO_DATASETS'] . '</option>';
 				?>
 				<option value="">----------------------------------</option>
-				<option value="--newDataset"><?php echo (isset($LANG['CREATE_DATASET'])?$LANG['CREATE_DATASET']:'Create New Dataset'); ?></option>
+				<option value="--newDataset"><?= $LANG['CREATE_DATASET'] ?></option>
 			</select>
 		</div>
 		<div style="clear:both;margin:5px 0px">
 			<span class="checkbox-elem"><input name="selectall" type="checkbox" onclick="selectAllDataset(this)" /></span>
-			<span style="padding:10px;"><?php echo (isset($LANG['SELECT_ALL_RECORDS'])?$LANG['SELECT_ALL_RECORDS']:'Select all records on page'); ?></span>
+			<span style="padding:10px;"><?= $LANG['SELECT_ALL_RECORDS'] ?></span>
 		</div>
 		<div style="clear:both;">
-			<input name="searchvar" type="hidden" value="<?php echo $searchVar; ?>" />
-			<div style="padding:5px 0px;float:left;"><button name="action" type="submit" value="addSelectedToDataset" onclick="return hasSelectedOccid(this.form)"><?php echo (isset($LANG['ADD_SELECTED'])?$LANG['ADD_SELECTED']:'Add Selected Records to Dataset'); ?></button></div>
-			<div style="padding:5px;float:left;"><button name="action" type="submit" value="addAllToDataset"><?php echo (isset($LANG['ADD_COMPLETE_QUERY'])?$LANG['ADD_COMPLETE_QUERY']:'Add Complete Query to Dataset'); ?></button></div>
+			<input name="searchvar" type="hidden" value="<?= $searchVar; ?>" />
+			<div style="padding:5px 0px;float:left;"><button name="action" type="submit" value="addSelectedToDataset" onclick="return hasSelectedOccid(this.form)"><?= $LANG['ADD_SELECTED'] ?></button></div>
+			<div style="padding:5px;float:left;"><button name="action" type="submit" value="addAllToDataset"><?= $LANG['ADD_COMPLETE_QUERY'] ?></button></div>
 		</div>
 	</fieldset>
 </div>

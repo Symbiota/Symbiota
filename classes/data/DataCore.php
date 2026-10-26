@@ -68,7 +68,7 @@ class DataCore extends Manager{
 			return false;
 		}
 		$this->setParameterArr($inputArr);
-		$sql = 'INSERT INTO `' . $tableName . '`(`' . implode('`, `', array_keys($this->parameterArr)) . '`) VALUES(' . trim(str_repeat('?,', count($this->parameterArr)), ', ') . ') ';
+		$sql = 'INSERT IGNORE INTO `' . $tableName . '`(`' . implode('`, `', array_keys($this->parameterArr)) . '`) VALUES(' . trim(str_repeat('?,', count($this->parameterArr)), ',') . ') ';
 		$paramArr = array_values($this->parameterArr);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param($this->typeStr, ...$paramArr);
@@ -102,7 +102,7 @@ class DataCore extends Manager{
 		}
 		$this->setParameterArr($inputArr);
 		$paramArr = array_values($this->parameterArr);
-		$sql = 'UPDATE `' . $tableName . '` SET ' . implode(' = ?,', array_keys($this->parameterArr)) . ' = ? ';
+		$sql = 'UPDATE IGNORE `' . $tableName . '` SET ' . implode(' = ?,', array_keys($this->parameterArr)) . ' = ? ';
 		if($paramArr){
 			if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $this->typeStr)){
 				$sql .= 'WHERE ' . $sqlWhere;
@@ -136,7 +136,7 @@ class DataCore extends Manager{
 			$pkFieldName = array_search('pk', $this->fieldMap);
 			$pkArr = array($pkFieldName => $pkArr);
 		}
-		$sql = 'DELETE FROM `' . $tableName . '` WHERE ';
+		$sql = 'DELETE IGNORE FROM `' . $tableName . '` WHERE ';
 		$paramArr = array();
 		$typeStr = '';
 		if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $typeStr)){
@@ -167,6 +167,7 @@ class DataCore extends Manager{
 		$this->typeStr = '';
 		//Prepare type and value variables used within prepared statement
 		foreach($this->fieldMap as $field => $type){
+			if($type == 'x') continue;
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
@@ -188,12 +189,22 @@ class DataCore extends Manager{
 			if(isset($condArr[$fieldName])) $inputField = $fieldName;
 			elseif(isset($condArr[strtolower($fieldName)])) $inputField = strtolower($fieldName);
 			if($inputField){
-				$sqlFrag .= $delimiter . ' `' . $fieldName . '` = ? ';
-				$value = trim($condArr[$inputField]);
-				if($value === '') $value = null;
-				$paramArr[] = $value;
-				if($type == 'pk') $type = 'i';
-				$typeStr .= $type;
+				if(is_array($condArr[$inputField])){
+					$inputArr = $condArr[$inputField];
+					$inputItemCount = count($inputArr);
+					$sqlFrag .= $delimiter . ' `' . $fieldName . '` IN(' . trim(str_repeat('?,', $inputItemCount), ',') . ') ';
+					$paramArr = $inputArr;
+					if($type == 'pk') $type = 'i';
+					$typeStr .= str_repeat($type, $inputItemCount);
+				}
+				else{
+					$sqlFrag .= $delimiter . ' `' . $fieldName . '` = ? ';
+					$value = trim($condArr[$inputField]);
+					if($value === '') $value = null;
+					$paramArr[] = $value;
+					if($type == 'pk') $type = 'i';
+					$typeStr .= $type;
+				}
 				$delimiter = 'AND';
 			}
 		}

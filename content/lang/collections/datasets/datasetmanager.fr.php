@@ -7,11 +7,8 @@ Language: Français (French)
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.fr.php');
 
 $LANG['OWNER'] = 'Propriétaire';
-$LANG['ADMIN'] = 'Administrateur';
 $LANG['EDITOR'] = 'Editeur';
-$LANG['ROLE_LABEL_EDITOR'] = 'Peut ajouter et supprimer des occurrences uniquement';
-$LANG['READ_ACCESS'] = 'accès en lecture seule';
-$LANG['SUPERADMIN'] = 'SuperAdministrateur';
+$LANG['OCCUR_REMOVED'] = 'occurrences supprimées avec succès';
 $LANG['DS_EDITS_SAVED'] = 'Succès ! Modifications de l\'ensemble de données enregistrées. ';
 $LANG['DS_MERGED'] = 'Ensembles de données fusionnés avec succès';
 $LANG['DS_CLONED'] = 'Ensembles de données clonés avec succès';
@@ -53,9 +50,6 @@ $LANG['NONE_ASSIGNED'] = 'Aucun Attribué';
 $LANG['ADD_USER'] = 'Ajouter un Utilisateur';
 $LANG['TYPE_LOGIN'] = 'Tapez votre identifiant ou votre nom de famille, puis sélectionnez-le dans la liste';
 $LANG['LOGIN_NAME'] = 'Connexion/Nom';
-$LANG['FULL_ACCESS'] = 'Accès Complet';
-$LANG['READ_WRITE_ACCESS'] = 'Accès en Lecture/écriture';
-$LANG['READ_ACCESS'] = 'Accès en Lecture Seule';
 $LANG['ADD_USER'] = 'Ajouter un Utilisateur';
 $LANG['NOT_AUTH'] = 'Vous n\'êtes pas autorisé à consulter cet ensemble de données';
 $LANG['DS_NOT_IDENTIFIED'] = 'ERREUR : identifiant de l\'ensemble de données non identifié';

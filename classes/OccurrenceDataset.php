@@ -1,11 +1,8 @@
 <?php
 include_once($SERVER_ROOT . '/classes/data/OmDatasets.php');
-include_once($SERVER_ROOT . '/classes/DwcArchiverCore.php');
-include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 
 class OccurrenceDataset extends OmDatasets {
 
-	private $collArr = array();
 	private $errorArr = array();
 
 	function __construct() {
@@ -29,6 +26,36 @@ class OccurrenceDataset extends OmDatasets {
 		return $retArr;
 	}
 
+	public function getDatasetsByUser($uid = null){
+		$retArr = array();
+		if(!$uid){
+			if($GLOBALS['SYMB_UID']) $uid = $GLOBALS['SYMB_UID'];
+			else return false;
+		}
+
+		//Get datasets owned by user
+		$conditionArr = array('uid' => $uid);
+		$orderByArr = array('sortSequence','datasetName');
+		$retArr = $this->getDatasetArr($conditionArr, $orderByArr);
+		foreach($retArr as $id => $dsArr){
+			$retArr[$id]['role'] = 'owner';
+		}
+
+		if($userRoles = $this->getUserRoles(null, $uid)) {
+			//Get datasets shared with user
+			$condArr = array('datasetID' => array_keys($userRoles));
+			if($sharedDatasets = $this->getDatasetArr($condArr, $orderByArr)){
+				//Add role for each dataset
+				foreach($sharedDatasets as $id => $sharedDS){
+					$retArr[$id] = $sharedDS;
+					$role = key($userRoles[$id]);
+					$retArr[$id]['role'] = $role;
+				}
+			}
+		}
+		return $retArr;
+	}
+
 	public function getDatasetMetadata($publicOnly = true) {
 		$retArr = array();
 		if ($this->datasetID) {
@@ -40,298 +67,23 @@ class OccurrenceDataset extends OmDatasets {
 		return $retArr;
 	}
 
-	//Dataset management functions
-	public function getDatasetManagementArr() {
-		$retArr = array();
-		if ($GLOBALS['SYMB_UID']) {
-			$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, notes, description, sortsequence, initialtimestamp, ispublic FROM omoccurdatasets WHERE (uid = ' . $GLOBALS['SYMB_UID'] . ') ORDER BY sortsequence,name';
-			$rs = $this->conn->query($sql);
-			while ($r = $rs->fetch_object()) {
-				$retArr['owner'][$r->datasetid]['name'] = $r->datasetName;
-				$retArr['owner'][$r->datasetid]['notes'] = $r->notes;
-				$retArr['owner'][$r->datasetid]['description'] = $r->description;
-				$retArr['owner'][$r->datasetid]['sort'] = $r->sortsequence;
-				$retArr['owner'][$r->datasetid]['ts'] = $r->initialtimestamp;
-				$retArr['owner'][$r->datasetid]['ispublic'] = $r->ispublic;
-			}
-			$rs->free();
-
-			//Get shared datasets
-			$sql1 = 'SELECT d.datasetid, IFNULL(d.datasetName, d.name) as datasetName, d.notes, d.description, d.sortsequence, d.ispublic, d.initialtimestamp, r.role ' .
-				'FROM omoccurdatasets d INNER JOIN userroles r ON d.datasetid = r.tablepk ' .
-				'WHERE (r.uid = ' . $GLOBALS['SYMB_UID'] . ') AND (r.role IN("DatasetAdmin","DatasetEditor","DatasetReader")) ' .
-				'ORDER BY sortsequence,name';
-			//echo $sql1;
-			$rs1 = $this->conn->query($sql1);
-			while ($r1 = $rs1->fetch_object()) {
-				$retArr['other'][$r1->datasetid]['name'] = $r1->datasetName;
-				$retArr['other'][$r1->datasetid]['role'] = $r1->role;
-				$retArr['other'][$r1->datasetid]['notes'] = $r1->notes;
-				$retArr['other'][$r1->datasetid]['description'] = $r1->description;
-				$retArr['other'][$r1->datasetid]['sort'] = $r1->sortsequence;
-				$retArr['other'][$r1->datasetid]['ts'] = $r1->initialtimestamp;
-				$retArr['other'][$r1->datasetid]['ispublic'] = $r1->ispublic;
-			}
-			$rs1->free();
-		}
-		return $retArr;
-	}
-
-	public function mergeDatasets($targetArr) {
-		$targetDsid = array_shift($targetArr);
-		//Rename target
-		$sql1 = 'UPDATE omoccurdatasets SET datasetName = CONCAT(datasetName," (merged)"), name = CONCAT(name," (merged)") WHERE datasetid = ' . $targetDsid;
-		if ($this->conn->query($sql1)) {
-			//Push occurrences to target
-			$sql2 = 'UPDATE IGNORE omoccurdatasetlink SET datasetid = ' . $targetDsid . ' WHERE datasetid IN(' . implode(',', $targetArr) . ')';
-			if ($this->conn->query($sql2)) {
-				//Delete dataset, including linked occurrences that failed to transfer due to being linked multiple times within the group
-				$sql3 = 'DELETE FROM omoccurdatasets WHERE datasetid IN(' . implode(',', $targetArr) . ')';
-				if (!$this->conn->query($sql3)) {
-					$this->errorMessage = 'WARNING: Unable to remove extra datasets: ' . $this->conn->error;
-					return false;
-				}
-			} else {
-				$this->errorMessage = 'FATAL ERROR: Unable to transfer occurrence records into target dataset: ' . $this->conn->error;
-				return false;
-			}
-		} else {
-			$this->errorMessage = 'FATAL ERROR: Unable to rename target dataset in prep for merge: ' . $this->conn->error;
-			return false;
-		}
-		return true;
-	}
-
-	public function cloneDatasets($targetArr, $uid) {
+	public function cloneDataset() {
 		$status = true;
-		$sql = 'SELECT datasetid, IFNULL(datasetName, name) as datasetName, name, notes, description, sortsequence FROM omoccurdatasets WHERE datasetid IN(' . implode(',', $targetArr) . ')';
-		$rs = $this->conn->query($sql);
-		while ($r = $rs->fetch_object()) {
-			//Create new name and ensure it doesn't already exist for owner
-			$newName = $r->datasetName . ' - Copy';
-			$newNameTemp = $newName;
-			$cnt = 1;
-			do {
-				$sql1 = 'SELECT datasetid FROM omoccurdatasets WHERE name = "' . $newNameTemp . '" AND uid = ' . $uid;
-				$nameExists = false;
-				$rs1 = $this->conn->query($sql1);
-				while ($rs1->fetch_object()) {
-					$newNameTemp = $newName . ' ' . $cnt;
-					$nameExists = true;
-					$cnt++;
-				}
-				$rs1->free();
-			} while ($nameExists);
-			$newName = $newNameTemp;
-			//Add to database
-			$sql2 = 'INSERT INTO omoccurdatasets(datasetName, name, notes, description, sortsequence, uid)
-				VALUES("' . $newName . '","' . $r->name . '","' . $r->notes . '","' . $r->description . '",' . ($r->sortsequence ? $r->sortsequence : '""') . ',' . $uid . ')';
-			if ($this->conn->query($sql2)) {
-				$this->datasetID = $this->conn->insert_id;
-				//Duplicate all records wtihin new dataset
-				$sql3 = 'INSERT INTO omoccurdatasetlink(occid, datasetid, notes, description) ' .
-					'SELECT occid, ' . $this->datasetID . ', notes, description FROM omoccurdatasetlink WHERE datasetid = ' . $r->datasetid;
-				if (!$this->conn->query($sql3)) {
-					$this->errorMessage = 'ERROR: Unable to clone dataset links into new datasets: ' . $this->conn->error;
-					$status = false;
-				}
-			} else {
-				$this->errorMessage = 'ERROR: Unable to create new dataset within clone method: ' . $this->conn->error;
-				$status = false;
-			}
-		}
-		$rs->free();
-		return $status;
-	}
-
-	public function deleteDatasetRecord($dsid) {
-		$this->deleteDataset();
-
-		//Delete users
-		$sql = 'DELETE FROM userroles WHERE (role IN("DatasetAdmin","DatasetEditor","DatasetReader")) AND (tablename = "omoccurdatasets") AND (tablepk = ' . $dsid . ') ';
-		if (!$this->conn->query($sql)) {
-			$this->errorMessage = 'ERROR deleting user: ' . $this->conn->error;
-			return false;
-		}
-
-		return true;
-	}
-
-	//User management functions
-	public function getUsers($datasetId) {
-		$retArr = array();
-		$sql = 'SELECT u.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username ' .
-			'FROM userroles r INNER JOIN users u ON r.uid = u.uid ' .
-			'WHERE r.role IN("DatasetAdmin","DatasetEditor","DatasetReader") ' .
-			'AND (r.tablename = "omoccurdatasets") AND (r.tablepk = ' . $datasetId . ')';
-		//echo $sql;
-		$rs = $this->conn->query($sql);
-		while ($r = $rs->fetch_object()) {
-			$retArr[$r->role][$r->uid] = $r->username;
-		}
-		$rs->free();
-		return $retArr;
-	}
-
-	public function getUserRoles(){
-		$retArr = array();
-		$symbUid = 0;
-		if(!empty($GLOBALS['SYMB_UID'])) $symbUid = $GLOBALS['SYMB_UID'];
-		if($this->datasetID && $symbUid){
-			//Get roles for current user
-			$sql = 'SELECT role FROM userroles WHERE (tablename = "omoccurdatasets") AND (tablepk = ?) AND (uid = ?) ';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('ii', $this->datasetID, $symbUid);
-				$stmt->execute();
-				$rs = $stmt->get_result();
-				while ($r = $rs->fetch_object()) {
-					$retArr[] = $r->role;
-				}
-				$rs->free();
-				$stmt->close();
-			}
-		}
-		return $retArr;
-	}
-
-	public function addUser($datasetID, $uid, $role) {
-		if (is_numeric($uid)) {
-			$sql = 'INSERT INTO userroles(uid,role,tablename,tablepk,uidassignedby) VALUES(' . $uid . ',"' . $this->cleanInStr($role) . '","omoccurdatasets",' . $datasetID . ',' . $GLOBALS['SYMB_UID'] . ')';
-			if (!$this->conn->query($sql)) {
-				$this->errorMessage = 'ERROR adding new user: ' . $this->conn->error;
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public function deleteUser($datasetID, $uid, $role) {
-		$status = true;
-		$sql = 'DELETE FROM userroles WHERE (uid = ' . $uid . ') AND (role = "' . $role . '") AND (tablename = "omoccurdatasets") AND (tablepk = ' . $datasetID . ') ';
-		if (!$this->conn->query($sql)) {
-			$this->errorMessage = 'ERROR deleting user: ' . $this->conn->error;
-			return false;
+		$datasetMeta = $this->getDatasetMetadata(false);
+		$newName = $datasetMeta['datasetName'] . ' - Copy (' . time() . ')';
+		//Create new dataset
+		$dsArr['datasetName'] = $newName;
+		$dsArr['uid'] = $GLOBALS['SYMB_UID'];
+		unset($dsArr['datasetID']);
+		unset($dsArr['datasetIdentifier']);
+		unset($dsArr['recordID']);
+		unset($dsArr['initialTimestamp']);
+		if($this->insertDataset($dsArr)){
+			$newDatasetID = $this->conn->insert_id;
+			//Insert all occurrences
+			$this->copyOccurrences($newDatasetID);
+			$status = true;
 		}
 		return $status;
 	}
-
-	//Occurrence functions
-	public function getOccurrenceCount() {
-		$returnVal = 0;
-		if ($this->datasetID) {
-			$sql = 'SELECT COUNT(o.occid) as cnt FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid WHERE dl.datasetid = ? ';
-			$sql .= OccurrenceUtil::appendFullProtectionSQL();
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->datasetID);
-				$stmt->execute();
-				$stmt->bind_result($returnVal);
-				$stmt->fetch();
-				$stmt->close();
-			}
-		}
-		return $returnVal;
-	}
-
-	public function getOccurrences($datasetId, $pageNumber = 1, $retLimit = 500) {
-		$retArr = array();
-		if ($datasetId) {
-			$sql = 'SELECT o.occid, o.catalognumber, o.occurrenceid ,o.othercatalognumbers,
-				o.sciname, o.family, o.recordedby, o.recordnumber, o.eventdate,
-				o.country, o.stateprovince, o.county, o.locality, o.decimallatitude, o.decimallongitude, dl.notes
-				FROM omoccurrences o INNER JOIN omoccurdatasetlink dl ON o.occid = dl.occid
-				WHERE dl.datasetid = ? ';
-			$sql .= OccurrenceUtil::appendFullProtectionSQL();
-			if($retLimit) $sql .= 'LIMIT '. (($pageNumber - 1) * $retLimit) . ',' . $retLimit;
-			$params[] = $datasetId;
-			try {
-				$result = QueryUtil::executeQuery($this->conn, $sql, $params);
-			} catch (\Throwable  $e) {
-				error_log('ERROR fetching count for dataset: ' . $datasetId);
-			}
-			$recordCount = 1;
-			while ($r = $result->fetch_object()) {
-				if ($r->catalognumber) $retArr[$r->occid]['catnum'] = $r->catalognumber;
-				elseif ($r->occurrenceid) $retArr[$r->occid]['catnum'] = $r->occurrenceid;
-				elseif ($r->othercatalognumbers) $retArr[$r->occid]['catnum'] = $r->othercatalognumbers;
-				else $retArr[$r->occid]['catnum'] = '';
-				$sciname = $r->sciname;
-				if ($r->family) $sciname .= ' (' . $r->family . ')';
-				$retArr[$r->occid]['sciname'] = $sciname;
-				$collStr = $r->recordedby . ' ' . $r->recordnumber;
-				if ($r->eventdate) $collStr .= ' [' . $r->eventdate . ']';
-				$retArr[$r->occid]['coll'] = $collStr;
-				$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
-			}
-			$result->free();
-		}
-		return $retArr;
-	}
-
-	public function removeSelectedOccurrences($datasetId, $occArr) {
-		$status = true;
-		if (is_numeric($datasetId) && $occArr) {
-			$sql = 'DELETE FROM omoccurdatasetlink WHERE (datasetid = ' . $datasetId . ') AND (occid IN(' . implode(',', $occArr) . '))';
-			if (!$this->conn->query($sql)) {
-				$this->errorMessage = 'ERROR deleting selected occurrences: ' . $this->conn->error;
-				return false;
-			}
-		}
-		return $status;
-	}
-
-	public function addSelectedOccurrences($datasetId, $occArr) {
-		$status = false;
-		if (is_numeric($datasetId)) {
-			if (is_numeric($occArr)) $occArr = array($occArr);
-			foreach ($occArr as $v) {
-				if (is_numeric($v)) {
-					$sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) VALUES("' . $v . '",' . $datasetId . ') ';
-					if ($this->conn->query($sql)) $status = true;
-					else {
-						$this->errorMessage = 'ERROR adding occurrence (' . $v . '): ' . $this->conn->error;
-						$status = false;
-					}
-				}
-			}
-		}
-		return $status;
-	}
-
-	//General data retrival functions
-	public function getUserList($term) {
-		$retArr = array();
-		$sql = 'SELECT uid, CONCAT(CONCAT_WS(", ", lastname, firstname)," - ", username," [#", uid,"]") AS username ' .
-			'FROM users WHERE lastname LIKE "%' . $this->cleanInStr($term) . '%" OR username LIKE "%' . $this->cleanInStr($term) . '%" ' .
-			'ORDER BY lastname, firstname';
-		$rs = $this->conn->query($sql);
-		while ($r = $rs->fetch_object()) {
-			$retArr[] = array('id' => $r->uid, 'label' => $r->username);
-		}
-		$rs->free();
-		return $retArr;
-	}
-
-	public function getCollName($collId) {
-		$collName = '';
-		if ($collId) {
-			if (!$this->collArr) $this->setCollMetadata($collId);
-			$collName = $this->collArr['collname'] . ' (' . $this->collArr['instcode'] . ($this->collArr['collcode'] ? ':' . $this->collArr['collcode'] : '') . ')';
-		}
-		return $collName;
-	}
-
-	private function setCollMetadata($collId) {
-		$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype ' .
-			'FROM omcollections WHERE collid = ' . $collId;
-		if ($rs = $this->conn->query($sql)) {
-			while ($r = $rs->fetch_object()) {
-				$this->collArr['instcode'] = $r->institutioncode;
-				$this->collArr['collcode'] = $r->collectioncode;
-				$this->collArr['collname'] = $r->collectionname;
-				$this->collArr['colltype'] = $r->colltype;
-			}
-			$rs->free();
-		}
-	}
-
 }
