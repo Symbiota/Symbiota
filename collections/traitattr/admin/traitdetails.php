@@ -64,9 +64,11 @@ if($formSubmit && $isEditor){
 	}
 	elseif($formSubmit == 'addDependency'){
 		$traitManager->insertTraitStateDep($_POST);
+		$tabIndex = 1;
 	}
-	else if($formSubmite =- 'deleteDependency') {
-
+	else if($formSubmit == 'deleteDependency') {
+		$traitManager->deleteTraitStateDep($_POST);
+		$tabIndex = 1;
 	}
 		
 }
@@ -359,7 +361,7 @@ if(!$traitID) header('Location: index.php');
 														<img src="../../../images/add.png" class="icon-img"/>			
 													</button>
 													<div id="newdepform-<?= $stateID ?>" style="display:none;">
-														<form>
+														<form method="post">
 															<select name="traitID">
 																<?php 
 																# Dependency name="traitID" needs to be different from a state's name="traitid"
@@ -378,12 +380,14 @@ if(!$traitID) header('Location: index.php');
 													<?php
 													$stateDepArr = $traitManager->getStateDepArr($stateID);
 														if($stateDepArr){
-															echo '<ul>';
+															echo '<form method="post"><input name="parentstateid" type="hidden" value="'. $stateID .'"/><input name="formsubmit" type="hidden" value="deleteDependency" /><ul>';
 															foreach ($stateDepArr as $dependency){
 																$trait = $traitManager->getTraitArrById2($dependency['traitID']);
-																echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
+																echo '<li style="display:flex; align-items:center; gap: 10px;">
+																<a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a>
+																<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="Remove Dependency"><img src="../../../images/del.png" class="icon-img"/></button></li>';
 															}
-															echo '</ul>';
+															echo '</ul></form>';
 														}
 														else {
 															echo 'No dependencies.';
