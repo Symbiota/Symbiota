@@ -49,9 +49,7 @@ $searchVar = $collManager->getQueryTermStr();
 </head>
 <body>
 <div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
-<div id="all_collections_parent_container" data-config='<?= json_encode([
-	'CURRENT_URL' => $_SERVER['REQUEST_URI'],
-]) ?>'></div>
+<div id="all_collections_parent_container" data-config='<?= json_encode(['CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI'])]) ?>'></div>
 <?php
 	$displayLeftMenu = (isset($collections_harvestparamsMenu)?$collections_harvestparamsMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
@@ -432,7 +430,7 @@ $searchVar = $collManager->getQueryTermStr();
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
-				<input type="hidden" name="db" value="<?php echo $collManager->getSearchTerm('db', $_SERVER['REQUEST_URI']); ?>" />
+				<input type="hidden" name="db" value="<?= $collManager->getSearchTerm('db') ?>" />
 			</div>
 			<hr/>
 		</form>

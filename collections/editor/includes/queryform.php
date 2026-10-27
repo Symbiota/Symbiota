@@ -141,7 +141,11 @@ else{
 			}
 			?>
 		</div>
-		<form name="queryform" action="<?php echo $_SERVER['SCRIPT_NAME']; ?>" method="post" onsubmit="return verifyQueryForm(this)">
+		<?php
+		$formAction = 'occurrenceeditor.php';
+		if(strpos($_SERVER['SCRIPT_NAME'], 'occurrencetabledisplay') !== false) $formAction = 'occurrencetabledisplay.php';
+		?>
+		<form name="queryform" action="<?= $formAction ?>" method="post" onsubmit="return verifyQueryForm(this)">
 			<?php
 			if(!$crowdSourceMode){
 				?>

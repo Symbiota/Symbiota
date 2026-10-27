@@ -3,9 +3,10 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load(['collections/misc/collprofiles', 'sitemap']);
+Language::load(['collections/misc/collprofiles', 'profile/adminmenu']);
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 unset($_SESSION['editorquery']);
@@ -337,9 +338,7 @@ if ($SYMB_UID) {
 		<b><?= $LANG['COLL_PROFILE'] ?></b>
 	</div>
 	<div role="main" id="innertext" style="padding-top:0">
-		<div id="all_collections_parent_container" data-config='<?= json_encode([
-		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
-		]) ?>'></div>
+		<div id="all_collections_parent_container" data-config='<?= json_encode(['CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI'])]) ?>'></div>
 		<?php
 		if ($collid && !$collid == 0){
 			?>

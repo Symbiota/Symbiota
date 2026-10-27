@@ -47,7 +47,6 @@ $LANG['DESCMAXCHAR'] = 'Description can only have a maximum of 2000 characters. 
 $LANG['CHARLONG'] = 'characters long';
 $LANG['SELECTCHECKPULL'] = 'Choose a checklist from the pull-down';
 $LANG['CHOOSEUSER'] = 'Choose a user from the pull-down';
-$LANG['ADDNEWPR'] = 'Add New Project';
 $LANG['TOGGLEEDIT'] = 'Toggle Editing Functions';
 $LANG['MAPREP'] = 'Map representation of checklists';
 $LANG['PENCIL_ALT'] = 'image of a pencil on paper, indicating edit mode toggle';

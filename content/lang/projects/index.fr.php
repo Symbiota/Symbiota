@@ -46,7 +46,6 @@ $LANG['DESCMAXCHAR'] = "La description ne peut contenir qu'un maximum de 2 000�
 $LANG['CHARLONG'] = 'caractères longs';
 $LANG['SELECTCHECKPULL'] = 'Choisissez une liste de contrôle dans le menu déroulant';
 $LANG['CHOOSEUSER'] = 'Choisissez un utilisateur dans le menu déroulant';
-$LANG['ADDNEWPR'] = 'Ajouter un nouveau projet';
 $LANG['TOGGLEEDIT'] = "Fonctions d'édition d'Oggle";
 $LANG['MAPREP'] = 'Représentation cartographique de la liste de contrôle';
 $LANG['PENCIL_ALT'] = 'image d\'un crayon sur papier, indiquant le basculement du mode d\'édition';

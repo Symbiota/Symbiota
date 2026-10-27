@@ -654,34 +654,40 @@ class SpecUploadBase extends SpecUpload{
 		$this->outputMsg('<li>Data cleaning:</li>');
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning event dates...</li>');
 
-		$sql = 'UPDATE uploadspectemp u '.
-			'SET u.year = YEAR(u.eventDate) '.
-			'WHERE (u.collid IN('.$this->collId.')) AND (u.eventDate IS NOT NULL) AND (u.year IS NULL)';
+		//only populate year for possible legal dates and when year of start date does not equal year of end date
+		$sql = 'UPDATE uploadspectemp
+			SET year = YEAR(eventDate)
+			WHERE (collid IN('.$this->collId.')) AND (year IS NULL) AND (eventDate IS NOT NULL) AND (eventDate2 IS NULL OR YEAR(eventDate) = YEAR(eventDate2))
+			AND eventDate BETWEEN "1400-01-01" AND NOW()';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE uploadspectemp u '.
-			'SET u.month = MONTH(u.eventDate) '.
-			'WHERE (u.collid IN('.$this->collId.')) AND (u.month IS NULL) AND (u.eventDate IS NOT NULL)';
+		$sql = 'UPDATE uploadspectemp
+			SET month = MONTH(eventDate)
+			WHERE (collid IN('.$this->collId.')) AND (month IS NULL) AND (eventDate IS NOT NULL) AND (eventDate2 IS NULL OR EXTRACT(YEAR_MONTH FROM eventDate) = EXTRACT(YEAR_MONTH FROM eventDate2))
+			AND eventDate BETWEEN "1400-01-01" AND NOW()';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE uploadspectemp u '.
-			'SET u.day = DAY(u.eventDate) '.
-			'WHERE u.collid IN('.$this->collId.') AND u.day IS NULL AND u.eventDate IS NOT NULL';
+		$sql = 'UPDATE uploadspectemp
+			SET day = DAY(eventDate)
+			WHERE collid IN('.$this->collId.') AND day IS NULL AND eventDate IS NOT NULL AND (eventDate2 IS NULL OR eventDate = eventDate2)
+			AND eventDate BETWEEN "1400-01-01" AND NOW()';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE uploadspectemp u '.
-			'SET u.startDayOfYear = DAYOFYEAR(u.eventDate) '.
-			'WHERE u.collid IN('.$this->collId.') AND u.startDayOfYear IS NULL AND u.eventDate IS NOT NULL';
+		$sql = 'UPDATE uploadspectemp
+			SET startDayOfYear = DAYOFYEAR(eventDate)
+			WHERE collid IN('.$this->collId.') AND startDayOfYear IS NULL AND eventDate IS NOT NULL
+			AND eventDate BETWEEN "1400-01-01" AND NOW()';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE uploadspectemp u '.
-			'SET u.endDayOfYear = DAYOFYEAR(u.eventDate2) '.
-			'WHERE u.collid IN('.$this->collId.') AND u.endDayOfYear IS NULL AND u.eventDate2 IS NOT NULL';
+		$sql = 'UPDATE uploadspectemp
+			SET endDayOfYear = DAYOFYEAR(eventDate2)
+			WHERE collid IN('.$this->collId.') AND endDayOfYear IS NULL AND eventDate2 IS NOT NULL
+			AND eventDate BETWEEN "1400-01-01" AND NOW()';
 		$this->conn->query($sql);
 
-		$sql = 'UPDATE IGNORE uploadspectemp u
-			SET u.eventDate = CONCAT_WS("-",LPAD(u.year,4,"19"),IFNULL(LPAD(u.month,2,"0"),"00"),IFNULL(LPAD(u.day,2,"0"),"00"))
-			WHERE (u.eventDate IS NULL) AND (u.year > 1300) AND (u.year <= '.date('Y').') AND (collid IN('.$this->collId.'))';
+		$sql = 'UPDATE IGNORE uploadspectemp
+			SET eventDate = CONCAT_WS("-",LPAD(year,4,"19"),IFNULL(LPAD(month,2,"0"),"00"),IFNULL(LPAD(day,2,"0"),"00"))
+			WHERE (eventDate IS NULL) AND (year BETWEEN 1300 AND ' . date('Y') . ') AND (collid IN('.$this->collId.'))';
 		$this->conn->query($sql);
 
 		$this->outputMsg('<li style="margin-left:10px;">Cleaning country and state/province ...</li>');

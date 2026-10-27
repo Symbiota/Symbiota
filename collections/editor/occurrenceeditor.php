@@ -5,7 +5,7 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 Language::load('collections/editor/occurrenceeditor');
 
 //file upload handle
-include_once $SERVER_ROOT . "/classes/Media.php";
+include_once $SERVER_ROOT . '/classes/Media.php';
 if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil::getMaximumPostSize() && empty($_POST) && empty($_FILES)) {
 	$max_size = UploadUtil::formatBytes(UploadUtil::getMaximumFileUploadSize());
 	$ex = new MediaException(MediaException::ExceedMaxSize, $max_size);
@@ -14,7 +14,7 @@ if (isset($_SERVER['CONTENT_LENGTH']) && $_SERVER['CONTENT_LENGTH'] > UploadUtil
 	if($_SESSION['occurrenceEditorFallbackUrl']) {
 		header('Location: ' . $_SESSION['occurrenceEditorFallbackUrl']);
 	} else {
-		header('Location: ' . $_SERVER['HTTP_REFERER']);
+		header('Location: ' . $SERVER_ROOT . '/index.php');
 	}
     exit;
 }
@@ -491,7 +491,7 @@ if($SYMB_UID){
 		$imgCnt = 1;
 		foreach($specImgArr as $imgId => $i2){
 			$iUrl = $i2['url'];
-			if($iUrl == 'empty' && $i2['origurl']) $iUrl = $i2['origurl'];
+			if(empty($iUrl) && $i2['origurl']) $iUrl = $i2['origurl'];
 			if($imgUrlPrefix && substr($iUrl,0,4) != 'http') $iUrl = $imgUrlPrefix.$iUrl;
 			$imgArr[$imgCnt]['mediaid'] = $imgId;
 			$imgArr[$imgCnt]['web'] = $iUrl;
