@@ -646,7 +646,7 @@ class OccurrenceEditorManager {
 				if ($orderBy == 'identifierValue') {
 					$selectFirst = "(SELECT id2.identifierValue FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
 					if ($this->qryArr['orderbydir'] === 'ASC') {
-						$sql .= " ORDER BY ($selectFirst) IS NULL ASC, CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) ASC ";
+						$sql .= " ORDER BY ($selectFirst) IS NULL, CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) ASC ";
 					} else {
 						$sql .= " ORDER BY CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) DESC ";
 					}
@@ -654,13 +654,13 @@ class OccurrenceEditorManager {
 				else if ($orderBy == 'identifierName') {
 					$selectFirst = "(SELECT id2.identifierName FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
 					if ($this->qryArr['orderbydir'] === 'ASC') {
-						$sql .= " ORDER BY ($selectFirst IS NULL OR $selectFirst = '') ASC, $selectFirst ASC ";
+						$sql .= " ORDER BY ($selectFirst IS NULL OR $selectFirst = ''), $selectFirst ASC ";
 					} else {
 						$sql .= " ORDER BY $selectFirst DESC ";
 					}
 				}
 				else {
-					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : 'DESC';
+					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL, o.' . $sqlOrderBy . ' ASC' : 'DESC';
 					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $orderbydir . ' ';
 				}
 			}
