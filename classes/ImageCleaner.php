@@ -338,10 +338,6 @@ class ImageCleaner extends Manager{
 			$this->logOrEcho('FATAL ERROR: MEDIA_ROOT_PATH not configured within portal configuration file',1);
 			exit;
 		}
-		if(!$GLOBALS['MEDIA_ROOT_URL']){
-			$this->logOrEcho('FATAL ERROR: MEDIA_ROOT_URL not configured within portal configuration file',1);
-			exit;
-		}
 		if(substr($url, 0, 4) == 'http'){
 			//Remove domain name
 			$url = parse_url($url, PHP_URL_PATH);
