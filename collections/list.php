@@ -376,7 +376,7 @@ $_SESSION['citationvar'] = $searchVar;
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
-										if($MEDIA_DOMAIN && (substr($fieldArr['media']['thumbnail'], 0, 4) != 'http')){
+										if($MEDIA_DOMAIN && isset($fieldArr['media']['thumbnail']) && (substr($fieldArr['media']['thumbnail'], 0, 4) != 'http')){
 											$thumbnail = $MEDIA_DOMAIN . $fieldArr['media']['thumbnail'];
 										}
 										else $thumbnail = $fieldArr['media']['thumbnail'];
