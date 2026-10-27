@@ -14,5 +14,5 @@ $LANG['VIEW_SAMPLE'] = 'Ver muestras en este conjunto de Datos (vista de Tabla)'
 $LANG['VIEW_LIST'] = 'Ver lista de taxones en este conjunto de Datos';
 $LANG['UNDEFINED_CATEGORY'] = 'Conjuntos de datos diversos';
 $LANG['NO_DATASETS'] = 'No hay conjuntos de datos';
-$LANG['VIEW_USER_LIST'] = 'Ver tus conjuntos de datos';
+$LANG['VIEW_USER_LIST'] = 'Ver todos de tus conjuntos de datos';
 ?>

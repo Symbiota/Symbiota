@@ -105,59 +105,84 @@ $indManager->setOccid($occid);
 		<?php
 		//Dataset Management
 		$datasetManager = new OccurrenceDataset();
-		$datasetArr = $datasetManager->getDatasetArr(array('occid', $occid));
-		if($datasetArr){
-			echo '<fieldset>';
-			echo '<legend>' . ($LANG['DATASETLINKAGES']) . '</legend>';
-			if($SYMB_UID) echo '<div style="float:right"><a href="#" onclick="toggle(\'dataset-block\');return false"><img src="../../images/add.png" /></a></div>';
-			$dsDisplayStr = '';
-			foreach($datasetArr as $dsid => $dsArr){
-				$dsDisplayStr .= '<li>';
-				$dsDisplayStr .= '<a href="../datasets/datasetmanager.php?datasetid=' . $dsid . '" target="_blank">' . $dsArr['datasetName'] . '</a>';
-				if(!empty($dsArr['role'])) $dsDisplayStr .= ' (role: '.$dsArr['role'].')';
-				if(!empty($dsArr['notes'])) $dsDisplayStr .= ' - '.$dsArr['notes'];
-				$dsDisplayStr .= '</li>';
-			}
-			if($dsDisplayStr){
-				echo '<div class="section-title">' . $LANG['MEMBEROF'] . '</div>';
-				echo '<ul>'.$dsDisplayStr.'</ul>';
-			}
-			else echo '<div style="margin:15px 0px">' . $LANG['OCCURRENCENOTLINKED'] . '</div>';
-			if($SYMB_UID){
-				?>
-				<div class="dataset-block" id="dataset-block" style="display: none;">
-					<fieldset>
-						<legend><?= $LANG['CREATENEWREL'] ?></legend>
-						<form action="../datasets/datasetHandler.php" method="post" onsubmit="return verifyDatasetForm(this);">
-							<div style="margin:3px">
-								<select name="targetdatasetid">
-									<option value=""><?= $LANG['SELECTEXISTING'] ?></option>
-									<option value="">----------------------------------</option>
-									<?php
-									foreach($datasetArr as $dsid => $dsArr){
-										if(!array_key_exists('linked',$dsArr)){
-											echo '<option value="'.$dsid.'">'.$dsArr['name'].'</option>';
-										}
-									}
-									?>
-									<option value="--newDataset"><?= $LANG['CREATENEWDATASET'] ?></option>
-								</select>
-							</div>
-							<div style="margin:5px">
-								<label><?= $LANG['NOTES'] ?>:</label><br/>
-								<input name="notes" type="text" value="" maxlength="250" style="width:90%;" />
-							</div>
-							<div style="margin:15px">
-								<input name="occid" type="hidden" value="<?= $occid; ?>" />
-								<input name="sourcepage" type="hidden" value="individual" />
-								<button name="action" type="submit" value="addSelectedToDataset" ><?= $LANG['LINKTO'] ?></button>
-							</div>
-						</form>
-					</fieldset>
-				</div>
+		$datasetArr = $datasetManager->getDatasetsByOccurrence($occid);
+		$userDatasetArr = $datasetManager->getDatasetsByUser();
+		if($datasetArr || $userDatasetArr){
+			?>
+			<fieldset>
+				<legend><?= $LANG['DATASETLINKAGES'] ?></legend>
 				<?php
-			}
-			echo '</fieldset>';
+				if($SYMB_UID){
+					?>
+					 <div style="float:right"><a href="#" onclick="toggle('dataset-block');return false"><img src="../../images/add.png" /></a></div>
+					<?php
+				}
+				if($datasetArr){
+					?>
+					<div class="section-title"><?= $LANG['MEMBEROF'] ?></div>
+					<ul>
+						<?php
+						foreach($datasetArr as $dsetID => $dsetArr){
+							$name = $dsetArr['datasetName'];
+							$isPublic = $dsetArr['isPublic'];
+							if(!empty($userDatasetArr[$setID])){
+								$role = key($userDatasetArr[$setID]);
+								$name .= ' (role: ' . $dsArr['role'] . ')';
+								$isPublic = true;
+							}
+							if($isPublic){
+							?>
+							<li>
+								<a href="../datasets/datasetmanager.php?datasetid=<?= $dsetID ?>" target="_blank"><?= $name ?></a>
+								<?php
+								if(!empty($dsArr['role'])) echo ' (role: ' . $dsArr['role'] . ')';
+								if(!empty($dsArr['notes'])) echo ' - ' . $dsArr['notes'];
+								?>
+							</li>
+							<?php
+						}
+						?>
+					</ul>
+					<?php
+				}
+				else echo '<div style="margin:15px 0px">' . $LANG['OCCURRENCENOTLINKED'] . '</div>';
+				if($SYMB_UID){
+					?>
+					<div class="dataset-block" id="dataset-block" style="display: none;">
+						<fieldset>
+							<legend><?= $LANG['CREATENEWREL'] ?></legend>
+							<form action="../datasets/datasetHandler.php" method="post" onsubmit="return verifyDatasetForm(this);">
+								<div style="margin:3px">
+									<select name="targetdatasetid">
+										<option value=""><?= $LANG['SELECTEXISTING'] ?></option>
+										<option value="">----------------------------------</option>
+										<?php
+										foreach($datasetArr as $dsid => $dsArr){
+											if(!array_key_exists('linked',$dsArr)){
+												echo '<option value="'.$dsid.'">'.$dsArr['name'].'</option>';
+											}
+										}
+										?>
+										<option value="--newDataset"><?= $LANG['CREATENEWDATASET'] ?></option>
+									</select>
+								</div>
+								<div style="margin:5px">
+									<label><?= $LANG['NOTES'] ?>:</label><br/>
+									<input name="notes" type="text" value="" maxlength="250" style="width:90%;" />
+								</div>
+								<div style="margin:15px">
+									<input name="occid" type="hidden" value="<?= $occid; ?>" />
+									<input name="sourcepage" type="hidden" value="individual" />
+									<button name="action" type="submit" value="addSelectedToDataset" ><?= $LANG['LINKTO'] ?></button>
+								</div>
+							</form>
+						</fieldset>
+					</div>
+					<?php
+				}
+				?>
+			</fieldset>
+			<?php
 		}
 		?>
 	</div>

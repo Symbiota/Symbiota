@@ -33,19 +33,18 @@ if($action == 'createNewDataset'){
 
 if($datasetId){
 	$datasetManager->setDatasetID($datasetId);
-
 	$mdArr = $datasetManager->getDatasetMetadata(false);
 
 	$isEditor = 0;
 	if ($SYMB_UID == $mdArr['uid']) {
 		$isEditor = 1;
 	}
-	elseif($roles = $datasetManager->getUserRoles()) {
-		if (in_array('DatasetAdmin', $roles)) {
+	elseif($roles = $datasetManager->getUserRoles($datasetId, $SYMB_UID)) {
+		if (isset($roles[$datasetId]['DatasetAdmin'])) {
 			$isEditor = 1;
-		} elseif (in_array('DatasetEditor', $roles)) {
+		} elseif (isset($roles[$datasetId]['DatasetEditor'])) {
 			$isEditor = 2;
-		} elseif (in_array('DatasetReader', $roles)) {
+		} elseif (isset($roles[$datasetId]['DatasetReader'])) {
 			$isEditor = 3;
 		}
 	}
@@ -70,7 +69,7 @@ if($datasetId){
 					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'transferOccurrences') {
-				if ($datasetManager->transferOccurrences($_POST['occid'])) {
+				if ($datasetManager->transferOccurrences($_POST['targetDatasetID'])) {
 					$statusStr = $LANG['DS_MERGED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
@@ -82,19 +81,19 @@ if($datasetId){
 					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'Delete Dataset') {
-				if ($datasetManager->deleteDatasetRecord()) {
+				if ($datasetManager->deleteDataset()) {
 					header('Location: index.php');
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'addUser') {
-				if ($datasetManager->addUser($datasetId, $_POST['uid'], $_POST['role'])) {
+				if ($datasetManager->insertUserRole($_POST['uid'], $_POST['role'])) {
 					$statusStr = $LANG['USER_ADDED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
 				}
 			} elseif ($action == 'DelUser') {
-				if ($datasetManager->deleteUser($datasetId, $_POST['uid'], $_POST['role'])) {
+				if ($datasetManager->deleteUserRole($_POST['uid'], $_POST['role'])) {
 					$statusStr = $LANG['USER_REMOVED'];
 				} else {
 					$statusStr = $datasetManager->getErrorMessage();
@@ -118,18 +117,6 @@ if($datasetId){
 	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../../js/symb/shared.js"></script>
 	<script type="text/javascript" src="../../js/tinymce/tinymce.min.js"></script>
-	<script type="text/javascript">
-		// Adds WYSIWYG editor to description field
-		tinymce.init({
-			selector: '#description',
-			plugins: 'link lists image',
-			menubar: '',
-			toolbar: ['undo redo | bold italic underline | link | alignleft aligncenter alignright | formatselect | bullist numlist | indent outdent | blockquote | image'],
-			branding: false,
-			default_link_target: "_blank",
-			paste_as_text: true
-		});
-	</script>
 	<script type="text/javascript">
 		var isDownloadAction = false;
 		$(document).ready(function() {
@@ -168,6 +155,16 @@ if($datasetId){
 				}
 			});
 
+			// Adds WYSIWYG editor to description field
+			tinymce.init({
+				selector: '#description',
+				plugins: 'link lists image',
+				menubar: '',
+				toolbar: ['undo redo | bold italic underline | link | alignleft aligncenter alignright | formatselect | bullist numlist | indent outdent | blockquote | image'],
+				branding: false,
+				default_link_target: "_blank",
+				paste_as_text: true
+			});
 		});
 
 		function selectAll(cb) {
@@ -289,6 +286,13 @@ if($datasetId){
 			font-weight: bold;
 			text-decoration: underline;
 		}
+		.split-div{
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+			align-items: flex-end;
+			padding: 0px 20px;
+		}
 	</style>
 </head>
 
@@ -304,7 +308,7 @@ if($datasetId){
 		<b><?= $LANG['DS_MANAGER'] ?></b>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?= $LANG['DS_OCC_MANAGER'] ?></h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['DS_OCC_MANAGER'] ?></h1>
 		<?php
 		if ($statusStr) {
 			$color = 'green';
@@ -316,8 +320,6 @@ if($datasetId){
 			echo '</div>';
 		}
 		if ($datasetId) {
-			echo '<div style="margin:10px 0px 5px 20px;font-weight:bold;font-size:130%;">' . $mdArr['datasetName'] . '</div>';
-
 			if ($isEditor) {
 				$role = $LANG['DS_READER'];
 				if($isEditor == 1){
@@ -325,8 +327,16 @@ if($datasetId){
 					if($SYMB_UID == $mdArr['uid']) $role = ' (' . $LANG['OWNER'] . ')';
 				}
 				elseif($isEditor == 2) $role = $LANG['DS_EDITOR'];
-				echo '<div style="margin-left:20px" title="' . $LANG['ROLE'] . '">' . $LANG['ROLE'] . ': ' . $role . '</div>';
 				?>
+				<div class="split-div">
+					<div>
+						<h2 style="margin-bottom:10px;"><?= $mdArr['datasetName'] ?></h2>
+						<div title="<?= $LANG['ROLE'] ?>"><?= $LANG['ROLE'] . ': ' . $role ?></div>
+					</div>
+					<div>
+						<a href="index.php?datasetid=<?= $datasetId ?>"><?= $LANG['GOTO_PUBLIC_DISPLAY'] ?></a>
+					</div>
+				</div>
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#occurtab"><span><?= $LANG['OCC_LIST'] ?></span></a></li>
@@ -418,13 +428,15 @@ if($datasetId){
 									$trCnt = 0;
 									foreach ($occArr as $occid => $recArr) {
 										$trCnt++;
+										$catNum = $recArr['catnum'];
+										if(!$catNum) $catNum = $LANG['UNDEFINED'];
 										?>
 										<tr <?= ($trCnt % 2 ? 'class="alt"' : '') ?>>
 											<td>
 												<input type="checkbox" name="occid[]" value="<?= $occid ?>" />
 											</td>
 											<td>
-												<?= '<a href="#" onclick="openIndPopup(' . $occid . '); return false;">' . $recArr['catnum'] . '</a>' ?>
+												<a href="#" onclick="openIndPopup(<?= $occid ?>); return false;"><?= $catNum ?></a>
 											</td>
 											<td>
 												<?= $recArr['coll'] ?>
@@ -479,8 +491,14 @@ if($datasetId){
 										<input name="datasetName" id="datasetName" type="text" value="<?= $mdArr['datasetName'] ?>" aria-label="<?= $LANG['NAME'] ?>" style="width:70%" required />
 									</div>
 									<div>
-										<input type="checkbox" name="isPublic" id="isPublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['isPublic'] ? 'CHECKED' : '') ?> />
-										<label for="isPublic"><?= $LANG['PUB_VISIBLE'] ?></label>
+										<span>
+											<input type="radio" name="isPublic" id="isPrivate" value="0" aria-label="<?= $LANG['PRIVATE'] ?>" <?= (empty($mdArr['isPublic']) ? 'CHECKED' : '') ?> />
+											<label for="isPrivate"><?= $LANG['PRIVATE'] ?></label>
+										</span>
+										<span>
+											<input type="radio" name="isPublic" id="isPublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" <?= ($mdArr['isPublic'] ? 'CHECKED' : '') ?> />
+											<label for="isPublic"><?= $LANG['PUB_VISIBLE'] ?></label>
+										</span>
 									</div>
 									<div>
 										<label for="description"><?= $LANG['DESCRIPTION'] ?></label>
@@ -491,8 +509,12 @@ if($datasetId){
 										<input name="bibliographicCitation" id="bibliographicCitation" type="text" value="<?= $mdArr['bibliographicCitation'] ?>" style="width:100%" aria-label="<?= $LANG['CITATION'] ?>" />
 									</div>
 									<div>
-										<label for="dynamicProperties"><?= $LANG['DYNAMIC_PROPERTIES'] ?></label>
-										<input name="dynamicProperties" id="dynamicProperties" type="text" value="" style="width:100%" aria-label="<?= $LANG['DYNAMIC_PROPERTIES'] ?>" />
+										<label for="category"><?= $LANG['CATEGORY'] ?></label>
+										<input name="category" id="category" type="text" value="<?= $mdArr['category'] ?>" style="width:350px" aria-label="<?= $LANG['CATEGORY'] ?>" />
+									</div>
+									<div>
+										<label for="datasetIdentifier"><?= $LANG['DATASET_IDENTIFIER'] ?></label>
+										<input name="datasetIdentifier" id="dynamicProperties" type="text" value="<?= $mdArr['datasetIdentifier'] ?>" style="width:350px" aria-label="<?= $LANG['DATASET_IDENTIFIER'] ?>" />
 									</div>
 									<div>
 										<label for="notes"><?= $LANG['NOTES_INTERNAL'] ?></label>
@@ -543,7 +565,7 @@ if($datasetId){
 															<input name="uid" type="hidden" value="<?= $uid ?>" />
 															<input name="datasetid" type="hidden" value="<?= $datasetId ?>" />
 															<input name="tabindex" type="hidden" value="2" />
-															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.2em" alt="<?= $LANG['DROP_ICON'] ?>" />
+															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.1em; margin:0px" alt="<?= $LANG['DROP_ICON'] ?>" />
 														</form>
 													</li>
 													<?php

@@ -26,8 +26,11 @@ class DataCore extends Manager{
 			$this->errorMessage = 'FIELD_MAP_NOT_DEFINED';
 			return false;
 		}
-		$pkName = array_search('pk', $this->fieldMap);
-		if(!$pkName){
+		$pkArr = array();
+		foreach($this->fieldMap as $n => $t){
+			if($t == 'pk') $pkArr[$n] = '';
+		}
+		if(!$pkArr){
 			$this->errorMessage = 'PRIMARY_KEY_NOT_DEFINED';
 			return false;
 		}
@@ -46,9 +49,12 @@ class DataCore extends Manager{
 			$stmt->execute();
 			$rs = $stmt->get_result();
 			while($r = $rs->fetch_assoc()){
-				$pk = $r[$pkName];
+				foreach($pkArr as $pkName => $v){
+					$pkArr[$pkName] = $r[$pkName];
+				}
+				$key = implode('-', $pkArr);
 				foreach($this->fieldMap as $fieldName => $type){
-					$retArr[$pk][$fieldName] = $r[$fieldName];
+					$retArr[$key][$fieldName] = $r[$fieldName];
 				}
 			}
 			$rs->free();
@@ -173,7 +179,7 @@ class DataCore extends Manager{
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
 			if($postField){
 				$value = trim($inputArr[$postField]);
-				if(!$value) $value = null;
+				if(trim($value) === '') $value = null;
 				$this->parameterArr[$field] = $value;
 				if($type == 'pk') $type = 'i';
 				$this->typeStr .= $type;

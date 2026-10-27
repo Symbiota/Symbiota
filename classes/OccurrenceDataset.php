@@ -38,7 +38,7 @@ class OccurrenceDataset extends OmDatasets {
 		$orderByArr = array('sortSequence','datasetName');
 		$retArr = $this->getDatasetArr($conditionArr, $orderByArr);
 		foreach($retArr as $id => $dsArr){
-			$retArr[$id]['role'] = 'owner';
+			$retArr[$id]['role'][] = 'owner';
 		}
 
 		if($userRoles = $this->getUserRoles(null, $uid)) {
@@ -48,10 +48,26 @@ class OccurrenceDataset extends OmDatasets {
 				//Add role for each dataset
 				foreach($sharedDatasets as $id => $sharedDS){
 					$retArr[$id] = $sharedDS;
-					$role = key($userRoles[$id]);
+					$role = array_keys($userRoles[$id]);
 					$retArr[$id]['role'] = $role;
 				}
 			}
+		}
+		return $retArr;
+	}
+
+	public function getDatasetsByOccurrence($occid){
+		$retArr = array();
+		if($occid){
+			$occurArr = $this->getOccurrences(array('occid' => $occid));
+			if(!$occurArr) return $retArr;
+			$dsIdArr = array();
+			foreach($occurArr as $dsArr){
+				$dsIdArr[] = $dsArr['datasetID'];
+			}
+			$conditionArr = array('datasetID' => $dsIdArr);
+			$orderByArr = array('sortSequence','datasetName');
+			$retArr = $this->getDatasetArr($conditionArr, $orderByArr);
 		}
 		return $retArr;
 	}

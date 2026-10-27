@@ -44,7 +44,7 @@ class OmDatasets extends DataCore{
 		return $this->updateRecord('omoccurdatasets', $pkArr, $inputArr);
 	}
 
-	public function deleteDataset($datasetID){
+	public function deleteDataset($datasetID = null){
 		if(!$datasetID){
 			if($this->datasetID){
 				$datasetID = $this->datasetID;
@@ -136,8 +136,12 @@ class OmDatasets extends DataCore{
 
 	public function insertOccurrences($input){
 		//Input: single occid, or an array of multiple occids
+		if(!$this->datasetID){
+			$this->errorMessage = 'ID_NOT_SET';
+			return false;
+		}
 		$this->setDatasetOccurrenceMap();
-		if(is_numeric($input) && $this->datasetID){
+		if(is_numeric($input)){
 			$inputArr = array('datasetID' => $this->datasetID, 'occid' => $input);
 			return $this->insertRecord('omoccurdatasetlink', $inputArr);
 		}
@@ -148,10 +152,6 @@ class OmDatasets extends DataCore{
 				if($this->insertRecord('omoccurdatasetlink', $inputArr)) $status = true;
 			}
 			return $status;
-		}
-		else{
-			$this->errorMessage = 'ID_NOT_SET';
-			return false;
 		}
 	}
 
@@ -218,11 +218,9 @@ class OmDatasets extends DataCore{
 		$retArr = array();
 		$typeStr = '';
 		$paramArr = array();
-		$sql = 'SELECT r.tablePK, r.uid, r.role FROM userroles r ';
-		if($uid){
-			$sql = 'SELECT r.tablePK, r.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username FROM userroles r INNER JOIN users u ON r.uid = u.uid ';
-		}
-		$sql .= 'WHERE r.role IN("' . implode('","', $this->validUserRoles) . '") AND (r.tablename = "omoccurdatasets") ';
+		$sql = 'SELECT r.tablePK, r.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username
+			FROM userroles r INNER JOIN users u ON r.uid = u.uid
+			WHERE r.role IN("' . implode('","', $this->validUserRoles) . '") AND (r.tablename = "omoccurdatasets") ';
 		if($uid){
 			$paramArr[] = $uid;
 			$typeStr .= 'i';
@@ -234,13 +232,11 @@ class OmDatasets extends DataCore{
 			$sql .= 'AND (r.tablepk = ?)';
 		}
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param($typeStr, ...$paramArr);
+			if($typeStr) $stmt->bind_param($typeStr, ...$paramArr);
 			$stmt->execute();
 			$rs = $stmt->get_result();
 			while ($r = $rs->fetch_object()) {
-				$userName = '';
-				if($uid) $userName = $r->username;
-				$retArr[$r->tablePK][$r->role][$uid] = $userName;
+				$retArr[$r->tablePK][$r->role][$r->uid] = $r->username;
 			}
 			$rs->free();
 			$stmt->close();
@@ -248,14 +244,14 @@ class OmDatasets extends DataCore{
 		return $retArr;
 	}
 
-	public function insertUserRole($datasetID, $uid, $role) {
+	public function insertUserRole($uid, $role) {
 		$status = false;
 		if (!is_numeric($uid)) return false;
 		if(!in_array($role, $this->validUserRoles)) return false;
 		$uidAssignedBy = $GLOBALS['SYMB_UID'];
-		$sql = 'INSERT INTO userroles(uid, role, tableName, tablePK, uidAssignedBy) VALUES(?, ?, "omoccurdatasets", ?, ?)';
+		$sql = 'INSERT IGNORE INTO userroles(uid, role, tableName, tablePK, uidAssignedBy) VALUES(?, ?, "omoccurdatasets", ?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('isii', $uid, $role, $datasetID, $uidAssignedBy);
+			$stmt->bind_param('isii', $uid, $role, $this->datasetID, $uidAssignedBy);
 			$stmt->execute();
 			if($stmt->affected_rows) $status = true;
 			else $this->errorMessage = $stmt->error;
@@ -265,7 +261,7 @@ class OmDatasets extends DataCore{
 	}
 
 	public function deleteUserRole($uid = 0, $role = 0) {
-		$status = true;
+		$status = false;
 		$typeStr = 'i';
 		$paramArr = array($this->datasetID);
 		$sql = 'DELETE FROM userroles WHERE (tablename = "omoccurdatasets") AND (tablepk = ?) ';
@@ -280,6 +276,8 @@ class OmDatasets extends DataCore{
 			$paramArr[] = $role;
 			$sql .= 'AND (role = ?) ';
 		}
+		echo $sql;
+		print_r($paramArr);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param($typeStr, ...$paramArr);
 			$stmt->execute();
@@ -298,11 +296,11 @@ class OmDatasets extends DataCore{
 			$sql = 'SELECT uid, CONCAT(CONCAT_WS(", ", lastname, firstname)," - ", username," [#", uid,"]") AS username
 				FROM users WHERE lastname LIKE ? OR username LIKE ?
 				ORDER BY lastname, firstname';
-			if($stmt = $this->prepare($sql)){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('ss', $term, $term);
 				$stmt->execute();
 				$rs = $stmt->get_result();
-				if ($r = $rs->fetch_object()) {
+				while($r = $rs->fetch_object()) {
 					$retArr[] = array('id' => $r->uid, 'label' => $r->username);
 				}
 				$rs->free();
@@ -316,11 +314,11 @@ class OmDatasets extends DataCore{
 		$collName = '';
 		if ($collid && is_numeric($collid)) {
 			$sql = 'SELECT institutioncode, collectioncode, collectionname, colltype FROM omcollections WHERE collid = ?';
-			if($stmt = $this->prepare($sql)){
+			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param('i', $collid);
 				$stmt->execute();
 				$rs = $stmt->get_result();
-				if ($r = $rs->fetch_object()) {
+				while($r = $rs->fetch_object()) {
 					$collName = $r->collectionname . ' (' . $r->institutioncode . ($r->collectionname ? ':' . $r->collectionname : '') . ')';
 				}
 				$rs->free();

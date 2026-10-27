@@ -13,6 +13,22 @@ $datasetid = array_key_exists('datasetid', $_REQUEST) ? Sanitize::int($_REQUEST[
 $datasetManager = new OccurrenceDataset();
 $datasetManager->setDatasetID($datasetid);
 $dsMetaArr = $datasetManager->getDatasetMetadata();
+
+$isEditor = 0;
+if($datasetid && $SYMB_UID){
+	if ($SYMB_UID == $dsMetaArr['uid']) {
+		$isEditor = 1;
+	}
+	elseif($roles = $datasetManager->getUserRoles($datasetid, $SYMB_UID)) {
+		if (isset($roles[$datasetid]['DatasetAdmin'])) {
+			$isEditor = 1;
+		} elseif (isset($roles[$datasetid]['DatasetEditor'])) {
+			$isEditor = 2;
+		} elseif (isset($roles[$datasetid]['DatasetReader'])) {
+			$isEditor = 3;
+		}
+	}
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -21,6 +37,15 @@ $dsMetaArr = $datasetManager->getDatasetMetadata();
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
+		<style>
+			.img-icon{ width: 1.2em }
+			.split-div{
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+				align-items: center;
+			}
+		</style>
 	</head>
 	<body>
 		<?php
@@ -39,14 +64,32 @@ $dsMetaArr = $datasetManager->getDatasetMetadata();
 				$searchUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid;
 				$tableUrl = $CLIENT_ROOT . '/collections/listtabledisplay.php?datasetid=' . $datasetid;
 				$taxaUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid . '&tabindex=0';
+				$occurCount = $datasetManager->getOccurrenceCount();
 				?>
-				<h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1>
-				<div><?= $dsMetaArr['description'] ;?></div>
-				<p><?= $LANG['INCLUDES'] ?> <?= $datasetManager->getOccurrenceCount() ?> <?= $LANG['RECORDS'] ?></p>
-				<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_AND_DOWNLOAD'] ?></a></p>
-				<p><a class="btn" href="<?= $tableUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLE'] ?></a></p>
-				<p><a class="btn" href="<?= $taxaUrl ?>" target="_blank"><?= $LANG['VIEW_LIST'] ?></a></p>
+				<div class="split-div">
+					<div><h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1></div>
+					<?php
+					if($isEditor){
+						?>
+						<div><a href="datasetmanager.php?datasetid=<?= $datasetid ?>"><img class="img-icon" src="../../images/edit.png" title="<?= $LANG['MANAGE_DATASET'] ?>" ></a></div>
+						<?php
+					}
+					?>
+				</div>
 				<?php
+				if($dsMetaArr['datasetIdentifier']) echo '<p><b>' . $LANG['DATASET_IDENTIFIER'] . ':</b> ' . $dsMetaArr['datasetIdentifier'] . '</p>';
+				?>
+				<p><?= $dsMetaArr['description'] ?></p>
+				<p><?= $dsMetaArr['bibliographicCitation'] ?></p>
+				<p><?= $LANG['INCLUDES'] ?> <?= $occurCount ?> <?= $LANG['RECORDS'] ?></p>
+				<?php
+				if($occurCount){
+					?>
+					<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_AND_DOWNLOAD'] ?></a></p>
+					<p><a class="btn" href="<?= $tableUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLE'] ?></a></p>
+					<p><a class="btn" href="<?= $taxaUrl ?>" target="_blank"><?= $LANG['VIEW_LIST'] ?></a></p>
+					<?php
+				}
 			}
 			else{
 				echo '<h1 class="page-heading">' . $LANG['PUB_DAT_LIST'] . '</h1>';
