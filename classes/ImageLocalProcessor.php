@@ -258,14 +258,15 @@ class ImageLocalProcessor {
 			$this->imgUrlBase = $GLOBALS['MEDIA_ROOT_URL'];
 		}
 		if(!empty($GLOBALS['MEDIA_DOMAIN'])){
-			//Since imageDomain is set, portal is not central portal thus add portals domain to url base
-			if(substr($this->imgUrlBase,0,7) != 'http://' && substr($this->imgUrlBase,0,8) != 'https://'){
+			// Media Domain settings are applied to image url on the client render side (output).  Do not store media domain info to the DB
+			/**if(substr($this->imgUrlBase,0,7) != 'http://' && substr($this->imgUrlBase,0,8) != 'https://'){
 				$urlPrefix = "http://";
 				if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443) $urlPrefix = "https://";
 				$urlPrefix .= $_SERVER["SERVER_NAME"];
 				if($_SERVER["SERVER_PORT"] && $_SERVER["SERVER_PORT"] != 80 && $_SERVER['SERVER_PORT'] != 443) $urlPrefix .= ':'.$_SERVER["SERVER_PORT"];
 				$this->imgUrlBase = $urlPrefix.$this->imgUrlBase;
-			}
+			}**/
+			$this->imgUrlBase .= '/';
 		}
 		if($this->imgUrlBase && substr($this->imgUrlBase,-1) != '/' && substr($this->imgUrlBase,-1) != "\\"){
 			$this->imgUrlBase .= '/';

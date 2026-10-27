@@ -34,7 +34,7 @@ if($isEditor){
 		if($occurManager->addOccurrence($_POST) && ($occid = $occurManager->getOccid())) {
 			try {
 				$occur_map = $occurManager->getOccurMap()[$occid];
-				$path = get_occurrence_upload_path(
+				$path = Media::get_occurrence_upload_path(
 					$occur_map['institutioncode'],
 					$occur_map['collectioncode'],
 					$occur_map['catalognumber']
