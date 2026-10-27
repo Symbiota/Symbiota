@@ -362,14 +362,16 @@ if(!$traitID) header('Location: index.php');
 														<form>
 															<select name="traitID">
 																<?php 
-																# dependnency name="traitID" needs to be different from a state's name="traitid"
+																# Dependency name="traitID" needs to be different from a state's name="traitid"
 																foreach ($traitList as $trait) {
-																	echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
+																	if ($trait['traitID'] !== (int)$traitID) {
+																		echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
+																	}		
 																}
 																?>
 															</select>
 															<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
-															<button name="formsubmit" type="submit" value="addDependency">Save</button>
+															<button name="formsubmit" type="submit" value="addDependency" style="float:right; margin-right:10px;">Add</button>
 														</form>
 													</div>
 													<legend>Dependencies (Trait and their States that Appear when this Trait is Selected):</legend>
