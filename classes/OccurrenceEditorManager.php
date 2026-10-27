@@ -597,7 +597,7 @@ class OccurrenceEditorManager {
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp) {
 		$sqlFrag = '';
 		if ($customTerm == 'IS_NULL') {
-			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NULL) ' . ($ccp ? $ccp . ' ' : '');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NULL OR '. $customField . ' = \'\') ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_NULL') {
 			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NOT NULL AND ' . $customField . ' != \'\') ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_EQUALS') {
