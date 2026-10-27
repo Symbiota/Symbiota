@@ -16,7 +16,7 @@ final class LocalStorageTest extends TestCase {
 	public function testInstitutionCodeOnly(): void {
 		self::initGlobals();
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST_CODE', null, null));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST_CODE', null, null));
 
 		$this->assertSame(self::root_path . 'INST_CODE/'. date('Ym') . '/', $upload_strategy->getDirPath());
 		$this->assertSame(self::root_url . 'INST_CODE/'. date('Ym') . '/' , $upload_strategy->getUrlPath());
@@ -26,7 +26,7 @@ final class LocalStorageTest extends TestCase {
 		$GLOBALS['MEDIA_ROOT_PATH'] = 'image/root/path';
 		$GLOBALS['MEDIA_ROOT_URL'] = 'image/root/url';
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST_CODE', null, null));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST_CODE', null, null));
 
 		$this->assertSame('image/root/path/INST_CODE/'. date('Ym') . '/', $upload_strategy->getDirPath());
 		$this->assertSame('image/root/url/INST_CODE/'. date('Ym') . '/', $upload_strategy->getUrlPath());
@@ -36,7 +36,7 @@ final class LocalStorageTest extends TestCase {
 	public function testInstAndCollCode(): void {
 		self::initGlobals();
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST_CODE', 'COLL_CODE', null));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST_CODE', 'COLL_CODE', null));
 
 		$this->assertSame(self::root_path . 'INST_CODE_COLL_CODE/'. date('Ym') . '/', $upload_strategy->getDirPath());
 		$this->assertSame(self::root_url . 'INST_CODE_COLL_CODE/'. date('Ym') . '/' , $upload_strategy->getUrlPath());
@@ -45,7 +45,7 @@ final class LocalStorageTest extends TestCase {
 	public function testInstCollCodeCatNumber(): void {
 		self::initGlobals();
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST_CODE', 'COLL_CODE', '8994'));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST_CODE', 'COLL_CODE', '8994'));
 
 		$this->assertSame(self::root_path . 'INST_CODE_COLL_CODE/'. '00008' . '/', $upload_strategy->getDirPath());
 		$this->assertSame(self::root_url . 'INST_CODE_COLL_CODE/'. '00008' . '/' , $upload_strategy->getUrlPath());
@@ -54,7 +54,7 @@ final class LocalStorageTest extends TestCase {
 	public function testInstCollCodeCatString(): void {
 		self::initGlobals();
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST_CODE', 'COLL_CODE', 'BLS4578'));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST_CODE', 'COLL_CODE', 'BLS4578'));
 
 		$this->assertSame(self::root_path . 'INST_CODE_COLL_CODE/'. 'BLS4' . '/', $upload_strategy->getDirPath());
 		$this->assertSame(self::root_url . 'INST_CODE_COLL_CODE/'. 'BLS4' . '/' , $upload_strategy->getUrlPath());
@@ -63,7 +63,7 @@ final class LocalStorageTest extends TestCase {
 	public function testSpaceReplace(): void {
 		self::initGlobals();
 
-		$upload_strategy = new LocalStorage(get_occurrence_upload_path('INST CODE', 'COLL_CODE', 'BLS4578'));
+		$upload_strategy = new LocalStorage(Media::get_occurrence_upload_path('INST CODE', 'COLL_CODE', 'BLS4578'));
 
 		$this->assertSame(self::root_path . 'INST_CODE_COLL_CODE/'. 'BLS4' . '/', $upload_strategy->getDirPath());
 		$this->assertSame(self::root_url . 'INST_CODE_COLL_CODE/'. 'BLS4' . '/' , $upload_strategy->getUrlPath());
