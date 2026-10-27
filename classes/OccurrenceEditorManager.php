@@ -644,16 +644,20 @@ class OccurrenceEditorManager {
 			}
 			if ($sqlOrderBy) {
 				if ($orderBy == 'identifierValue') {
+					$selectFirst = "(SELECT id2.identifierValue FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
 					if ($this->qryArr['orderbydir'] === 'ASC') {
-						$sql .= "ORDER BY (id.identifierValue) IS NULL ASC, CAST(REGEXP_REPLACE(id.identifierValue, '[^0-9]', '') AS UNSIGNED) ASC ";
+						$sql .= " ORDER BY ($selectFirst) IS NULL ASC, CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) ASC ";
+					} else {
+						$sql .= " ORDER BY CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) DESC ";
 					}
-					else {
-						$sql .= "ORDER BY CAST(REGEXP_REPLACE(id.identifierValue, '[^0-9]', '') AS UNSIGNED) DESC ";
-					}
-				}	
+				}
 				else if ($orderBy == 'identifierName') {
-					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? " IS NULL OR id.identifierName = '' ASC, id.identifierName ASC" : 'DESC';
-					$sql .= 'ORDER BY (id.identifierName) ' . $orderbydir . ' ';
+					$selectFirst = "(SELECT id2.identifierName FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
+					if ($this->qryArr['orderbydir'] === 'ASC') {
+						$sql .= " ORDER BY ($selectFirst IS NULL OR $selectFirst = '') ASC, $selectFirst ASC ";
+					} else {
+						$sql .= " ORDER BY $selectFirst DESC ";
+					}
 				}
 				else {
 					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL ASC, o.' . $sqlOrderBy . ' ASC' : 'DESC';
@@ -736,7 +740,7 @@ class OccurrenceEditorManager {
 				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
 			}
 			if (strpos($sqlFrag, 'LEFT JOIN omoccuridentifiers') === false) {
-				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON id.idomoccuridentifiers=(SELECT MIN(id2.idomoccuridentifiers) FROM omoccuridentifiers id2 WHERE o.occid = id2.occid) ';
+				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
