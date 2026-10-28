@@ -20,12 +20,10 @@ if($datasetid && $SYMB_UID){
 		$isEditor = 1;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetid, $SYMB_UID)) {
-		if (isset($roles[$datasetid]['DatasetAdmin'])) {
+		if (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetAdmin'])) {
 			$isEditor = 1;
-		} elseif (isset($roles[$datasetid]['DatasetEditor'])) {
+		} elseif (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetEditor'])) {
 			$isEditor = 2;
-		} elseif (isset($roles[$datasetid]['DatasetReader'])) {
-			$isEditor = 3;
 		}
 	}
 }
@@ -37,6 +35,12 @@ if($datasetid && $SYMB_UID){
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
+		<script>
+			function targetDownloadPopup(f) {
+				window.open('', 'downloadpopup', 'left=100,top=50,width=900,height=700');
+				f.target = 'downloadpopup';
+			}
+		</script>
 		<style>
 			.img-icon{ width: 1.2em }
 			.split-div{
@@ -61,9 +65,6 @@ if($datasetid && $SYMB_UID){
 		<div role="main" id="innertext">
 			<?php
 			if($datasetid){
-				$searchUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid;
-				$tableUrl = $CLIENT_ROOT . '/collections/listtabledisplay.php?datasetid=' . $datasetid;
-				$taxaUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid . '&tabindex=0';
 				$occurCount = $datasetManager->getOccurrenceCount();
 				?>
 				<div class="split-div">
@@ -84,9 +85,19 @@ if($datasetid && $SYMB_UID){
 				<p><?= $LANG['INCLUDES'] ?> <?= $occurCount ?> <?= $LANG['RECORDS'] ?></p>
 				<?php
 				if($occurCount){
+					$searchUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid;
+					$tableUrl = $CLIENT_ROOT . '/collections/listtabledisplay.php?datasetid=' . $datasetid;
+					$taxaUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid . '&tabindex=0';
 					?>
-					<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_AND_DOWNLOAD'] ?></a></p>
-					<p><a class="btn" href="<?= $tableUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLE'] ?></a></p>
+					<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLES_LIST'] ?></a></p>
+					<p><a class="btn" href="<?= $tableUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLES_TABLE'] ?></a></p>
+					<p>
+						<form name="export-dataset-form" action="../download/index.php" method="post" onsubmit="targetDownloadPopup(this)">
+							<input name="searchvar" type="hidden" value="datasetid=<?= $datasetid ?>" />
+							<input name="dltype" type="hidden" value="specimen" />
+							<button type="submit" name="submitaction" value="exportAll"><?= $LANG['EXPORT_DS'] ?></button>
+						</form>
+					</p>
 					<p><a class="btn" href="<?= $taxaUrl ?>" target="_blank"><?= $LANG['VIEW_LIST'] ?></a></p>
 					<?php
 				}

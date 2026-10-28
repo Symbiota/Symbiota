@@ -40,7 +40,6 @@ $LANG['SCI_NAME'] = 'Nom Scientifique';
 $LANG['LOCALITY'] = 'Localité';
 $LANG['UNDEFINED'] = 'indéfini';
 $LANG['REM_SEL_OCCS'] = 'Supprimer les occurrences sélectionnées';
-$LANG['EXPORT_DS'] = 'Exporter l\'ensemble de données';
 $LANG['NO_OCCS_DS'] = 'Aucune occurrence liée à cet ensemble de données';
 $LANG['LINK_OCCS_VIA'] = 'Vous pouvez lier des occurrences via le';
 $LANG['OCC_SEARCH'] = 'page de recherche d\'occurrences';

@@ -40,23 +40,19 @@ if($datasetId){
 		$isEditor = 1;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetId, $SYMB_UID)) {
-		if (isset($roles[$datasetId]['DatasetAdmin'])) {
+		if (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetAdmin'])) {
 			$isEditor = 1;
-		} elseif (isset($roles[$datasetId]['DatasetEditor'])) {
+		} elseif (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetEditor'])) {
 			$isEditor = 2;
-		} elseif (isset($roles[$datasetId]['DatasetReader'])) {
-			$isEditor = 3;
 		}
 	}
 
 	if ($isEditor) {
-		if ($isEditor < 3) {
-			if ($action == 'deleteOccurrences') {
-				if(!$datasetManager->deleteOccurrences($_POST['occid'])) {
-					$statusStr = count($_POST['occid']) . ' ' . $LANG['OCCUR_REMOVED'];
-				} else {
-					$statusStr = $datasetManager->getErrorMessage();
-				}
+		if ($action == 'deleteOccurrences') {
+			if(!$datasetManager->deleteOccurrences($_POST['occid'])) {
+				$statusStr = count($_POST['occid']) . ' ' . $LANG['OCCUR_REMOVED'];
+			} else {
+				$statusStr = $datasetManager->getErrorMessage();
 			}
 		}
 		if ($isEditor == 1) {
@@ -321,7 +317,7 @@ if($datasetId){
 		}
 		if ($datasetId) {
 			if ($isEditor) {
-				$role = $LANG['DS_READER'];
+				$role = '';
 				if($isEditor == 1){
 					$role = $LANG['DS_ADMIN'];
 					if($SYMB_UID == $mdArr['uid']) $role = ' (' . $LANG['OWNER'] . ')';
@@ -550,22 +546,24 @@ if($datasetId){
 									<div class="section-title"><?= $LANG[$labelStr] ?></div>
 									<div style="margin:15px;">
 										<?php
-										if (array_key_exists($roleStr, $userArr)) {
+										$hasUser = false;
+										foreach($userArr as $userID => $userDetailArr) {
 											?>
 											<ul>
 												<?php
-												$uArr = $userArr[$roleStr];
-												foreach ($uArr as $uid => $name) {
+												if(array_key_exists($roleStr, $userDetailArr['roles'])) {
+													$hasUser = true;
+													$confirmMessage = $LANG['SURE_REM_USER'] . ' ' . $userDetailArr['name'] . '?';
 													?>
 													<li>
-														<?= $name ?>
-														<form name="deluserform" method="post" action="datasetmanager.php" style="display:inline;" onsubmit="return confirm('<?= $LANG['SURE_REM_USER'] . ' ' . $name . '?' ?>')">
+														<?= $userDetailArr['name'] ?>
+														<form name="deluserform" method="post" action="datasetmanager.php" style="display:inline;" onsubmit="return confirm('<?= $confirmMessage ?>')">
 															<input name="submitaction" type="hidden" value="DelUser" />
 															<input name="role" type="hidden" value="<?= $roleStr ?>" />
-															<input name="uid" type="hidden" value="<?= $uid ?>" />
+															<input name="uid" type="hidden" value="<?= $userID ?>" />
 															<input name="datasetid" type="hidden" value="<?= $datasetId ?>" />
 															<input name="tabindex" type="hidden" value="2" />
-															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1.1em; margin:0px" alt="<?= $LANG['DROP_ICON'] ?>" />
+															<input name="submitimage" type="image" src="../../images/drop.png" style="width:1em; margin:0px" alt="<?= $LANG['DROP_ICON'] ?>" />
 														</form>
 													</li>
 													<?php
@@ -573,7 +571,8 @@ if($datasetId){
 												?>
 											</ul>
 											<?php
-										} else echo '<div style="margin:15px;">' . $LANG['NONE_ASSIGNED'] . '</div>';
+										}
+										if(!$hasUser) echo '<div style="margin:15px;">' . $LANG['NONE_ASSIGNED'] . '</div>';
 										?>
 									</div>
 									<?php

@@ -40,7 +40,6 @@ $LANG['SCI_NAME'] = 'Scientific Name';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['UNDEFINED'] = 'undefined';
 $LANG['REM_SEL_OCCS'] = 'Remove Selected Occurrences';
-$LANG['EXPORT_DS'] = 'Export Dataset';
 $LANG['NO_OCCS_DS'] = 'There are no occurrences linked to this dataset';
 $LANG['LINK_OCCS_VIA'] = 'You can link occurrences via the';
 $LANG['OCC_SEARCH'] = 'occurrence search page';

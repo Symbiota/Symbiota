@@ -81,6 +81,7 @@ $datasetManager = new OccurrenceDataset();
 			fieldset{ padding:15px;margin:15px; }
 			legend{ font-weight: bold; }
 			.dataset-item{ margin-bottom: 10px }
+			.img-icon{ width: 1.1em }
 		</style>
 	</head>
 	<body>
@@ -98,21 +99,27 @@ $datasetManager = new OccurrenceDataset();
 		?>
 		<div>
 		<div style="float:right;margin:10px;" title="<?= $LANG['CRT_NEW_DAT'] ?>" >
-	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png"  style="width:1.5em;" alt="<?= $LANG['ADD_BUTTON'] ?>"/> </a>
+	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png" class="img-icon" alt="<?= $LANG['ADD_BUTTON'] ?>"/> </a>
 		</div>
 		<h1 class="page-heading"> <?= $LANG['OCC_DAT_MNG'] ?> </h1>
 		<div> <?= $LANG['TOOL_DESCR'] ?> </div>
 		<div id=adddiv style="display:none">
 			<fieldset>
 				<legend><b> <?= $LANG['CRT_NEW_DAT'] ?> </b></legend>
-				<form name="adminform" action="datasetmanager.php" method="post" onsubmit="return validateEditForm(this)">
+				<form name="adminform" action="datasetmanager.php" method="post">
 					<div>
 						<label for="datasetName"><?= $LANG['NAME'] ?></label>
-						<input id="datasetName" name="datasetName" type="text" style="width:90%" />
+						<input id="datasetName" name="datasetName" type="text" style="width:90%" required />
 					</div>
 					<div>
-						<input type="checkbox" name="isPublic" id="isPublic" value="1" />
-						<label for="ispublic"><?= $LANG['PUB_VISIBLE'] ?></label>
+						<span>
+							<input type="radio" name="isPublic" id="isPrivate" value="0" aria-label="<?= $LANG['PRIVATE'] ?>" />
+							<label for="isPrivate"><?= $LANG['PRIVATE'] ?></label>
+						</span>
+						<span>
+							<input type="radio" name="isPublic" id="isPublic" value="1" aria-label="<?= $LANG['PUB_VISIBLE'] ?>" />
+							<label for="isPublic"><?= $LANG['PUB_VISIBLE'] ?></label>
+						</span>
 					</div>
 					<div>
 						<label for="description"><?= $LANG['DESCRIPTION'] ?></label>
@@ -123,8 +130,12 @@ $datasetManager = new OccurrenceDataset();
 						<input name="bibliographicCitation" id="bibliographicCitation" type="text" value="" style="width:100%" aria-label="<?= $LANG['CITATION'] ?>" />
 					</div>
 					<div>
-						<label for="dynamicProperties"><?= $LANG['DYNAMIC_PROPERTIES'] ?></label>
-						<input name="dynamicProperties" id="dynamicProperties" type="text" value="" style="width:100%" aria-label="<?= $LANG['DYNAMIC_PROPERTIES'] ?>" />
+						<label for="category"><?= $LANG['CATEGORY'] ?></label>
+						<input name="category" id="category" type="text" style="width:350px" aria-label="<?= $LANG['CATEGORY'] ?>" />
+					</div>
+					<div>
+						<label for="datasetIdentifier"><?= $LANG['DATASET_IDENTIFIER'] ?></label>
+						<input name="datasetIdentifier" id="dynamicProperties" type="text" style="width:350px" aria-label="<?= $LANG['DATASET_IDENTIFIER'] ?>" />
 					</div>
 					<div>
 						<label for="notes"><?= $LANG['NOTES_INTERNAL'] ?></label>
@@ -144,16 +155,17 @@ $datasetManager = new OccurrenceDataset();
 				<?php
 				$ownedByExists = false;
 				foreach($dataSetArr as $dsid => $dsArr){
-					if($dsArr['role'] == 'owner'){
+					if(array_key_exists('owner', $dsArr['role'])){
 						$ownedByExists = true;
 						?>
 						<div class="dataset-item">
 							<div>
-								<a href="datasetmanager.php?datasetid=<?= $dsid; ?>" title="<?= $LANG['MNG_EDIT'] ?>">
+								<a href="index.php?datasetid=<?= $dsid; ?>" title="<?= $LANG['MNG_EDIT'] ?>">
 									<?php
 									echo '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>';
 									?>
 								</a>
+								<span style="margin-left: 5px"><a href="datasetmanager.php?datasetid=<?= $dsid ?>"><img src="../../images/edit.png" class="img-icon"></a></span>
 							</div>
 							<div style="margin-left:15px;">
 								<?php
@@ -175,23 +187,27 @@ $datasetManager = new OccurrenceDataset();
 				<?php
 				$sharedByExists = false;
 				foreach($dataSetArr as $dsid => $dsArr){
-					if($dsArr['role'] != 'owner'){
+					if(!array_key_exists('owner', $dsArr['role'])){
 						$sharedByExists = true;
 						?>
-						<div>
-							<a href="datasetmanager.php?datasetid=<?= $dsid ?>" title="Access Dataset"><?= '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>' ?></a>
+						<div class="dataset-item">
+							<div>
+								<a href="index.php?datasetid=<?= $dsid ?>" title="Access Dataset"><?= '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>' ?></a>
 								<?php
-								$role = $LANG['DS_READER'];
-								if($dsArr['role'] == 'DatasetAdmin') $role = $LANG['DS_ADMIN'];
-								elseif($dsArr['role'] == 'DatasetEditor') $role = $LANG['DS_EDITOR'];
-								echo ' - ' . $role;
+								echo ' - ' . implode(', ', $dsArr['role']);
+								if(count($dsArr['role']) > 1 || !array_key_exists('DatasetReader', $dsArr['role'])){
+									?>
+									<span style="margin-left: 5px"><a href="datasetmanager.php?datasetid=<?= $dsid ?>"><img src="../../images/edit.png" class="img-icon"></a></span>
+									<?php
+								}
 								?>
-						</div>
-						<div style="margin-left:15px;">
-							<?php
-							echo ($dsArr['notes'] ? $dsArr['notes'] . '<br/>' : '');
-							echo 'Created: ' . $dsArr['initialTimestamp'];
-							?>
+							</div>
+							<div style="margin-left:15px;">
+								<?php
+								echo ($dsArr['notes'] ? $dsArr['notes'] . '<br/>' : '');
+								echo 'Created: ' . $dsArr['initialTimestamp'];
+								?>
+							</div>
 						</div>
 						<?php
 					}

@@ -20,8 +20,9 @@ $LANG['DATASET_IDENTIFIER'] = 'Identificador (GUID)';
 $LANG['DYNAMIC_PROPERTIES'] = 'Propiedades dinámicas';
 $LANG['NOTES_INTERNAL'] = 'Notas (uso interno, no mostradas públicamente)';
 $LANG['SAVE_EDITS'] = 'Guardar Ediciones';
-$LANG['DS_ADMIN'] = 'Administrador de conjuntos de datos';
-$LANG['DS_EDITOR'] = 'Editor de conjuntos de datos';
-$LANG['DS_READER'] = 'Lector de conjuntos de datos';
+$LANG['DS_ADMIN'] = 'Administrador';
+$LANG['DS_EDITOR'] = 'Editor';
+$LANG['DS_READER'] = 'Lector';
+$LANG['EXPORT_DS'] = 'Exportar conjunto de datos';
 
 ?>

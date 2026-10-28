@@ -38,18 +38,18 @@ class OccurrenceDataset extends OmDatasets {
 		$orderByArr = array('sortSequence','datasetName');
 		$retArr = $this->getDatasetArr($conditionArr, $orderByArr);
 		foreach($retArr as $id => $dsArr){
-			$retArr[$id]['role'][] = 'owner';
+			$retArr[$id]['role']['owner'] = $this->translateUserRole('owner');
 		}
 
 		if($userRoles = $this->getUserRoles(null, $uid)) {
 			//Get datasets shared with user
-			$condArr = array('datasetID' => array_keys($userRoles));
+			$datasetKeyArr = array_keys($userRoles);
+			$condArr = array('datasetID' => $datasetKeyArr);
 			if($sharedDatasets = $this->getDatasetArr($condArr, $orderByArr)){
 				//Add role for each dataset
 				foreach($sharedDatasets as $id => $sharedDS){
 					$retArr[$id] = $sharedDS;
-					$role = array_keys($userRoles[$id]);
-					$retArr[$id]['role'] = $role;
+					$retArr[$id]['role'] = $userRoles[$id][$uid]['roles'];
 				}
 			}
 		}

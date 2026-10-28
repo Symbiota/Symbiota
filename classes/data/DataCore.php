@@ -173,7 +173,7 @@ class DataCore extends Manager{
 		$this->typeStr = '';
 		//Prepare type and value variables used within prepared statement
 		foreach($this->fieldMap as $field => $type){
-			if($type == 'x') continue;
+			if($type == 'x' || $type == 'pk') continue;
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
@@ -181,7 +181,6 @@ class DataCore extends Manager{
 				$value = trim($inputArr[$postField]);
 				if(trim($value) === '') $value = null;
 				$this->parameterArr[$field] = $value;
-				if($type == 'pk') $type = 'i';
 				$this->typeStr .= $type;
 			}
 		}

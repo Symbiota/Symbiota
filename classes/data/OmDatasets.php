@@ -7,6 +7,7 @@ class OmDatasets extends DataCore{
 
 	protected $datasetID = 0;
 	private $validUserRoles = array('DatasetAdmin', 'DatasetEditor', 'DatasetReader');
+	private $userRoleArr = array('DatasetAdmin' => 'DS_ADMIN', 'DatasetEditor' => 'DS_EDITOR', 'DatasetReader' => 'DS_READER', 'owner' => 'DS_OWNER');
 
 	function __construct() {
 		parent::__construct();
@@ -220,7 +221,7 @@ class OmDatasets extends DataCore{
 		$paramArr = array();
 		$sql = 'SELECT r.tablePK, r.uid, r.role, CONCAT_WS(", ",u.lastname,u.firstname) as username
 			FROM userroles r INNER JOIN users u ON r.uid = u.uid
-			WHERE r.role IN("' . implode('","', $this->validUserRoles) . '") AND (r.tablename = "omoccurdatasets") ';
+			WHERE r.role IN("' . implode('","', array_keys($this->userRoleArr)) . '") AND (r.tablename = "omoccurdatasets") ';
 		if($uid){
 			$paramArr[] = $uid;
 			$typeStr .= 'i';
@@ -236,7 +237,8 @@ class OmDatasets extends DataCore{
 			$stmt->execute();
 			$rs = $stmt->get_result();
 			while ($r = $rs->fetch_object()) {
-				$retArr[$r->tablePK][$r->role][$r->uid] = $r->username;
+				$retArr[$r->tablePK][$r->uid]['name'] = $r->username;
+				$retArr[$r->tablePK][$r->uid]['roles'][$r->role] = $this->translateUserRole($r->role);
 			}
 			$rs->free();
 			$stmt->close();
@@ -244,10 +246,16 @@ class OmDatasets extends DataCore{
 		return $retArr;
 	}
 
+	protected function translateUserRole($dbValue){
+		global $LANG;
+		if(isset($LANG[$this->userRoleArr[$dbValue]])) return $LANG[$this->userRoleArr[$dbValue]];
+		return $dbValue;
+	}
+
 	public function insertUserRole($uid, $role) {
 		$status = false;
 		if (!is_numeric($uid)) return false;
-		if(!in_array($role, $this->validUserRoles)) return false;
+		if(!array_key_exists($role, $this->userRoleArr)) return false;
 		$uidAssignedBy = $GLOBALS['SYMB_UID'];
 		$sql = 'INSERT IGNORE INTO userroles(uid, role, tableName, tablePK, uidAssignedBy) VALUES(?, ?, "omoccurdatasets", ?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
@@ -271,13 +279,11 @@ class OmDatasets extends DataCore{
 			$sql .= ' AND (uid = ?) ';
 		}
 		if($role){
-			if(!in_array($role, $this->validUserRoles)) return false;
+			if(!array_key_exists($role, $this->userRoleArr)) return false;
 			$typeStr .= 's';
 			$paramArr[] = $role;
 			$sql .= 'AND (role = ?) ';
 		}
-		echo $sql;
-		print_r($paramArr);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param($typeStr, ...$paramArr);
 			$stmt->execute();

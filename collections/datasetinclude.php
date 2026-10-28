@@ -22,10 +22,10 @@ if($SYMB_UID){
 					<?php
 					$dsManager = new OccurrenceDataset();
 					if($datasetArr = $dsManager->getDatasetsByUser()){
-						foreach($datasetArr as $datasetID => $datasetArr){
-							if($datasetArr['role'] != 'DatasetReader'){
-								//Only add if user can add occurrences
-								echo '<option value="' . $datasetID.'">' . $datasetArr['datasetName'] . '</option>';
+						foreach($datasetArr as $datasetID => $dsArr){
+							if(count($dsArr['role']) > 1 || key($dsArr['role']) != 'DatasetReader'){
+								//Output only if user has a writable permission other than DatasetReader
+								echo '<option value="' . $datasetID.'">' . $dsArr['datasetName'] . '</option>';
 							}
 						}
 					}
