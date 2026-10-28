@@ -237,7 +237,20 @@ class OmOccurrenceTraits extends DataCore{
 
 
 	//General data retrival functions
-
+	public function getProjectGroups(){
+		$groupArr = [];
+		$sql = 'SELECT DISTINCT projectGroup FROM tmtraits WHERE projectGroup IS NOT NULL ORDER BY projectGroup ASC';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_assoc()){
+				array_push($groupArr, $r);
+			}
+			$rs->free();
+			$stmt->close();
+		}
+		return $groupArr;
+	}
 
 	//Setters and getters
 	public function getTraitID(){

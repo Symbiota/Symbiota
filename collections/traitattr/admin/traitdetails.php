@@ -185,6 +185,7 @@ if(!$traitID) header('Location: index.php');
 			$traitList = $traitManager->getTraitArr();
 			$traitArr = $traitManager->getTraitArrById();
 			$traitStateArr = $traitManager->getTraitStateArr();
+			$groupArr = $traitManager->getProjectGroups();
 			?>
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
@@ -216,22 +217,19 @@ if(!$traitID) header('Location: index.php');
 									<label for="units">Units</label><br />
 									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($traitArr['units']) ?>" />
 								</div>
-								<div style="float:left;margin-left:15px;">
-									<label for="hid">Grouping</label><br />
-									<select id="hid" name="hid">
-										<option value="">Not Assigned</option>
-										<option value="">---------------------</option>
+								<div style="margin-left:15px;float:left;">
+									<label for="projectGroup">Project Group:</label><br />
+									<input type="text" id="projectGroup" name="projectGroup" list="groups" autocomplete="off" maxlength="255" value="<?= Sanitize::outString($traitArr['projectGroup']) ?>"/>
+									<datalist id="groups">
 										<?php
-										$headingArr = []; //$traitManager->getCharacterHeadingArr();
-										asort($headingArr);
-										foreach($headingArr as $k => $v){
-											echo '<option value="' . $k . '" ' . ($k==$traitArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['name']) . '</option>';
+										foreach($groupArr as $group) {
+											echo '<option value="'. $group['projectGroup'].'">';
 										}
 										?>
-									</select>
-									<a href="#" title="Edit Groupings" onclick="openHeadingAdmin(); return false;"><img src="../../../images/edit.png" class="icon-img" alt="Edit Icon" /></a>
+									</datalist>
 								</div>
 							</div>
+
 							<div style="padding-top:8px;clear:both;">
 								<label for="refurl">Reference URL</label><br />
 								<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($traitArr['refUrl']) ?>" />
@@ -253,6 +251,10 @@ if(!$traitID) header('Location: index.php');
 								<label for="traitname">isPublic:</label>
 								<input type="hidden" name="isPublic" value="0"/>
 								<input type="checkbox" id="isPublic" name="isPublic" value="1" <?= $traitArr['isPublic'] === 1 ? 'checked' : '' ?> />
+
+								<label for="traitname" style="margin-left:20px;">includeInSearch:</label>
+								<input type="hidden" name="includeInSearch" value="0"/>
+								<input type="checkbox" id="includeInSearch" name="includeInSearch" value="1" <?= $traitArr['includeInSearch'] === 1 ? 'checked' : '' ?> />
 							</div>
 							<div style="padding-top:8px;">
 							<label for="dynamicproperties">Dynamic Properties/Input Type:</label>

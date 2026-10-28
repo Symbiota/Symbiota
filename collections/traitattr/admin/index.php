@@ -14,7 +14,8 @@ $langId = array_key_exists('langid',$_REQUEST) ? $_REQUEST['langid'] : '';
 
 $traitManager = new OccurrenceTraitAdmin();
 
-$traitList = $traitManager->getTraitArr();
+$traitList = $traitManager->getTraitArr(null, ['projectGroup ASC', 'traitName ASC']);
+$groupArr = $traitManager->getProjectGroups();
 
 $isEditor = false;
 if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
@@ -59,12 +60,12 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 						<fieldset>
 							<legend><b>New Trait</b></legend>
 							<div>
-							<label for="traitname">Trait Name:</label>
+								<label for="traitname">Trait Name:</label>
 								<input type="text" id="traitname" name="traitname" autocomplete="off" maxlength="255" style="width:400px;" required/>
 							</div>
 							<div class="flex-form">
 								<div>
-								<label for="traittype">Trait Type:</label>
+									<label for="traittype">Trait Type:</label>
 									<select id="traittype" name="traittype" >
 										<option value="UM">UM</option>
 										<option value="OM">OM</option>
@@ -72,22 +73,33 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<option value="NU">NU</option>
 									</select>
 								</div>
-							</div>
-							<div class="flex-form">
 								<div>
-									<label for="traitname">Units:</label>
+									<label for="units">Units:</label>
 									<input type="text" id="units" name="units" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="traitname">Description:</label>
+									<label for="projectGroup">Project Group:</label>
+									<input type="text" id="projectGroup" name="projectGroup" list="groups" autocomplete="off" maxlength="255" />
+									<datalist id="groups">
+										<?php
+										foreach($groupArr as $group) {
+											echo '<option value="'. $group['projectGroup'].'">';
+										}
+										?>
+									</datalist>
+								</div>
+							</div>
+							<div class="flex-form">
+								<div>
+									<label for="description">Description:</label>
 									<input type="text" id="description" name="description" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="traitname">Reference URL:</label>
+									<label for="refurl">Reference URL:</label>
 									<input type="text" id="refurl" name="refurl" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="traitname">Notes:</label>
+									<label for="notes">Notes:</label>
 									<input type="text" id="notes" name="notes" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
@@ -98,10 +110,15 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 										<option value="select">Select</option>
 									</select>
 								</div>
-								<div style="padding-top:4px;"">
-									<label for="traitname">isPublic:</label>
+								<div style="padding-top:4px;">
+									<label for="isPublic">isPublic:</label>
 									<input type="hidden" name="isPublic" value="0"/>
 									<input type="checkbox" id="isPublic" name="isPublic" value="1" checked/>
+								</div>
+								<div style="padding-top:4px;"">
+									<label for="includeInSearch">includeInSearch:</label>
+									<input type="hidden" name="includeInSearch" value="0"/>
+									<input type="checkbox" id="includeInSearch" name="includeInSearch" value="1" checked/>
 								</div>
 							</div>
 							<div style="width:100%;padding-top:6px;">
@@ -113,10 +130,19 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 				<div id="traitList" style="padding-left:10px;">
 					<?php
 					if($traitList){
-						echo '<ul>';
+						foreach($groupArr as $group) {
+							echo '<h2>' . Sanitize::outString($group['projectGroup']) . '</h2><ul>';
+							foreach ($traitList as $trait){
+								if ($trait['projectGroup'] === $group['projectGroup'])
+								echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
+							}
+							echo '</ul>';
+						}
+						echo '<h2>No Group Assigned</h2><ul>';
 						foreach ($traitList as $trait){
-							echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
-							//var_dump($trait);
+							if (empty($trait['projectGroup'])) {
+								echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
+							}
 						}
 						echo '</ul>';
 					}
