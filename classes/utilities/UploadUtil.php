@@ -745,22 +745,33 @@ class UploadUtil {
 	 * return string
 	 */
 	public static function cleanFileName(string $file_name):string {
-		$file_name = str_replace(".","", $file_name);
-		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
-		$file_name = str_replace("__","_",$file_name);
-		$file_name = str_replace(array(chr(231),chr(232),chr(233),chr(234),chr(260)),"a",$file_name);
-		$file_name = str_replace(array(chr(230),chr(236),chr(237),chr(238)),"e",$file_name);
-		$file_name = str_replace(array(chr(239),chr(240),chr(241),chr(261)),"i",$file_name);
-		$file_name = str_replace(array(chr(247),chr(248),chr(249),chr(262)),"o",$file_name);
-		$file_name = str_replace(array(chr(250),chr(251),chr(263)),"u", $file_name);
-		$file_name = str_replace(array(chr(264),chr(265)),"n",$file_name);
-		$file_name = preg_replace("/[^a-zA-Z0-9\-_]/", "", $file_name);
-		$file_name = trim($file_name,' _-');
+		global $CHARSET;
 
-		if(strlen($file_name) > 30) {
-			$file_name = substr($file_name, 0, 30);
+		// Remove periods
+		$file_name = str_replace('.', '', $file_name);
+
+		// Convert encoded spaces, encoded # signs, and literal spaces to underscores.
+		$file_name = str_ireplace(
+			['%20', '%23', ' '],
+			'_',
+			$file_name
+		);
+
+		// Transliterate UTF-8 characters to ASCII where possible.
+		$transliterated = iconv($CHARSET, 'ASCII//TRANSLIT//IGNORE', $file_name);
+		if ($transliterated !== false) {
+			$file_name = $transliterated;
 		}
 
-		return $file_name;
+		// Remove characters other than ASCII letters, digits, underscores, and hyphens.
+		$file_name = preg_replace('/[^a-zA-Z0-9_-]/', '', $file_name) ?? '';
+
+		// Collapse repeated underscores and trim unwanted edge separators.
+		$file_name = preg_replace('/_+/', '_', $file_name) ?? '';
+		$file_name = trim($file_name, ' _-');
+
+		// Limit the result to 30 ASCII characters.
+		return substr($file_name, 0, 30);
+
 	}
 }

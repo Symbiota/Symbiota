@@ -43,7 +43,7 @@ final class UploadUtilTest extends TestCase {
 	}
 
 	public function test_filename_cleaning_special_chars() {
-		$this->assertSame('aaaaaaa', UploadUtil::cleanFileName('àáâãäåæ'));
+		$this->assertSame('aaaaaaae', UploadUtil::cleanFileName('àáâãäåæ'));
 		$this->assertSame('eeee', UploadUtil::cleanFileName('èéêë'));
 		$this->assertSame('iiii', UploadUtil::cleanFileName('ìíîï'));
 		$this->assertSame('ooooo', UploadUtil::cleanFileName('òóôõö'));
