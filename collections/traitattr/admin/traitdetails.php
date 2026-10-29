@@ -357,46 +357,6 @@ if(!$traitID) header('Location: index.php');
 												<label for="sortseq-<?= $stateID ?>">Sort Sequence</label><br />
 												<input type="number" id="sortseq-<?= $stateID ?>" name="sortseq" style="width:80px;" value="<?= Sanitize::outString($stateArr['sortseq']) ?>" />
 											</div>
-											<div>
-												<fieldset>
-													<button type="button" class="clear-icon-button" style="float:right;" onclick="toggle('newdepform-<?= $stateID ?>');" title="Add New Dependency">
-														<img src="../../../images/add.png" class="icon-img"/>			
-													</button>
-													<div id="newdepform-<?= $stateID ?>" style="display:none;">
-														<form method="post">
-															<select name="traitID">
-																<?php 
-																# Dependency name="traitID" needs to be different from a state's name="traitid"
-																foreach ($traitList as $trait) {
-																	if ($trait['traitID'] !== (int)$traitID) {
-																		echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
-																	}		
-																}
-																?>
-															</select>
-															<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
-															<button name="formsubmit" type="submit" value="addDependency" style="float:right; margin-right:10px;">Add</button>
-														</form>
-													</div>
-													<legend>Dependencies (Trait and their States that Appear when this Trait is Selected):</legend>
-													<?php
-													$stateDepArr = $traitManager->getStateDepArr($stateID);
-														if($stateDepArr){
-															echo '<form method="post"><input name="parentstateid" type="hidden" value="'. $stateID .'"/><input name="formsubmit" type="hidden" value="deleteDependency" /><ul>';
-															foreach ($stateDepArr as $dependency){
-																$trait = $traitManager->getTraitArrById2($dependency['traitID']);
-																echo '<li style="display:flex; align-items:center; gap: 10px;">
-																<a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a>
-																<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="Remove Dependency"><img src="../../../images/del.png" class="icon-img"/></button></li>';
-															}
-															echo '</ul></form>';
-														}
-														else {
-															echo 'No dependencies.';
-														}
-													?>
-												</fieldset>
-											</div>
 											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
@@ -404,6 +364,50 @@ if(!$traitID) header('Location: index.php');
 											</div>
 										</fieldset>
 									</form>
+									<div>
+										<fieldset>
+											<button type="button" class="clear-icon-button" style="float:right;" onclick="toggle('newdepform-<?= $stateID ?>');" title="Add New Dependency">
+												<img src="../../../images/add.png" class="icon-img"/>			
+											</button>
+											<div id="newdepform-<?= $stateID ?>" style="display:none;">
+												<form method="post" style="display:flex;">
+													<select name="traitID">
+														<?php 
+														# Dependency name="traitID" needs to be different from a state's name="traitid"
+														foreach ($traitList as $trait) {
+															if ($trait['traitID'] !== (int)$traitID) {
+																echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
+															}		
+														}
+														?>
+													</select>
+													<input name="traitid" type="hidden" value="<?= $traitID ?>" />
+													<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
+													<button name="formsubmit" type="submit" value="addDependency">Add</button>
+												</form>
+											</div>
+											<legend>Dependencies (Trait and their States that Appear when this Trait is Selected):</legend>
+											<?php
+											$stateDepArr = $traitManager->getStateDepArr($stateID);
+												if($stateDepArr){
+													echo '<form method="post">
+													<input name="traitid" type="hidden" value="'. $traitID .'" />
+													<input name="parentstateid" type="hidden" value="'. $stateID .'"/>
+													<input name="formsubmit" type="hidden" value="deleteDependency" /><ul>';
+													foreach ($stateDepArr as $dependency){
+														$trait = $traitManager->getTraitArrById2($dependency['traitID']);
+														echo '<li style="display:flex; gap:10px; margin-bottom:10px;">
+														<a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a>
+														<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="Remove Dependency"><img src="../../../images/del.png" class="icon-img"/></button></li>';
+													}
+													echo '</ul></form>';
+											}
+												else {
+													echo 'No dependencies.';
+												}
+											?>
+										</fieldset>
+									</div>	
 									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
 										<fieldset>
 											<legend>Delete Trait State</legend>
