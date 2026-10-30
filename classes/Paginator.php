@@ -54,10 +54,7 @@ class Paginator {
 	}	
 
 	private function summaryText(): String {
-		if($this->totalCount < $this->perPage){
-			return $this->activePage . ', records 1 - ' . $this->totalCount . ' of ' . $this->totalCount;
-		}
-		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . $this->perPage * $this->activePage . ' of ' . $this->totalCount;
+		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . min($this->perPage * $this->activePage, $this->totalCount) . ' of ' . $this->totalCount;
 	}
 
 	private function pageLink(Int $page): String {
@@ -73,7 +70,10 @@ class Paginator {
 	public static function getPageRequestVar(String $variableName): Int {
 		if(($page = $_REQUEST[$variableName] ?? false) && is_numeric($page)) {
 			return intval(filter_var($page, FILTER_SANITIZE_NUMBER_INT));
-		} else {
+		} else if ($variableName === 'imageCount') {
+			return 10;
+		}
+		else {
 			return 1;
 		}
 	}
