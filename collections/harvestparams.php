@@ -3,6 +3,8 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceDataset.php');
+
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $collManager = new OccurrenceManager();
@@ -22,7 +24,7 @@ $searchVar = $collManager->getQueryTermStr();
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/symb/collections.list.js?ver=2" type="text/javascript"></script>
-	<script src="../js/symb/collections.harvestparams.js?ver=5" type="text/javascript"></script>
+	<script src="../js/symb/collections.harvestparams.js?ver=5b" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js?ver=1" type="text/javascript"></script>
 	<script src="../js/symb/collections.traitsearch.js?ver=8" type="text/javascript"></script> <!-- Contains search-by-trait modifications -->
 	<script src="../js/symb/wktpolygontools.js?ver=1c" type="text/javascript"></script>
@@ -39,7 +41,7 @@ $searchVar = $collManager->getQueryTermStr();
 		hr{ clear:both; margin: 10px 0px }
 		button{ margin: 2px }
 		select{ margin-bottom: 4px }
-		.catHeaderDiv { font-weight:bold; font-size: 18px }
+		.catHeaderDiv { font-weight:bold; font-size: 18px; margin-bottom: 10px; }
 		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; }
 		.coordBoxDiv .labelDiv { font-weight:bold;float:left }
 		.coordBoxDiv .iconDiv { float: left; margin-left: 5px; }
@@ -64,8 +66,8 @@ $searchVar = $collManager->getQueryTermStr();
 	else{
 		?>
 		<div class='navpath'>
-			<a href="../index.php"><?php echo htmlspecialchars($LANG['NAV_HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-			<a href="index.php"><?php echo htmlspecialchars($LANG['NAV_COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
+			<a href="../index.php"><?= $LANG['NAV_HOME'] ?></a> &gt;&gt;
+			<a href="index.php"><?= $LANG['NAV_COLLECTIONS'] ?></a> &gt;&gt;
 			<b><?php echo $LANG['NAV_SEARCH']; ?></b>
 		</div>
 		<?php
@@ -82,26 +84,24 @@ $searchVar = $collManager->getQueryTermStr();
 						<div style="margin:10px 0px 0px 5px;"><input type='checkbox' name='usethes' id='usethes' value='1' CHECKED />
 						<label for="usethes"><?php echo $LANG['INCLUDE_SYNONYMS']; ?></div></label>
 					</div>
-					<section class="flex-form">
-						<div>
-							<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
-							<select id="taxontype" name="taxontype">
-								<?php
-								$taxonType = 1;
-								if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
-								$taxonTypeRange = 6;
-								if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
-								for($h=1;$h<$taxonTypeRange;$h++){
-									echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
-								}
-								?>
-							</select>
-						</div>
-						<div>
-							<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
-							<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
-						</div>
-					</section>
+					<div>
+						<label for="taxontype"><?php echo $LANG['SELECT_TAXON_TYPE'] ?>:</label>
+						<select id="taxontype" name="taxontype">
+							<?php
+							$taxonType = 1;
+							if(isset($DEFAULT_TAXON_SEARCH) && $DEFAULT_TAXON_SEARCH) $taxonType = $DEFAULT_TAXON_SEARCH;
+							$taxonTypeRange = 6;
+							if(isset($DISPLAY_COMMON_NAMES) && !$DISPLAY_COMMON_NAMES) $taxonTypeRange = 5;
+							for($h=1;$h<$taxonTypeRange;$h++){
+								echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
+							}
+							?>
+						</select>
+					</div>
+					<div>
+						<label for="taxa"><?php echo $LANG['TYPE_TAXON'] ?>:</label>
+						<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?php echo $LANG['SEPARATE_MULTIPLE']; ?>" />
+					</div>
 				</div>
 				<div style='float:right;margin:0px 10px;'>
 					<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
@@ -153,8 +153,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="upperlat"><?php echo $LANG['LL_BOUND_NLAT']; ?>:</label>
 							<input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="upperlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="upperlat_NS" name="upperlat_NS">
+							<select id="upperlat_NS" name="upperlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="ulN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
 								<option id="ulS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
 							</select>
@@ -162,8 +161,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="bottomlat"><?php echo $LANG['LL_BOUND_SLAT']; ?>:</label>
 							<input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="bottomlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="bottomlat_NS" name="bottomlat_NS">
+							<select id="bottomlat_NS" name="bottomlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="blN" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
 								<option id="blS" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
 							</select>
@@ -171,8 +169,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="leftlong"><?php echo $LANG['LL_BOUND_WLNG']; ?>:</label>
 							<input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="leftlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="leftlong_EW" name="leftlong_EW">
+							<select id="leftlong_EW" name="leftlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="llW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
 								<option id="llE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
 							</select>
@@ -180,8 +177,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="rightlong"><?php echo $LANG['LL_BOUND_ELNG']; ?>:</label>
 							<input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="cleanNumericInput(this);" style="margin-left:3px;">
-							<label for="rightlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-							<select id="rightlong_EW" name="rightlong_EW">
+							<select id="rightlong_EW" name="rightlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="rlW" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
 								<option id="rlE" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
 							</select>
@@ -191,7 +187,7 @@ $searchVar = $collManager->getQueryTermStr();
 				<div class="coordBoxDiv">
 					<div class="labelDiv">
 						<label for="footprintwkt">
-							<?php echo isset($LANG['LL_POLYGON_TEXT'])?$LANG['LL_POLYGON_TEXT']:''; ?>
+							<?= $LANG['LL_POLYGON_TEXT'] ?>
 						</label>
 					</div>
 					<div class="iconDiv">
@@ -213,8 +209,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<div>
 								<label for="pointlat"><?php echo $LANG['LL_P-RADIUS_LAT']; ?>:</label>
 								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlat_NS"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlat_NS" name="pointlat_NS">
+								<select id="pointlat_NS" name="pointlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 									<option id="N" value="N"><?php echo $LANG['LL_N_SYMB']; ?></option>
 									<option id="S" value="S"><?php echo $LANG['LL_S_SYMB']; ?></option>
 								</select>
@@ -224,8 +219,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<div>
 								<label for="pointlong"><?php echo $LANG['LL_P-RADIUS_LNG']; ?>:</label>
 								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlong_EW"><?php echo $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlong_EW" name="pointlong_EW">
+								<select id="pointlong_EW" name="pointlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 									<option id="W" value="W"><?php echo $LANG['LL_W_SYMB']; ?></option>
 									<option id="E" value="E"><?php echo $LANG['LL_E_SYMB']; ?></option>
 								</select>
@@ -235,10 +229,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<div>
 								<label for="radius"><?php echo $LANG['LL_P-RADIUS_RADIUS']; ?>:</label>
 								<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
-							</div>
-							<div>
-								<label for="radiusunits"><?php echo $LANG['DISTANCE_UNIT'] ?>:</label>
-								<select id="radiusunits" name="radiusunits">
+								<select id="radiusunits" name="radiusunits" aria-label="<?= $LANG['DISTANCE_UNIT'] ?>">
 									<option value="km"><?php echo $LANG['LL_P-RADIUS_KM']; ?></option>
 									<option value="mi"><?php echo $LANG['LL_P-RADIUS_MI']; ?></option>
 								</select>
@@ -279,6 +270,22 @@ $searchVar = $collManager->getQueryTermStr();
 					<label for="includeothercatnum"><?php echo $LANG['INCLUDE_OTHER_CATNUM']?></label>
 				</div>
 				<?php
+				$datasetManager = new OccurrenceDataset();
+				if($datasetList = $datasetManager->getDatasetList()){
+					?>
+					<div>
+						<label for="datasetid"><?= $LANG['DATASET'] ?>:</label>
+						<select id="datasetid" name="datasetid">
+							<option value="">------------------------</option>
+							<?php
+							foreach($datasetList as $dsid => $dsArr){
+								echo '<option value="' . $dsid . '">' . $dsArr['datasetName'] . '</option>';
+							}
+							?>
+						</select>
+					</div>
+					<?php
+				}
 				if($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()){
 					?>
 					<div>
@@ -324,7 +331,7 @@ $searchVar = $collManager->getQueryTermStr();
 				<hr/>
 				<div id="searchFormPaleo" style="float:left">
 					<div>
-						<div class="catHeaderDiv bottom-breathing-room-rel-sm"><?php echo $LANG['GEO_CONTEXT']; ?></div>
+						<div class="catHeaderDiv"><?php echo $LANG['GEO_CONTEXT']; ?></div>
 					</div>
 					<div>
 						<div>
@@ -424,9 +431,9 @@ $searchVar = $collManager->getQueryTermStr();
 			?>
 
 			<div style="float:right;">
-				<div><button type="submit" style="width:100%"><?php echo isset($LANG['BUTTON_NEXT_LIST'])?$LANG['BUTTON_NEXT_LIST']:'List Display'; ?></button></div>
-				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?php echo isset($LANG['BUTTON_NEXT_TABLE'])?$LANG['BUTTON_NEXT_TABLE']:'Table Display'; ?></button></div>
-				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?php echo isset($LANG['BUTTON_RESET'])?$LANG['BUTTON_RESET']:'Reset Form'; ?></button></div>
+				<div><button type="submit" style="width:100%"><?= $LANG['BUTTON_NEXT_LIST'] ?></button></div>
+				<div><button type="button" style="width:100%" onclick="displayTableView(this.form)"><?= $LANG['BUTTON_NEXT_TABLE'] ?></button></div>
+				<div><button type="reset" style="width:100%" onclick="resetHarvestParamsForm()"><?= $LANG['BUTTON_RESET'] ?></button></div>
 			</div>
 			<div>
 				<input name="comingFrom" type="hidden" value="harvestparams" >
