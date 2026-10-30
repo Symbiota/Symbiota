@@ -191,7 +191,7 @@ class RpcOccurrenceEditor extends RpcBase{
 			$sql .= ') ';
 		}
 
-		$sql .= 'ORDER BY sciname';
+		$sql .= 'LIMIT 50';
 
 		$rs = $this->conn->query($sql);
 		while ($r = $rs->fetch_object()){

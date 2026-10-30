@@ -27,4 +27,7 @@ $LANG['RETRIEVE'] = 'Recuperar inicio de sesión';
 $LANG['YOUR_EMAIL'] = 'Su correo electrónico';
 $LANG['OID_LOGIN'] = 'Iniciar sesión con OID';
 $LANG['THIRD_PARTY_LOGIN'] = 'Inicie sesión utilizando autenticación de terceros';
+$LANG['CAPTCHA_INFO'] = "Alternativamente, para explorar contenido público de forma anónima, por favor confirme que es humano utilizando el siguiente formulario.";
+$LANG['IM_HUMAN'] = "Soy un ser humano";
+$LANG['CHECK_CAPTCHA'] = "Primero debes marcar la casilla del CAPTCHA (para demostrar que eres humano)";
 ?>
