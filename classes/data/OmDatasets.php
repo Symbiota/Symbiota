@@ -211,7 +211,7 @@ class OmDatasets extends DataCore{
 	}
 
 	private function setDatasetOccurrenceMap(){
-		$this->fieldMap = array('datasetID' => 'pk', 'occid' => 'pk', 'notes' => 's', 'initialTimestamp' => 'x');
+		$this->fieldMap = array('datasetID' => 'cpk', 'occid' => 'cpk', 'notes' => 's', 'initialTimestamp' => 'x');
 	}
 
 	//User role functions

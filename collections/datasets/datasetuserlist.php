@@ -99,7 +99,7 @@ $datasetManager = new OccurrenceDataset();
 		?>
 		<div>
 		<div style="float:right;margin:10px;" title="<?= $LANG['CRT_NEW_DAT'] ?>" >
-	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png" class="img-icon" alt="<?= $LANG['ADD_BUTTON'] ?>"/> </a>
+	 		<a href="#" onclick="toggle('adddiv');return false;"><img src="../../images/add.png" class="img-icon" alt="<?= $LANG['ADD_BUTTON'] ?>"/></a>
 		</div>
 		<h1 class="page-heading"> <?= $LANG['OCC_DAT_MNG'] ?> </h1>
 		<div> <?= $LANG['TOOL_DESCR'] ?> </div>

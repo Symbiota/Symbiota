@@ -7,13 +7,10 @@ Language: English
 
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.en.php');
 
-$LANG['INCLUDES'] = 'This dataset includes';
-$LANG['RECORDS'] = 'occurrence records';
-$LANG['VIEW_SAMPLES_LIST'] = 'View samples (List view)';
-$LANG['VIEW_SAMPLES_TABLE'] = 'View samples (Table view)';
-$LANG['DOWNLOAD_SAMPLES'] = 'Download samples';
-$LANG['VIEW_LIST'] = 'View list of taxa';
+$LANG['OCCURRENCES_LIST'] = 'Extended Search';
+$LANG['PRIVATE_DATASET'] = 'Dataset is private';
 $LANG['UNDEFINED_CATEGORY'] = 'Miscellaneous Datasets';
 $LANG['NO_DATASETS'] = 'There are no public datasets';
 $LANG['VIEW_USER_LIST'] = 'View all your Datasets';
+$LANG['ADD_TO_CART'] = 'Add Occurrence to Cart';
 ?>

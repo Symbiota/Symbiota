@@ -14,16 +14,16 @@ $datasetManager = new OccurrenceDataset();
 $datasetManager->setDatasetID($datasetid);
 $dsMetaArr = $datasetManager->getDatasetMetadata();
 
-$isEditor = 0;
+$isEditor = false;
 if($datasetid && $SYMB_UID){
 	if ($SYMB_UID == $dsMetaArr['uid']) {
-		$isEditor = 1;
+		$isEditor = true;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetid, $SYMB_UID)) {
 		if (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetAdmin'])) {
-			$isEditor = 1;
+			$isEditor = true;
 		} elseif (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetEditor'])) {
-			$isEditor = 2;
+			$isEditor = true;
 		}
 	}
 }
@@ -62,74 +62,97 @@ if($datasetid && $SYMB_UID){
 			if($datasetid) echo '<b>' . $dsMetaArr['datasetName'] . '</b>';
 			?>
 		</div>
-		<div role="main" id="innertext">
+		<div role="main" id="innertext" style="margin-bottom: 20px">
 			<?php
 			if($datasetid){
-				$occurCount = $datasetManager->getOccurrenceCount();
-				?>
-				<div class="split-div">
-					<div><h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1></div>
-					<?php
-					if($isEditor){
-						?>
-						<div><a href="datasetmanager.php?datasetid=<?= $datasetid ?>"><img class="img-icon" src="../../images/edit.png" title="<?= $LANG['MANAGE_DATASET'] ?>" ></a></div>
+				if($dsMetaArr['isPublic'] || $isEditor){
+					?>
+					<div class="split-div">
+						<div><h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1></div>
+						<div>
+							<?php
+							if($SYMB_UID){
+								?>
+								<span><a href="datasetuserlist.php"><img class="img-icon" src="../../images/list.png" title="<?= $LANG['VIEW_USER_LIST'] ?>" ></a></span>
+								<?php
+							}
+							if($isEditor){
+								?>
+								<span><a href="datasetmanager.php?datasetid=<?= $datasetid ?>"><img class="img-icon" src="../../images/edit.png" title="<?= $LANG['MANAGE_DATASET'] ?>" ></a></span>
+								<?php
+							}
+							?>
+						</div>
+					</div>
+					<div>
 						<?php
-					}
-					?>
-				</div>
-				<?php
-				if($dsMetaArr['datasetIdentifier']) echo '<p><b>' . $LANG['DATASET_IDENTIFIER'] . ':</b> ' . $dsMetaArr['datasetIdentifier'] . '</p>';
-				?>
-				<p><?= $dsMetaArr['description'] ?></p>
-				<p><?= $dsMetaArr['bibliographicCitation'] ?></p>
-				<p><?= $LANG['INCLUDES'] ?> <?= $occurCount ?> <?= $LANG['RECORDS'] ?></p>
-				<?php
-				if($occurCount){
-					$searchUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid;
-					$tableUrl = $CLIENT_ROOT . '/collections/listtabledisplay.php?datasetid=' . $datasetid;
-					$taxaUrl = $CLIENT_ROOT . '/collections/list.php?datasetid=' . $datasetid . '&tabindex=0';
-					?>
-					<p><a class="btn" href="<?= $searchUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLES_LIST'] ?></a></p>
-					<p><a class="btn" href="<?= $tableUrl ?>" target="_blank"><?= $LANG['VIEW_SAMPLES_TABLE'] ?></a></p>
-					<p>
-						<form name="export-dataset-form" action="../download/index.php" method="post" onsubmit="targetDownloadPopup(this)">
-							<input name="searchvar" type="hidden" value="datasetid=<?= $datasetid ?>" />
-							<input name="dltype" type="hidden" value="specimen" />
-							<button type="submit" name="submitaction" value="exportAll"><?= $LANG['EXPORT_DS'] ?></button>
+						if($dsMetaArr['datasetIdentifier']) echo '<p><b>' . $LANG['DATASET_IDENTIFIER'] . ':</b> ' . $dsMetaArr['datasetIdentifier'] . '</p>';
+						?>
+						<p><?= $dsMetaArr['description'] ?></p>
+						<p><?= $dsMetaArr['bibliographicCitation'] ?></p>
+					</div>
+					<div style="">
+						<?php
+						include('datasetoccurlist.php');
+						?>
+					</div>
+					<div style="margin:15px">
+						<form name="sample-list-form" action="../list.php" method="post" target="_blank">
+							<input name="datasetid" type="hidden" value="<?= $datasetid ?>">
+							<button type="submit"><?= $LANG['OCCURRENCES_LIST'] ?></button>
 						</form>
-					</p>
-					<p><a class="btn" href="<?= $taxaUrl ?>" target="_blank"><?= $LANG['VIEW_LIST'] ?></a></p>
+					</div>
+					<?php
+				}
+				else{
+					?>
+					<hr><?= $LANG['PRIVATE_DATASET'] ?></hr>
 					<?php
 				}
 			}
 			else{
-				echo '<h1 class="page-heading">' . $LANG['PUB_DAT_LIST'] . '</h1>';
-				if($datasetArr = $datasetManager->getDatasetList()){
-					echo '<ul>';
+				?>
+				<div class="split-div">
+					<div><h1 class="page-heading"><?= $LANG['PUB_DAT_LIST'] ?></h1></div>
+					<div>
+						<?php
+						if($SYMB_UID){
+							?>
+							<span><a href="datasetuserlist.php"><img class="img-icon" src="../../images/list.png" title="<?= $LANG['VIEW_USER_LIST'] ?>" ></a></span>
+							<?php
+						}
+						?>
+					</div>
+				</div>
+				<?php
+				if($datasetArr = $datasetManager->getDatasetsGroupedByCategory()){
 					foreach($datasetArr as $category => $dsArr){
-						if($category == 'UNDEFINED_CATEGORY'){
+						echo '<div style="margin-bottom: 50px">';
+						if($category == 'Z-UNDEFINED_CATEGORY'){
 							$category = '';
 							if(count($datasetArr) > 1){
 								$category = $LANG['UNDEFINED_CATEGORY'];
 							}
 						}
 						echo '<h3>' . $category . '</h3>';
-						foreach($dsArr as $dsID => $dsName){
-							echo '<li><a href="index.php?datasetid=' . $dsID . '">' . Sanitize::outString($dsName) . '</a></li>';
+						echo '<ul>';
+						foreach($dsArr as $dsID => $unitArr){
+							$dsName = $unitArr['datasetName'];
+							$role = '';
+							if(!$unitArr['isPublic']){
+								$role = ' (' . $LANG['PRIVATE'];
+								if(isset($unitArr['role'])) $role .= ' - ' . $unitArr['role'];
+								$role .= ')';
+							}
+							echo '<li><a href="index.php?datasetid=' . $dsID . '">' . Sanitize::outString($dsName) . '</a>' . strtolower($role) . '</li>';
 						}
+						echo '</ul>';
+						echo '</div>';
 					}
 				}
 				else{
 					echo $LANG['NO_DATASETS'];
 				}
-			}
-			if($SYMB_UID){
-				?>
-				<div style="margin: 30px 0px">
-					<hr>
-				</div>
-				<h3><a href="datasetuserlist.php"><?= $LANG['VIEW_USER_LIST'] ?></a></h3>
-				<?php
 			}
 			?>
 		</div>

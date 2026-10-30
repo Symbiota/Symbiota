@@ -13,22 +13,53 @@ class OccurrenceDataset extends OmDatasets {
 		parent::__destruct();
 	}
 
-	public function getDatasetList() {
+	public function getDatasetMetadata() {
 		$retArr = array();
-		$cond = array('isPublic' => 1);
-		$orderBy = array('category','datasetName');
-		$datasetArr = $this->getDatasetArr($cond, $orderBy);
-		foreach($datasetArr as $id => $dsArr){
-			$cat = $dsArr['category'];
-			if(!$cat) $cat = 'UNDEFINED_CATEGORY';
-			$retArr[$cat][$id] = $dsArr['datasetName'];
+		if ($this->datasetID) {
+			$cond = array('datasetID' => $this->datasetID);
+			$dsArr = $this->getDatasetArr($cond);
+			$retArr = $dsArr[$this->datasetID];
 		}
 		return $retArr;
 	}
 
+	public function getDatasetList() {
+		//Returns and array of public datasets plus those owned by or shared with user
+		$retArr = array();
+		//Get public datasets
+		$cond = array('isPublic' => 1);
+		$retArr = $this->getDatasetArr($cond);
+		//Append user datasets
+		if($userDatasets = $this->getDatasetsByUser()){
+			$retArr = $userDatasets + $retArr;
+		}
+		uasort($retArr, function($a, $b) {
+			return strcasecmp($a['datasetName'], $b['datasetName']);
+		});
+		return $retArr;
+	}
+
+	public function getDatasetsGroupedByCategory() {
+		$retArr = array();
+		$datasetArr = $this->getDatasetList();
+		foreach($datasetArr as $id => $dsArr){
+			$cat = $dsArr['category'];
+			if(!$cat) $cat = 'Z-UNDEFINED_CATEGORY';
+			$retArr[$cat][$id]['datasetName'] = $dsArr['datasetName'];
+			$retArr[$cat][$id]['isPublic'] = $dsArr['isPublic'];
+			if(!empty($dsArr['role'])){
+				$retArr[$cat][$id]['role'] = implode(', ', $dsArr['role']);
+			}
+		}
+		ksort($retArr);
+		return $retArr;
+	}
+
 	public function getDatasetsByUser($uid = null){
+		//Returns datasets owned by or shared with user
 		$retArr = array();
 		if(!$uid){
+			//Default to current user
 			if($GLOBALS['SYMB_UID']) $uid = $GLOBALS['SYMB_UID'];
 			else return false;
 		}
@@ -72,20 +103,9 @@ class OccurrenceDataset extends OmDatasets {
 		return $retArr;
 	}
 
-	public function getDatasetMetadata($publicOnly = true) {
-		$retArr = array();
-		if ($this->datasetID) {
-			$cond = array('datasetID' => $this->datasetID);
-			if($publicOnly) $cond['isPbulic'] = 1;
-			$dsArr = $this->getDatasetArr($cond);
-			$retArr = $dsArr[$this->datasetID];
-		}
-		return $retArr;
-	}
-
 	public function cloneDataset() {
 		$status = true;
-		$datasetMeta = $this->getDatasetMetadata(false);
+		$datasetMeta = $this->getDatasetMetadata();
 		$newName = $datasetMeta['datasetName'] . ' - Copy (' . time() . ')';
 		//Create new dataset
 		$dsArr['datasetName'] = $newName;
@@ -101,5 +121,49 @@ class OccurrenceDataset extends OmDatasets {
 			$status = true;
 		}
 		return $status;
+	}
+
+	//Cart/Basket functions
+	public function addCartOccurrence($occidInput){
+		if(!$occidInput) return false;
+		if($this->setCartDatasetID()){
+			if($this->insertOccurrences($occidInput)) return true;
+		}
+		return false;
+	}
+
+	public function deleteCartOccurrence($occidInput){
+		if(!$occidInput) return false;
+		if($this->setCartDatasetID()){
+			if($this->deleteOccurrences($occidInput)) return true;
+		}
+		return false;
+	}
+
+	public function clearCart(){
+		if($this->setCartDatasetID()){
+			if($this->deleteOccurrences()) return true;
+		}
+		return true;
+	}
+
+	private function setCartDatasetID(){
+		if(empty($GLOBALS['SYMB_UID'])){
+			$this->errorMessage = 'USER_NOT_LOGGED';
+			return false;
+		}
+		$condArr = array('uid' => $GLOBALS['SYMB_UID'], 'datasetName' => 'USER_CART');
+		$datasetArr = $this->getDatasetArr($condArr);
+		if($datasetArr){
+			$this->datasetID = key($datasetArr);
+			return true;
+		}
+		else{
+			if($this->insertDataset($condArr)){
+				$this->datasetID = $this->datasetID;
+				return true;
+			}
+		}
+		return false;
 	}
 }

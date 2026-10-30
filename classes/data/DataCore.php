@@ -28,7 +28,7 @@ class DataCore extends Manager{
 		}
 		$pkArr = array();
 		foreach($this->fieldMap as $n => $t){
-			if($t == 'pk') $pkArr[$n] = '';
+			if($t == 'pk' || $t == 'cpk') $pkArr[$n] = '';
 		}
 		if(!$pkArr){
 			$this->errorMessage = 'PRIMARY_KEY_NOT_DEFINED';
@@ -79,9 +79,10 @@ class DataCore extends Manager{
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param($this->typeStr, ...$paramArr);
 			if($stmt->execute()){
-				if($stmt->affected_rows || !$stmt->error){
+				if(!$stmt->error){
 					$this->primaryKey = $stmt->insert_id;
 					$status = true;
+					if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_INSERTED';
 				}
 				else $this->errorMessage = $stmt->error;
 			}
@@ -115,7 +116,10 @@ class DataCore extends Manager{
 				if($stmt = $this->conn->prepare($sql)) {
 					$stmt->bind_param($this->typeStr, ...$paramArr);
 					if($stmt->execute()){
-						if($stmt->affected_rows || !$stmt->error) $status = true;
+						if(!$stmt->error){
+							$status = true;
+							if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_UPDATED';
+						}
 						else $this->errorMessage = $stmt->error;
 					}
 					else $this->errorMessage = $stmt->error;
@@ -150,8 +154,9 @@ class DataCore extends Manager{
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($typeStr, ...$paramArr);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if(!$stmt->error){
 					$status = true;
+					if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_DELETED';
 				}
 				else $this->errorMessage = $stmt->error;
 				$stmt->close();
@@ -181,6 +186,7 @@ class DataCore extends Manager{
 				$value = trim($inputArr[$postField]);
 				if(trim($value) === '') $value = null;
 				$this->parameterArr[$field] = $value;
+				if($type == 'cpk') $type = 'i';
 				$this->typeStr .= $type;
 			}
 		}
@@ -194,12 +200,12 @@ class DataCore extends Manager{
 			if(isset($condArr[$fieldName])) $inputField = $fieldName;
 			elseif(isset($condArr[strtolower($fieldName)])) $inputField = strtolower($fieldName);
 			if($inputField){
+				if($type == 'pk' || $type == 'cpk') $type = 'i';
 				if(is_array($condArr[$inputField])){
 					$inputArr = $condArr[$inputField];
 					$inputItemCount = count($inputArr);
 					$sqlFrag .= $delimiter . ' `' . $fieldName . '` IN(' . trim(str_repeat('?,', $inputItemCount), ',') . ') ';
 					$paramArr = $inputArr;
-					if($type == 'pk') $type = 'i';
 					$typeStr .= str_repeat($type, $inputItemCount);
 				}
 				else{
@@ -207,7 +213,6 @@ class DataCore extends Manager{
 					$value = trim($condArr[$inputField]);
 					if($value === '') $value = null;
 					$paramArr[] = $value;
-					if($type == 'pk') $type = 'i';
 					$typeStr .= $type;
 				}
 				$delimiter = 'AND';
