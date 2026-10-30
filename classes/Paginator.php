@@ -54,7 +54,7 @@ class Paginator {
 	}	
 
 	private function summaryText(): String {
-		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . $this->perPage * $this->activePage . ' of ' . $this->totalCount;
+		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . min($this->perPage * $this->activePage, $this->totalCount) . ' of ' . $this->totalCount;
 	}
 
 	private function pageLink(Int $page): String {
