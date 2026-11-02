@@ -70,6 +70,20 @@ if($formSubmit && $isEditor){
 		$traitManager->deleteTraitStateDep($_POST);
 		$tabIndex = 1;
 	}
+	elseif($formSubmit == 'addTaxon'){
+		if(!empty($_POST['tid'])){
+			if(!$traitManager->insertTaxonRelevance($_POST['tid'], $_POST['relation'])){
+				$statusStr = $LANG['ERROR_ADD_REL'] . $traitManager->getErrorMessage();
+			}
+			$tabIndex = 2;
+		}
+	}
+	elseif($formSubmit == 'delTaxon'){
+		if(!$traitManager->deleteTaxonRelevance($_POST['tid'])){
+			$statusStr = $LANG['ERROR_DELETE_REL'] . $traitManager->getErrorMessage();
+		}
+		$tabIndex = 2;
+	}
 		
 }
 

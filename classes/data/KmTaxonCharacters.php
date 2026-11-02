@@ -230,7 +230,7 @@ class KmTaxonCharacters extends DataCore{
 		$this->fieldMap = array('csImgID' => 'pk', 'cid' => 'i', 'cs' => 'i', 'url' => 's', 'notes' => 's', 'sortSequence' => 'i', 'username' => 's');
 	}
 
-	//Taxon relavence function
+	//Taxon relevance function
 	public function getTaxonRelevance(){
 		$retArr = array();
 		if(!$this->cid){

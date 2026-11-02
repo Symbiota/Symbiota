@@ -233,8 +233,47 @@ class OmOccurrenceTraits extends DataCore{
 	}
 
 	//tmtraittaxalink functions
+	private function setTraitTaxaMap(){
+		$this->fieldMap = array('traitid' => 'pk', 'tid' => 'pk', 'relation' => 's');
+	}
 
+	public function insertTaxonRelevance($tid, $relation){
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		$this->setTraitTaxaMap();
+		$inputArr = array('traitID' => $this->traitID, 'tid' => $tid);
+		return $this->insertRecord('tmtraittaxalink', $inputArr);
+	}
 
+	public function deleteTaxonRelevance($tid){
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		$this->setTraitTaxaMap();
+		return $this->deleteRecord('tmtraittaxalink', array('traitID' => $this->traitID, 'tid' => $tid));
+	}
+
+	public function getTaxonRelevance(){
+		$retArr = array();
+		if(!$this->traitID){
+			$this->errorMessage = 'TRAITID_NOT_SET';
+			return false;
+		}
+		$sql = 'SELECT l.tid, l.relation, t.sciname FROM tmtraittaxalink l INNER JOIN taxa t ON l.tid = t.tid WHERE l.traitid = ?';
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $this->traitID);
+			$stmt->execute();
+			$rs = $stmt->get_result();
+			while($r = $rs->fetch_object()){
+				$retArr[$r->relation][$r->tid]['sciname'] = $r->sciname;
+			}
+			$stmt->close();
+		}
+		return $retArr;
+	}
 
 	//General data retrival functions
 	public function getProjectGroups(){

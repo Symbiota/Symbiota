@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/KeyCharacterAdmin.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -8,12 +8,10 @@ Language::load('collections/traitarr/admin/taxonomylinkage');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
-$cid = array_key_exists('cid',$_REQUEST) ? Sanitize::int($_REQUEST['cid']) : 0;
-$langId = array_key_exists('langid', $_REQUEST) ? Sanitize::int($_REQUEST['langid']) : '';
+$traitID = array_key_exists('traitid', $_REQUEST) ? Sanitize::int($_REQUEST['traitid']) : 0;
 
-$keyManager = new KeyCharacterAdmin();
-$keyManager->setLangId($langId);
-$keyManager->setCid($cid);
+$keyManager = new OccurrenceTraitAdmin();
+$keyManager->setTraitID($traitID);
 $tLinks = $keyManager->getTaxonRelevance();
 ?>
 <!DOCTYPE html>
@@ -48,7 +46,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 							data: { term: $( this ).val() }
 						}).done(function( msg ) {
 							if(msg == ""){
-								alert("Taxonomic name not found with thesaurus ");
+								alert("<?= $LANG['ALERT_NO_TAXON']; ?>");
 							}
 							else{
 								$( "#relevancetidinput" ).val(msg);
@@ -65,11 +63,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 
 		function validateRelevanceForm(f){
 			if(f.relsciname.value == ""){
-				alert("Taxon field is empty");
+				alert("<?= $LANG['ALERT_EMPTY_TAXON'] ?>");
 				return false;
 			}
 			if(f.tid.value == ""){
-				alert("unable to obtain taxonomic thesaurus identifier for " + f.relsciname.value);
+				alert("<?= $LANG['ALERT_NO_TAXON_IDEN'] ?> " + f.relsciname.value);
 				return false;
 			}
 			return true;
@@ -77,12 +75,12 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<h1 class="page-heading">Link Character to Taxa</h1>
+	<?= var_dump($LANG); ?>
+	<h3><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
-			<b>Taxonomic relevance of character</b> -
-			Tag taxonomic nodes where character is most relevant.
-			Taxonomic branches can also be excluded (e.g. relevant to order A by exclude families X, Y, and Z).
+			<b><?= $LANG['CHAR_TAXON_RELEVANCE'] ?></b> -
+			<?= $LANG['TAG_TAXON_NODE'] ?>
 		</div>
 		<div style="margin:20px;">
 			<?php
@@ -90,19 +88,19 @@ $tLinks = $keyManager->getTaxonRelevance();
 				if(isset($tLinks['include'])){
 					?>
 					<fieldset style="padding:20px;">
-						<legend><b>Relevant Taxa</b></legend>
+						<legend><b><?= $LANG['RELEVANT_TAXA'] ?></b></legend>
 						<?php
 						foreach($tLinks['include'] as $tid => $tArr){
 							?>
 							<div style="margin:3px;clear:both;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b></div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
-									<input name="cid" type="hidden" value="<?= $cid ?>" />
+								<form name="delTaxonForm" action="traitdetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+									<input name="traitID" type="hidden" value="<?= $traitID ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../../images/del.png" style="width:1.3em;" />
+									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php
@@ -114,7 +112,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 				if(isset($tLinks['exclude'])){
 					?>
 					<fieldset style="padding:20px;">
-						<legend><b>Excluding Taxa</b></legend>
+						<legend><b><?= $LANG['EXLUDING_TAXA'] ?></b></legend>
 						<?php
 						foreach($tLinks['exclude'] as $tid => $tArr){
 							?>
@@ -122,11 +120,11 @@ $tLinks = $keyManager->getTaxonRelevance();
 								<?php
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
-									<input name="cid" type="hidden" value="<?= $cid ?>" />
+								<form name="delTaxonForm" action="traitdetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+									<input name="traitID" type="hidden" value="<?= $traitID ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
-									<input name="formsubmit" type="hidden" value="deltaxon" />
-									<input type="image" src="../../../images/del.png" style="width:1.3em;" />
+									<input name="formsubmit" type="hidden" value="delTaxon" />
+									<input type="image" src="../../images/del.png" style="width:1.3em;" />
 								</form>
 							</div>
 							<?php
@@ -139,38 +137,37 @@ $tLinks = $keyManager->getTaxonRelevance();
 			else{
 				?>
 				<div style="font-weight:bold">
-					This character has not yet been linked to the taxonomic tree.
-					This character will not be available until at least one relevant link is established.
+					<?= $LANG['NO_CHAR_LINK'] ?>
 				</div>
 				<?php
 			}
 			?>
 		</div>
 		<div style="margin:20px;">
-			<form name="taxonAddForm" action="chardetails.php" method="post" onsubmit="return validateRelevanceForm(this)">
+			<form name="taxonAddForm" action="traitdetails.php" method="post" onsubmit="return validateRelevanceForm(this)">
 				<fieldset style="padding:20px;">
-					<legend><b>Add Taxonomic Relevance Definition</b></legend>
+					<legend><b><?= $LANG['ADD_TAXON_RELEVANCE'] ?></b></legend>
 					<div style="height:15px;">
 						<div style="margin:3px;">
-							<label for="relevanceinput"><b>Taxon Name:</b></label>
+							<label for="relevanceinput"><b><?= $LANG['TAXON_NAME'] ?>:</b></label>
 							<input type="text" id="relevanceinput" name="relsciname" style="width:300px" />
 							<input type="hidden" id="relevancetidinput" name="tid" />
 						</div>
 						<div style="float:left;margin:3px;">
-							<label for="relation"><b>Relevance to taxon:</b></label>
+							<label for="relation"><b><?= $LANG['TAXON_RELEVANCE'] ?>:</b></label>
 							<select id="relation" name="relation">
-								<option value="include">Relevant</option>
-								<option value="exclude">Exclude</option>
+								<option value="include"><?= $LANG['RELEVANT'] ?></option>
+								<option value="exclude"><?= $LANG['EXCLUDE'] ?></option>
 							</select>
 						</div>
 					</div>
 					<div style="margin:3px;clear:both;">
-						<label for="editornotes"><b>Editor notes:</b></label>
+						<label for="editornotes"><b><?= $LANG['EDITOR_NOTES'] ?>:</b></label>
 						<input id="editornotes" name="notes" type="text" value="" style="width:80%;" />
 					</div>
 					<div style="margin:15px;">
-						<input name="cid" type="hidden" value="<?= $cid ?>" />
-						<button name="formsubmit" type="submit" value="Save Taxonomic Relevance">Save Taxonomic Relevance</button>
+						<input name="traitID" type="hidden" value="<?= $traitID ?>" />
+						<button name="formsubmit" type="submit" value="addTaxon"><?= $LANG['SAVE_TAXON_RELEVANCE'] ?></button>
 					</div>
 				</fieldset>
 			</form>
