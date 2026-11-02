@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceTraitAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('collections/traitarr/admin/taxonomylinkage');
+Language::load('collections/traitattr/admin/taxonomylinkage');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
@@ -75,7 +75,6 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<?= var_dump($LANG); ?>
 	<h3><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
@@ -118,7 +117,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 							?>
 							<div style="margin:3px;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b></div> ';
 								?>
 								<form name="delTaxonForm" action="traitdetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
 									<input name="traitID" type="hidden" value="<?= $traitID ?>" />
@@ -161,10 +160,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 							</select>
 						</div>
 					</div>
-					<div style="margin:3px;clear:both;">
-						<label for="editornotes"><b><?= $LANG['EDITOR_NOTES'] ?>:</b></label>
-						<input id="editornotes" name="notes" type="text" value="" style="width:80%;" />
-					</div>
+					<br>
 					<div style="margin:15px;">
 						<input name="traitID" type="hidden" value="<?= $traitID ?>" />
 						<button name="formsubmit" type="submit" value="addTaxon"><?= $LANG['SAVE_TAXON_RELEVANCE'] ?></button>

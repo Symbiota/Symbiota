@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceTraitAdmin.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-Language::load('collections/traitarr/admin/traitdetails');
+Language::load('collections/traitattr/admin/traitdetails');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
 
