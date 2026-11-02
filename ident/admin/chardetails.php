@@ -344,7 +344,7 @@ if(!$cid) header('Location: index.php');
 										$headingArr = $charManager->getCharacterHeadingArr();
 										asort($headingArr);
 										foreach($headingArr as $k => $v){
-											echo '<option value="' . $k . '" ' . ($k==$charArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['name']) . '</option>';
+											echo '<option value="' . $k . '" ' . ($k==$charArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['headingName']) . '</option>';
 										}
 										?>
 									</select>
