@@ -38,6 +38,113 @@ if(!isset($isEditor)){
 
 		$(document).ready(function() {
 
+			//Dialog functions
+			$(document).on('click', '.edit-notes-btn', function() {
+				const $row = $(this).closest('tr');
+				const occid = $row.data('occid');
+				const notes = $row.find('.occurrence-notes').text();
+				$('#occidInput').val(occid);
+				$('#notesInput').val(notes);
+				$('#notesRecordLabel').text('Occurrence ID: ' + occid);
+				$('#notesError').text('');
+				document.getElementById('notesDialog').showModal();
+			});
+
+			$('#occurrenceNotesForm').on('submit', function(e) {
+				e.preventDefault();
+				const $saveButton = $('#saveNoteButton');
+				const occid = $('#occidInput').val();
+				const notes = $('#notesInput').val();
+				$saveButton.prop('disabled', true);
+				$('#notesError').text('');
+				$.ajax({
+					url: 'rpc/editoccurrencelink.php',
+					type: 'POST',
+					dataType: 'json',
+					data: { datasetid: <?= $datasetId ?>, occid: occid, notes: notes, action: 'editoccidlink' },
+					success: function(response) {
+						if (response.status) {
+							// Update the notes in the corresponding table row
+							$('tr[data-occid="' + occid + '"]').find('.occurrence-notes').text(notes);
+							// Close the dialog
+							document.getElementById('notesDialog').close();
+						} else {
+							$('#notesError').text(
+								response.error || 'Unable to save notes.'
+							);
+						}
+					},
+					error: function() {
+						$('#notesError').text(
+							'An error occurred while saving the notes.'
+						);
+					},
+					complete: function() {
+						$saveButton.prop('disabled', false);
+					}
+				});
+			});
+
+			$('#cancelNotesButton').on('click', function() {
+				document.getElementById('notesDialog').close();
+			});
+
+			$(document).on('click', '.remove-link-btn', function() {
+				const $row = $(this).closest('tr');
+				const occid = $row.data('occid');
+				const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+				if(confirmDelete){
+					$.ajax({
+						url: 'rpc/editoccurrencelink.php',
+						type: 'POST',
+						dataType: 'json',
+						data: { datasetid: <?= $datasetId ?>, occid: occid, action: 'deloccidlink' },
+						success: function(response) {
+							if (response.status) {
+								$('tr[data-occid="' + occid + '"]').hide();
+							} else {
+								alert(response.error || 'Unable to unlink record');
+							}
+						},
+						error: function() {
+							alert('Unable to unlink record (2)');
+						}
+					});
+				}
+				return false;
+			});
+
+			document.addEventListener("DOMContentLoaded", function() {
+				const adjustPagination = () => {
+					const paginationLinks = document.querySelectorAll(".pagination-link");
+					const screenWidth = window.innerWidth;
+					let shouldReduceLinks = false;
+					let shouldReduceByHalf = false;
+
+					if (screenWidth < 770) {
+						shouldReduceLinks = true;
+					}
+					if (screenWidth < 1200) {
+						shouldReduceByHalf = true;
+					}
+
+					paginationLinks.forEach(link => {
+						const shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
+						const isEven = (parseInt(link.getAttribute("data-even-odd")) || 1) % 2;
+						if (shouldReduceByHalf) {
+							link.style.display = (isEven) ? "inline-block" : "none";
+						}
+						if (shouldReduceLinks) {
+							link.style.display = (shouldKeepLink) ? "inline-block" : "none";
+						}
+						if (!shouldReduceByHalf && !shouldReduceLinks) {
+							link.style.display = "inline-block";
+						}
+					});
+				}
+				window.addEventListener("resize", adjustPagination);
+				adjustPagination();
+			});
 
 		});
 
@@ -94,78 +201,6 @@ if(!isset($isEditor)){
 			return true;
 		}
 
-		//Dialog functions
-		$(document).on('click', '.edit-notes-btn', function() {
-			const $row = $(this).closest('tr');
-			const occid = $row.data('occid');
-			const notes = $row.find('.occurrence-notes').text();
-			$('#occidInput').val(occid);
-			$('#notesInput').val(notes);
-			$('#notesRecordLabel').text('Occurrence ID: ' + occid);
-			$('#notesError').text('');
-			document.getElementById('notesDialog').showModal();
-		});
-
-		$('#occurrenceNotesForm').on('submit', function(e) {
-			e.preventDefault();
-			const $saveButton = $('#saveNoteButton');
-			const occid = $('#occidInput').val();
-			const notes = $('#notesInput').val();
-			$saveButton.prop('disabled', true);
-			$('#notesError').text('');
-			$.ajax({
-				url: 'rpc/editoccurrencelink.php',
-				type: 'POST',
-				dataType: 'json',
-				data: { datasetid: <?= $datasetId ?>, occid: occid, notes: notes, action: 'editoccidlink' },
-				success: function(response) {
-					if (response.status) {
-						// Update the notes in the corresponding table row
-						$('tr[data-occid="' + occid + '"]').find('.occurrence-notes').text(notes);
-						// Close the dialog
-						document.getElementById('notesDialog').close();
-					} else {
-						$('#notesError').text(
-							response.error || 'Unable to save notes.'
-						);
-					}
-				},
-				error: function() {
-					$('#notesError').text(
-						'An error occurred while saving the notes.'
-					);
-				},
-				complete: function() {
-					$saveButton.prop('disabled', false);
-				}
-			});
-		});
-
-		$('#cancelNotesButton').on('click', function() {
-			document.getElementById('notesDialog').close();
-		});
-
-		$(document).on('click', '.remove-link-btn', function() {
-			const $row = $(this).closest('tr');
-			const occid = $row.data('occid');
-			$.ajax({
-				url: 'rpc/editoccurrencelink.php',
-				type: 'POST',
-				dataType: 'json',
-				data: { datasetid: <?= $datasetId ?>, occid: occid, action: 'deloccidlink' },
-				success: function(response) {
-					if (response.status) {
-						$('tr[data-occid="' + occid + '"]').hide();
-					} else {
-						alert(response.error || 'Unable to unlink record');
-					}
-				},
-				error: function() {
-					alert('Unable to unlink record (2)');
-				}
-			});
-		});
-
 		//Popup functions
 		function openIndPopup(occid) {
 			openPopup("../individual/index.php?occid=" + occid);
@@ -186,37 +221,6 @@ if(!isset($isEditor)){
 			f.target = 'downloadpopup';
 		}
 
-		document.addEventListener("DOMContentLoaded", function() {
-			const adjustPagination = () => {
-				const paginationLinks = document.querySelectorAll(".pagination-link");
-				const screenWidth = window.innerWidth;
-				let shouldReduceLinks = false;
-				let shouldReduceByHalf = false;
-
-				if (screenWidth < 770) {
-					shouldReduceLinks = true;
-				}
-				if (screenWidth < 1200) {
-					shouldReduceByHalf = true;
-				}
-
-				paginationLinks.forEach(link => {
-					const shouldKeepLink = parseInt(link.getAttribute("data-keep-link"));
-					const isEven = (parseInt(link.getAttribute("data-even-odd")) || 1) % 2;
-					if (shouldReduceByHalf) {
-						link.style.display = (isEven) ? "inline-block" : "none";
-					}
-					if (shouldReduceLinks) {
-						link.style.display = (shouldKeepLink) ? "inline-block" : "none";
-					}
-					if (!shouldReduceByHalf && !shouldReduceLinks) {
-						link.style.display = "inline-block";
-					}
-				});
-			}
-			window.addEventListener("resize", adjustPagination);
-			adjustPagination();
-		});
 	</script>
 	<style>
 		.icon-img{ width: 1.1em }
