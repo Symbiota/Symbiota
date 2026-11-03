@@ -6,7 +6,7 @@ include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('collections/datasets/index');
 
-header("Content-Type: text/html; charset=".$CHARSET);
+header('Content-Type: text/html; charset=' . $CHARSET);
 
 $datasetid = array_key_exists('datasetid', $_REQUEST) ? Sanitize::int($_REQUEST['datasetid']) : 0;
 
@@ -14,16 +14,16 @@ $datasetManager = new OccurrenceDataset();
 $datasetManager->setDatasetID($datasetid);
 $dsMetaArr = $datasetManager->getDatasetMetadata();
 
-$isEditor = false;
+$isEditor = 0;
 if($datasetid && $SYMB_UID){
 	if ($SYMB_UID == $dsMetaArr['uid']) {
-		$isEditor = true;
+		$isEditor = 1;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetid, $SYMB_UID)) {
 		if (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetAdmin'])) {
-			$isEditor = true;
+			$isEditor = 1;
 		} elseif (isset($roles[$datasetid][$SYMB_UID]['roles']['DatasetEditor'])) {
-			$isEditor = true;
+			$isEditor = 1;
 		}
 	}
 }
@@ -97,9 +97,13 @@ if($datasetid && $SYMB_UID){
 						?>
 					</div>
 					<div style="margin:15px">
-						<form name="sample-list-form" action="../list.php" method="post" target="_blank">
+						<?php
+						$searchPath = $CLIENT_ROOT . '/collections/search/index.php';
+						if($SHOULD_USE_HARVESTPARAMS) $searchPath = $CLIENT_ROOT . '/collections/harvestparams.php';
+						?>
+						<form name="sample-list-form" action="<?= $searchPath ?>" method="get" target="_blank">
 							<input name="datasetid" type="hidden" value="<?= $datasetid ?>">
-							<button type="submit"><?= $LANG['OCCURRENCES_LIST'] ?></button>
+							<button type="submit"><?= $LANG['EXTENDED_SEARCH'] ?></button>
 						</form>
 					</div>
 					<?php

@@ -13,14 +13,15 @@ $datasetManager = new OccurrenceDataset();
 if($datasetId){
 	$datasetManager->setDatasetID($datasetId);
 	$mdArr = $datasetManager->getDatasetMetadata();
-
+}
+if(!isset($isEditor)){
 	$isEditor = 0;
 	if ($SYMB_UID == $mdArr['uid']) {
-		$isEditor = 1;
+		$isEditor = 3;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetId, $SYMB_UID)) {
 		if (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetAdmin'])) {
-			$isEditor = 1;
+			$isEditor = 3;
 		} elseif (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetEditor'])) {
 			$isEditor = 2;
 		}
@@ -34,6 +35,11 @@ if($datasetId){
 	<meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET ?>">
 	<script type="text/javascript">
 		var isDownloadAction = false;
+
+		$(document).ready(function() {
+
+
+		});
 
 		function selectAll(cb) {
 			boxesChecked = true;
@@ -88,6 +94,79 @@ if($datasetId){
 			return true;
 		}
 
+		//Dialog functions
+		$(document).on('click', '.edit-notes-btn', function() {
+			const $row = $(this).closest('tr');
+			const occid = $row.data('occid');
+			const notes = $row.find('.occurrence-notes').text();
+			$('#occidInput').val(occid);
+			$('#notesInput').val(notes);
+			$('#notesRecordLabel').text('Occurrence ID: ' + occid);
+			$('#notesError').text('');
+			document.getElementById('notesDialog').showModal();
+		});
+
+		$('#occurrenceNotesForm').on('submit', function(e) {
+			e.preventDefault();
+			const $saveButton = $('#saveNoteButton');
+			const occid = $('#occidInput').val();
+			const notes = $('#notesInput').val();
+			$saveButton.prop('disabled', true);
+			$('#notesError').text('');
+			$.ajax({
+				url: 'rpc/editoccurrencelink.php',
+				type: 'POST',
+				dataType: 'json',
+				data: { datasetid: <?= $datasetId ?>, occid: occid, notes: notes, action: 'editoccidlink' },
+				success: function(response) {
+					if (response.status) {
+						// Update the notes in the corresponding table row
+						$('tr[data-occid="' + occid + '"]').find('.occurrence-notes').text(notes);
+						// Close the dialog
+						document.getElementById('notesDialog').close();
+					} else {
+						$('#notesError').text(
+							response.error || 'Unable to save notes.'
+						);
+					}
+				},
+				error: function() {
+					$('#notesError').text(
+						'An error occurred while saving the notes.'
+					);
+				},
+				complete: function() {
+					$saveButton.prop('disabled', false);
+				}
+			});
+		});
+
+		$('#cancelNotesButton').on('click', function() {
+			document.getElementById('notesDialog').close();
+		});
+
+		$(document).on('click', '.remove-link-btn', function() {
+			const $row = $(this).closest('tr');
+			const occid = $row.data('occid');
+			$.ajax({
+				url: 'rpc/editoccurrencelink.php',
+				type: 'POST',
+				dataType: 'json',
+				data: { datasetid: <?= $datasetId ?>, occid: occid, action: 'deloccidlink' },
+				success: function(response) {
+					if (response.status) {
+						$('tr[data-occid="' + occid + '"]').hide();
+					} else {
+						alert(response.error || 'Unable to unlink record');
+					}
+				},
+				error: function() {
+					alert('Unable to unlink record (2)');
+				}
+			});
+		});
+
+		//Popup functions
 		function openIndPopup(occid) {
 			openPopup("../individual/index.php?occid=" + occid);
 		}
@@ -140,17 +219,21 @@ if($datasetId){
 		});
 	</script>
 	<style>
+		.icon-img{ width: 1.1em }
 	</style>
 </head>
 <body>
 	<div id="occurtab">
 		<?php
 		if ($datasetId) {
-			$targetPage = 'index.php';
-			if(!empty($_REQUEST['targetpage']) && $_REQUEST['targetpage'] == 'dsmanager') $targetPage = 'datasetmanager.php';
+			$sourcePage = 'index.php';
+			if(!empty($_REQUEST['sourcepage']) && $_REQUEST['sourcepage'] == 'dsmanager'){
+				$sourcePage = 'datasetmanager.php';
+			}
 			$retLimit = 200;
 			$maxNumberOfPagesBeforeShowPageJump = 10;
 			if ($occArr = $datasetManager->getOccurrenceDetails($datasetId, $pageNumber, $retLimit)) {
+				$occurDetailArr = Sanitize::out($occArr);
 				$recordCount = $datasetManager->getOccurrenceCount($datasetId);
 				?>
 				<div class="gridlike-form-row" style="justify-content: space-between;padding-bottom: 5px;">
@@ -178,7 +261,7 @@ if($datasetId){
 						}
 						?>
 						<div id="jump-to-page" name="jump-to-page">
-							<form action="<?= $targetPage ?>" method="get" class="gridlike-form" style="margin:0;">
+							<form action="<?= $sourcePage ?>" method="get" class="gridlike-form" style="margin:0;">
 								<div class="gridlike-form-row">
 									<input type="hidden" name="datasetid" value="<?= $datasetId ?>">
 									<label class="screen-reader-only" for="jumpToPage">Jump to Page:</label>
@@ -197,13 +280,13 @@ if($datasetId){
 							// for ($x = max($pageCount - ($maxNumberOfPagesBeforeShowPageJump / 2), $pageNumber) + 1; $x <= $pageCount; $x++) {
 							if ($x > 1) echo '<span class="pagination-link" data-even-odd="' . $x . '"> | </span>';
 							if (($pageNumber) == $x) echo '<b>';
-							else echo '<a href="' . $targetPage . '?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
+							else echo '<a href="' . $sourcePage . '?datasetid=' . $datasetId . '&pagenumber=' . $x . '" class="pagination-link" data-even-odd="' . $x . '">';
 							echo ($x);
 							if (($pageNumber) == $x) echo '</b>';
 							else echo '</a>';
 						}
 						echo '<span class="pagination-link"> | ...</span>';
-						echo '<a href="' . $targetPage . '?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '" class="pagination-link" data-keep-link="' . $pageCount . '">';
+						echo '<a href="' . $sourcePage . '?datasetid=' . $datasetId . '&pagenumber=' . $pageCount . '" class="pagination-link" data-keep-link="' . $pageCount . '">';
 						echo ($pageCount);
 						echo '</a>';
 						?>
@@ -215,26 +298,60 @@ if($datasetId){
 				<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
 					<table class="styledtable" style="font-size:12px;">
 						<tr>
-							<th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="<?= $LANG['SEL_DESEL_SPCS'] ?>" /></th>
+							<?php
+							if($isEditor > 1){
+								?>
+								<th><input name="" value="" type="checkbox" onclick="selectAll(this);" title="<?= $LANG['SEL_DESEL_SPCS'] ?>" /></th>
+								<?php
+							}
+							?>
 							<th><?= $LANG['CAT_NUM'] ?></th>
+							<?php
+							if($isEditor > 1){
+								?>
+								<th><?= $LANG['DATASET_NOTES'] ?></th>
+								<?php
+							}
+							?>
 							<th><?= $LANG['COLLECTOR'] ?></th>
 							<th><?= $LANG['SCI_NAME'] ?></th>
 							<th><?= $LANG['LOCALITY'] ?></th>
 						</tr>
 						<?php
 						$trCnt = 0;
-						foreach ($occArr as $occid => $recArr) {
+						foreach ($occurDetailArr as $occid => $recArr) {
 							$trCnt++;
 							$catNum = $recArr['catnum'];
 							if(!$catNum) $catNum = $LANG['UNDEFINED'];
 							?>
-							<tr <?= ($trCnt % 2 ? 'class="alt"' : '') ?>>
-								<td>
-									<input type="checkbox" name="occid[]" value="<?= $occid ?>" />
-								</td>
+							<tr id="tr-<?= $occid ?>" data-occid="<?= $occid ?>" <?= ($trCnt % 2 ? 'class="alt"' : '') ?>>
+								<?php
+								if($isEditor > 1){
+									?>
+									<td>
+										<div><input type="checkbox" name="occid[]" value="<?= $occid ?>" /></div>
+										<div aria-label="Unlink occurrence from dataset">
+											<a href="#" class="remove-link-btn"><img src="<?= $CLIENT_ROOT ?>/images/del.png" class="icon-img"></a>
+										</div>
+										<div aria-label="Edit notes for occurrence <?= $occid ?>">
+											<a href="#" class="edit-notes-btn"><img src="<?= $CLIENT_ROOT ?>/images/edit.png" class="icon-img"></a>
+										</div>
+									</td>
+									<?php
+								}
+								?>
 								<td>
 									<a href="#" onclick="openIndPopup(<?= $occid ?>); return false;"><?= $catNum ?></a>
 								</td>
+								<?php
+								if($isEditor > 1){
+									?>
+									<td class="occurrence-notes">
+										<?= $recArr['notes'] ?>
+									</td>
+									<?php
+								}
+								?>
 								<td>
 									<?= $recArr['coll'] ?>
 								</td>
@@ -252,7 +369,7 @@ if($datasetId){
 					<div style="margin: 15px;">
 						<input name="datasetid" type="hidden" value="<?= $datasetId ?>" />
 						<?php
-						if ($occArr && $isEditor < 3 && $targetPage != 'index.php') {
+						if ($occurDetailArr && $isEditor > 1) {
 							?>
 							<button type="submit" name="submitaction" value="deleteOccurrences"><?= $LANG['REM_SEL_OCCS'] ?></button>
 							<?php
@@ -268,6 +385,28 @@ if($datasetId){
 					</form>
 				</div>
 				<?php
+				if($sourcePage == 'dsmanager'){
+					?>
+					<dialog id="notesDialog" class="modal-form">
+						<form id="occurrenceNotesForm">
+							<div class="dialog-header">
+								<h3>Edit Occurrence Notes</h3>
+							</div>
+							<div class="dialog-body">
+								<div id="notesRecordLabel"></div>
+								<input type="hidden" name="occid" id="occidInput">
+								<label for="notesInput">Notes</label>
+								<textarea id="notesInput" name="notes" rows="8"></textarea>
+								<div id="notesError" class="dialog-error" role="alert"></div>
+							</div>
+							<div class="dialog-footer">
+								<button type="button" id="cancelNotesButton" class="edit-btn">Cancel</button>
+								<button type="submit" id="saveNotesButton" class="edit-btn">Save</button>
+							</div>
+						</form>
+					</dialog>
+					<?php
+				}
 			} else {
 				?>
 				<div style="font-weight:bold; margin:15px"><?= $LANG['NO_OCCS_DS'] ?></div>

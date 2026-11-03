@@ -9,6 +9,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceDataset.php');
 
 Language::load('collections/search/index');
 
@@ -96,7 +97,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			expandButton.removeAttribute('style', 'display: none;');
 		};
 
-		document.addEventListener('DOMContentLoaded', () => {			
+		document.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
@@ -449,6 +450,42 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 									</label>
 									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
+								<?php
+								$datasetManager = new OccurrenceDataset();
+								if($datasetList = $datasetManager->getDatasetList()){
+									?>
+									<div class="select-container" style="position: relative; margin-bottom:15px;">
+										<label for="datasetid" class="screen-reader-only"><?= $LANG['DATASET'] ?></label>
+										<select name="datasetid" id="datasetid" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+											<option value="" data-chip="<?= $LANG['DATASET'] ?>">------------------------</option>
+											<?php
+											foreach($datasetList as $dsid => $dsArr){
+												echo '<option value="' . $dsid . '" data-chip="' . $LANG['DATASET'] . '">' . $dsArr['datasetName'] . '</option>';
+											}
+											?>
+										</select>
+										<span class="inset-input-label"><?= $LANG['DATASET'] ?></span>
+									</div>
+									<?php
+								}
+								if ($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()) {
+									?>
+									<div class="select-container" style="position: relative">
+										<label for="materialsampletype" class="screen-reader-only"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
+										<select name="materialsampletype" id="materialsampletype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+											<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
+											<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+											<?php
+											foreach ($matSampleTypeArr as $matSampeType) {
+												echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
+											}
+											?>
+										</select>
+										<span class="inset-input-label"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></span>
+									</div>
+									<?php
+								}
+								?>
 							</div>
 							<div>
 								<div>
@@ -476,24 +513,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
 								</div>
 							</div>
-							<?php
-							if ($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()) {
-							?>
-								<div class="select-container">
-									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
-									<select name="materialsampletype" id="materialsampletype">
-										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
-										<?php
-										foreach ($matSampleTypeArr as $matSampeType) {
-											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
-										}
-										?>
-									</select>
-								</div>
-							<?php
-							}
-							?>
 						</div>
 					</div>
 				</section>
@@ -805,7 +824,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	?>
 </body>
 <script src="<?= $JS_LANG_FILENAME ?>" type="text/javascript"></script>
-<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
+<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=3a" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 <script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=20171215>" type="text/javascript"></script>

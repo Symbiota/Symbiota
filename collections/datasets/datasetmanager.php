@@ -37,11 +37,11 @@ if($datasetId){
 
 	$isEditor = 0;
 	if ($SYMB_UID == $mdArr['uid']) {
-		$isEditor = 1;
+		$isEditor = 3;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetId, $SYMB_UID)) {
 		if (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetAdmin'])) {
-			$isEditor = 1;
+			$isEditor = 3;
 		} elseif (isset($roles[$datasetId][$SYMB_UID]['roles']['DatasetEditor'])) {
 			$isEditor = 2;
 		}
@@ -55,7 +55,7 @@ if($datasetId){
 				$statusStr = $datasetManager->getErrorMessage();
 			}
 		}
-		if ($isEditor == 1) {
+		if ($isEditor) {
 			if ($action == 'Save Edits') {
 				if($datasetManager->updateDataset($_POST)){
 					$mdArr = $datasetManager->getDatasetMetadata(false);
@@ -192,7 +192,7 @@ if($datasetId){
 		if ($datasetId) {
 			if ($isEditor) {
 				$role = '';
-				if($isEditor == 1){
+				if($isEditor == 3){
 					$role = $LANG['DS_ADMIN'];
 					if($SYMB_UID == $mdArr['uid']) $role = ' (' . $LANG['OWNER'] . ')';
 				}
@@ -209,9 +209,9 @@ if($datasetId){
 				</div>
 				<div id="tabs" style="margin:10px;">
 					<ul>
-						<li><a href="datasetoccurlist.php?targetpage=dsmanager&datasetid=<?= $datasetId ?>&pagenumber=<?= $pageNumber ?>"><span><?= $LANG['OCC_LIST'] ?></span></a></li>
+						<li><a href="datasetoccurlist.php?sourcepage=dsmanager&datasetid=<?= $datasetId ?>&pagenumber=<?= $pageNumber ?>"><span><?= $LANG['OCC_LIST'] ?></span></a></li>
 						<?php
-						if ($isEditor == 1) {
+						if ($isEditor == 3) {
 							?>
 							<li><a href="#admintab"><span><?= $LANG['GEN_MANAGEMENT'] ?></span></a></li>
 							<li><a href="#accesstab"><span><?= $LANG['USER_ACCESS'] ?></span></a></li>
@@ -220,7 +220,7 @@ if($datasetId){
 						?>
 					</ul>
 					<?php
-					if ($isEditor == 1) {
+					if ($isEditor == 3) {
 						?>
 						<div id="admintab">
 							<section class="fieldset-like">

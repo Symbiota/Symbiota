@@ -1,5 +1,7 @@
 <?php
 include_once($SERVER_ROOT . '/classes/data/OmDatasets.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+Language::load('collections/datasets/index');
 
 class OccurrenceDataset extends OmDatasets {
 

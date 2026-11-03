@@ -17,6 +17,7 @@ $LANG['COUNT'] = 'Contar';
 $LANG['RECORDS'] = 'registros';
 $LANG['SEL_DESEL_SPCS'] = 'Seleccionar/deseleccionar todas las muestras';
 $LANG['CAT_NUM'] = 'Número de Catálogo';
+$LANG['DATASET_NOTES'] = 'Dataset Notes (internal)';
 $LANG['COLLECTOR'] = 'Coleccionista';
 $LANG['SCI_NAME'] = 'Nombre Científico';
 $LANG['LOCALITY'] = 'Localidad';

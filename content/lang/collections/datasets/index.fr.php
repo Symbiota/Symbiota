@@ -7,7 +7,7 @@ Translated by: Google Translate
 */
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.fr.php');
 
-$LANG['OCCURRENCES_LIST'] = 'Recherche étendue';
+$LANG['EXTENDED_SEARCH'] = 'Recherche étendue';
 $LANG['PRIVATE_DATASET'] = 'Jeu de données est privé';
 $LANG['UNDEFINED_CATEGORY'] = 'Jeux de données divers';
 $LANG['NO_DATASETS'] = "Il n'y a pas d'ensembles de données publics";

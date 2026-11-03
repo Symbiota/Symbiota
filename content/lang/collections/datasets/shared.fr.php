@@ -24,5 +24,6 @@ $LANG['DS_ADMIN'] = 'Administrateur';
 $LANG['DS_EDITOR'] = 'Éditeur';
 $LANG['DS_READER'] = 'Lecteur';
 $LANG['EXPORT_DS'] = "Exporter l'ensemble de données";
+$LANG['USER_CART'] = "Panier de l'utilisateur";
 
 ?>

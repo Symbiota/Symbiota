@@ -19,7 +19,13 @@ class OmDatasets extends DataCore{
 
 	public function getDatasetArr($conditionArr = null, $orderByArr = null){
 		$this->setDatasetMap();
-		return $this->getRecordArr('omoccurdatasets', $conditionArr, $orderByArr);
+		$dsArr = $this->getRecordArr('omoccurdatasets', $conditionArr, $orderByArr);
+		foreach($dsArr as $id => $unitArr){
+			if($unitArr['datasetName'] == 'USER_CART' && isset($GLOBALS['LANG']['USER_CART'])){
+				$dsArr[$id]['datasetName'] = $GLOBALS['LANG']['USER_CART'];
+			}
+		}
+		return $dsArr;
 	}
 
 	public function insertDataset($inputArr){
@@ -111,6 +117,7 @@ class OmDatasets extends DataCore{
 					if ($r->eventdate) $collStr .= ' [' . $r->eventdate . ']';
 					$retArr[$r->occid]['coll'] = $collStr;
 					$retArr[$r->occid]['loc'] = trim($r->country . ', ' . $r->stateprovince . ', ' . $r->county . ', ' . $r->locality, ', ');
+					$retArr[$r->occid]['notes'] = $r->notes;
 				}
 				$rs->free();
 				$stmt->close();
@@ -154,6 +161,18 @@ class OmDatasets extends DataCore{
 			}
 			return $status;
 		}
+	}
+
+	public function updateOccurrence($occid, $notes){
+		//Input: single occid, input for notes
+		if(!$this->datasetID){
+			$this->errorMessage = 'ID_NOT_SET';
+			return false;
+		}
+		$this->setDatasetOccurrenceMap();
+		$pkArr = array('datasetID' => $this->datasetID, 'occid' => $occid);
+		$inputArr = array('notes' => $notes);
+		return $this->updateRecord('omoccurdatasetlink', $pkArr, $inputArr);
 	}
 
 	protected function copyOccurrences($targetDatasetID){
