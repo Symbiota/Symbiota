@@ -50,7 +50,6 @@ $LANG['PAGINATION_RECORDS'] = 'registros';
 $LANG['PAGINATION_PREVIOUS'] = 'Previo';
 $LANG['PAGINATION_NEXT'] = 'Próximo';
 $LANG['PAGINATION_OF'] = 'de';
-$LANG['SELECT_DATASET'] = 'Seleccione un conjunto de datos para agregar ocurrencias o seleccione Crear nuevo conjunto de datos';
 $LANG['SELECT_OCCURRENCE'] = 'Seleccione al menos una ocurrencia para agregar al conjunto de datos';
 $LANG['DATASET_MANAGEMENT'] = 'Gestión de conjuntos de datos';
 $LANG['DATASET_TARGET'] = 'Conjunto de datos';

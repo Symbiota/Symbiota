@@ -181,7 +181,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 				</div>
 			</div>
 		</div>
-		<form name="occurListForm" method="post" action="datasets/index.php" onsubmit="return validateOccurListForm(this)" target="_blank">
+		<form name="occurListForm" method="post" action="datasets/datasetuserlist.php" onsubmit="return validateOccurListForm(this)" target="_blank">
 			<?php include('datasetinclude.php'); ?>
 			<div id="tablediv">
 				<?php

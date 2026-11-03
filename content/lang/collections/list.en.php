@@ -50,7 +50,6 @@ $LANG['PAGINATION_RECORDS'] = 'records';
 $LANG['PAGINATION_PREVIOUS'] = 'Previous';
 $LANG['PAGINATION_NEXT'] = 'Next';
 $LANG['PAGINATION_OF'] = 'of';
-$LANG['SELECT_DATASET'] = 'Please select a dataset to append occurrences, or select Create New Dataset';
 $LANG['SELECT_OCCURRENCE'] = 'Please select at least one occurrence to be added to the dataset';
 $LANG['DATASET_MANAGEMENT'] = 'Dataset Management';
 $LANG['DATASET_TARGET'] = 'Dataset target';

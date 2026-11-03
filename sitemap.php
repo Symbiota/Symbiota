@@ -124,7 +124,7 @@ if(!$schemaVersion){
 				<h2><?= $LANG['DATASETS'] ?></h2>
 			</div>
 			<ul>
-				<li><a href="collections/datasets/publiclist.php"><?= $LANG['ALLPUBDAT'] ?></a></li>
+				<li><a href="collections/datasets/index.php"><?= $LANG['ALLPUBDAT'] ?></a></li>
 			</ul>
 			<div id="dynamiclists"><h2><?= $LANG['DYNAMIC'] ?></h2></div>
 			<ul>
@@ -263,7 +263,7 @@ if(!$schemaVersion){
 						</span>
 					</h2>
 					<ul>
-						<li><a href="collections/datasets/index.php"><?= $LANG['DATMANPAG'] ?></a> - <?= $LANG['DATA_AUTHORIZED_TO_EDIT'] ?></li>
+						<li><a href="collections/datasets/datasetuserlist.php"><?= $LANG['DATMANPAG'] ?></a> - <?= $LANG['DATA_AUTHORIZED_TO_EDIT'] ?></li>
 					</ul>
 					<h2 class="subheader">
 						<span>

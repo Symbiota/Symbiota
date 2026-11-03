@@ -20,7 +20,6 @@ $serverHost = GeneralUtil::getDomain();
 
 <body>
 	<?php
-	$displayLeftMenu = true;
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class="navpath">

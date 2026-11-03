@@ -344,6 +344,7 @@ class OccurrenceLabel {
 				'recordNumber'=>'o.recordnumber',
 				'associatedCollectors' => 'o.associatedcollectors',
 				'eventDate' => 'DATE_FORMAT(o.eventdate,"%e %M %Y") AS eventdate',
+				'eventDate2' => 'DATE_FORMAT(o.eventdate2,"%e %M %Y") AS eventdate',
 				'year' => 'o.year',
 				'month' => 'o.month',
 				'day' => 'o.day',

@@ -35,7 +35,7 @@ function checkHarvestParamsForm(frm, currentPage){
 				break;
 			}
 		}
-		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" ){
+		else if(traitInputs[i].name == "materialsampletype" || traitInputs[i].name == "earlyInterval" || traitInputs[i].name == "lateInterval" || traitInputs[i].name == "datasetid" ){
 			if(traitInputs[i].value.trim() != ""){
 				searchDefined = true;
 				break;
@@ -189,8 +189,8 @@ function setHarvestParamsForm(frm) {
 	  frm.catnum.value = urlVar.catnum;
 	}
 	//if(!urlVar.othercatnum){frm.includeothercatnum.checked = false;}
-	if (urlVar.eventdate2) {
-	  frm.eventdate2.value = urlVar.eventdate2;
+	if (urlVar.datasetid) {
+	  frm.datasetid.value = urlVar.datasetid;
 	}
 	if (urlVar.materialsampletype) {
 	  frm.materialsampletype.value = urlVar.materialsampletype;

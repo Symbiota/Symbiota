@@ -1144,6 +1144,9 @@ function setSearchForm(frm) {
     if (urlVar.eventdate2) {
       frm.eventdate2.value = urlVar.eventdate2;
     }
+    if (urlVar.datasetid) {
+      frm.datasetid.value = urlVar.datasetid;
+    }
     if (urlVar.materialsampletype) {
       frm.materialsampletype.value = urlVar.materialsampletype;
     }

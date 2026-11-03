@@ -173,7 +173,7 @@ foreach($collArr as $id => $collectionArr){
 			<section class="fieldset-like">
 				<h2><span><?= $LANG['MISC_TOOLS'] ?></span></h2>
 				<ul>
-					<li><a href="../collections/datasets/index.php"><?= $LANG['DATASET_MANAGEMENT'] ?></a></li>
+					<li><a href="../collections/datasets/datasetuserlist.php"><?= $LANG['DATASET_MANAGEMENT'] ?></a></li>
 					<?php
 					if((count($cArr)+count($oArr)) > 1){
 						?>

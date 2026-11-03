@@ -50,7 +50,6 @@ $LANG['PAGINATION_RECORDS'] = 'enregistrements';
 $LANG['PAGINATION_OF'] = 'sur';
 $LANG['PAGINATION_PREVIOUS'] = 'Précédent';
 $LANG['PAGINATION_NEXT'] = 'Suivant';
-$LANG['SELECT_DATASET'] = 'Veuillez sélectionner un ensemble de données pour ajouter des occurrences, ou sélectionnez Créer un nouvel jeu de données';
 $LANG['SELECT_OCCURRENCE'] = 'Veuillez sélectionner au moins une occurrence à ajouter à jeu de données';
 $LANG['DATASET_MANAGEMENT'] = 'Gestion des Jeu de Données';
 $LANG['DATASET_TARGET'] = 'Cible de Jeu de Données';

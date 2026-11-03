@@ -46,7 +46,6 @@ $LANG['PAGINATION_RECORDS'] = 'registros';
 $LANG['PAGINATION_PREVIOUS'] = 'Anterior';
 $LANG['PAGINATION_NEXT'] = 'Próximo';
 $LANG['PAGINATION_OF'] = 'de';
-$LANG['SELECT_DATASET'] = 'Por favor selecione um conjunto de dados para anexar ocorrências ou selecione Criar Novo Conjunto de Dados';
 $LANG['SELECT_OCCURRENCE'] = 'Por favor selecione pelo menos uma ocorrência para ser adicionada ao conjunto de dados';
 $LANG['DATASET_MANAGEMENT'] = 'Gerenciamento de Conjunto de Dados';
 $LANG['DATASET_TARGET'] = 'Alvo do Conjunto de Dados';

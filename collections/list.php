@@ -71,14 +71,6 @@ $_SESSION['citationvar'] = $searchVar;
 			});
 		});
 
-		function validateOccurListForm(f) {
-			if (f.targetdatasetid.value == "") {
-				alert("<?= $LANG['SELECT_DATASET'] ?>");
-				return false;
-			}
-			return true;
-		}
-
 		function hasSelectedOccid(f) {
 			var isSelected = false;
 			for (var h = 0; h < f.length; h++) {
@@ -335,7 +327,7 @@ $_SESSION['citationvar'] = $searchVar;
 					//Add search return
 					if ($occurArr) {
 					?>
-						<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">
+						<form name="occurListForm" method="post" action="datasets/datasetHandler.php" target="_blank">
 							<?php include('datasetinclude.php'); ?>
 							<table id="omlisttable">
 								<?php

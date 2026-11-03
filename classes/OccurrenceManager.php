@@ -107,7 +107,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 						$clOccidArr[] = $r->occid;
 					}
 					$rs->free();
-			}
+				}
 				if($clOccidArr) $sqlWhere .= 'AND (o.occid NOT IN('.implode(',',$clOccidArr).')) ';
 			}
 			//$this->displaySearchArr[] = $this->voucherManager->getQueryVariableStr();
@@ -145,7 +145,6 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$sqlWhere = substr_replace($sqlWhere,'',-1);
 			$sqlWhere .= $this->associationManager->getAssociatedRecords($this->searchTermArr, 'association-type') . ')';
 		}
-
 
 		//Country term
 		//Note: $this->displaySearchArr is set within the readRequestVariables function
@@ -962,10 +961,16 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 	public function addOccurrencesToDataset($datasetID){
 		if(!is_numeric($datasetID)) return false;
 		$this->setSqlWhere();
-		$sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid) SELECT DISTINCT o.occid, '.$datasetID.' as dsID FROM omoccurrences o '.$this->getTableJoins($this->sqlWhere).$this->sqlWhere;
-		if(!$this->conn->query($sql)){
-			$this->errorMessage = 'ERROR adding records to dataset(#'.$datasetID.'): '.$this->conn->error;
-			return false;
+		$sql = 'INSERT IGNORE INTO omoccurdatasetlink(occid,datasetid)
+			SELECT DISTINCT o.occid, ? as dsID FROM omoccurrences o ' . $this->getTableJoins($this->sqlWhere) . $this->sqlWhere;
+		if($stmt = $this->conn->prepare($sql)){
+			$stmt->bind_param('i', $datasetID);
+			$stmt->execute();
+			if($stmt->error){
+				$this->errorMessage = 'ERROR adding records to dataset(#' . $datasetID . '): ' . $stmt->error;
+				return false;
+			}
+			$stmt->close();
 		}
 		return true;
 	}
