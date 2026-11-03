@@ -9,7 +9,7 @@
 		$sql = 'SELECT tid '.
 			'FROM taxa '.
 			'WHERE sciname = "'.$queryString.'" ';
-		echo $sql;
+		//echo $sql;
 		$result = $con->query($sql);
 		if($row = $result->fetch_object()) {
 	       	$retStr = $row->tid;

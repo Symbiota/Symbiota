@@ -243,7 +243,7 @@ class OmOccurrenceTraits extends DataCore{
 			return false;
 		}
 		$this->setTraitTaxaMap();
-		$inputArr = array('traitID' => $this->traitID, 'tid' => $tid);
+		$inputArr = array('traitid' => $this->traitID, 'tid' => $tid, 'relation' => $relation);
 		return $this->insertRecord('tmtraittaxalink', $inputArr);
 	}
 

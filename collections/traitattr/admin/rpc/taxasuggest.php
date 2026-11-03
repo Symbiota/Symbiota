@@ -9,7 +9,7 @@
 		$sql = 'SELECT tid, sciname '.
 			'FROM taxa '.
 			'WHERE rankid < 220 AND sciname LIKE "'.$queryString.'%" ';
-		echo $sql;
+		//echo $sql;
 		$result = $con->query($sql);
 		while ($row = $result->fetch_object()) {
 			array_push($retArr,array('id'=>$row->tid,'value'=>$row->sciname));

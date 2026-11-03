@@ -97,7 +97,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 								<?php
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return confirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
@@ -121,7 +121,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 								<?php
 								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
 								?>
-								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
+								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return confirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?= $cid ?>" />
 									<input name="tid" type="hidden" value="<?= $tid ?>" />
 									<input name="formsubmit" type="hidden" value="deltaxon" />
