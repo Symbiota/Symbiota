@@ -27,7 +27,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 <html lang="<?= $LANG_TAG ?>">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=<?= $CHARSET;?>">
-	<title>Occurrence Traits</title>
+	<title><?= $LANG['OCCUR_TRAITS'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
@@ -42,15 +42,15 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 	?>
 	<div class='navpath'>
 		<a href='../../../index.php'> <?= $LANG['NAV_HOME'] ?> </a> &gt;&gt;
-		<b>Trait Management</b>
+		<b><?= $LANG['TRAIT_MGMT']  ?></b>
 	</div>
 	<div role="main" id="innertext">
 		<div style="float: right;">
-			<button type="button" class="clear-icon-button" onclick="toggle('addtraitdiv');" title="<?= $LANG['ADD_BTN'] ?>">
+			<button type="button" class="clear-icon-button" onclick="toggle('addtraitdiv');" title="<?= $LANG['ADD_BTN'] ?>" aria-label="<?= $LANG['ADD_BTN'] ?>">
 				<img class="icon-img" src="../../../images/add.png" />
 			</button>
 		</div>
-		<h1 class="page-heading">Occurrence Traits</h1>
+		<h1 class="page-heading"><?= $LANG['OCCUR_TRAITS'] ?></h1>
 		<?php
 		if($isEditor){
 			?>
@@ -58,14 +58,14 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 				<div id="addtraitdiv" style="display:none;margin-bottom:8px;">
 					<form name="newtraitform" action="traitdetails.php" method="post">
 						<fieldset>
-							<legend><b>New Trait</b></legend>
+							<legend><b><?= $LANG['NEW_TRAIT'] ?></b></legend>
 							<div>
-								<label for="traitname">Trait Name:</label>
+								<label for="traitname"><?= $LANG['TRAIT_NAME'] ?>:</label>
 								<input type="text" id="traitname" name="traitname" autocomplete="off" maxlength="255" style="width:400px;" required/>
 							</div>
 							<div class="flex-form">
 								<div>
-									<label for="traittype">Trait Type:</label>
+									<label for="traittype"><?= $LANG['TYPE'] ?>:</label>
 									<select id="traittype" name="traittype" >
 										<option value="UM">UM</option>
 										<option value="OM">OM</option>
@@ -74,11 +74,11 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 									</select>
 								</div>
 								<div>
-									<label for="units">Units:</label>
+									<label for="units"><?= $LANG['UNITS'] ?>:</label>
 									<input type="text" id="units" name="units" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="projectGroup">Project Group:</label>
+									<label for="projectGroup"><?= $LANG['PROJECT_GROUP'] ?>:</label>
 									<input type="text" id="projectGroup" name="projectGroup" list="groups" autocomplete="off" maxlength="255" />
 									<datalist id="groups">
 										<?php
@@ -91,32 +91,32 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							</div>
 							<div class="flex-form">
 								<div>
-									<label for="description">Description:</label>
+									<label for="description"><?= $LANG['DESC'] ?>:</label>
 									<input type="text" id="description" name="description" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="refurl">Reference URL:</label>
+									<label for="refurl"><?= $LANG['REF_URL'] ?>:</label>
 									<input type="text" id="refurl" name="refurl" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-									<label for="notes">Notes:</label>
+									<label for="notes"><?= $LANG['NOTES'] ?>:</label>
 									<input type="text" id="notes" name="notes" autocomplete="off" maxlength="255" />
 								</div>
 								<div>
-								<label for="dynamicproperties">Input Type:</label>
+								<label for="dynamicproperties"><?= $LANG['INPUT_TYPE'] ?>:</label>
 									<select id="dynamicproperties" name="dynamicproperties">
-										<option value="radio">Radio Button</option>
-										<option value="checkbox">Checkbox</option>
-										<option value="select">Select</option>
+										<option value="radio"><?= $LANG['RADIO_BTN'] ?></option>
+										<option value="checkbox"><?= $LANG['CHECKBOX'] ?></option>
+										<option value="select"><?= $LANG['SELECT'] ?></option>
 									</select>
 								</div>
 								<div style="padding-top:4px;">
-									<label for="isPublic">isPublic:</label>
+									<label for="isPublic"><?= $LANG['IS_PUBLIC'] ?>:</label>
 									<input type="hidden" name="isPublic" value="0"/>
 									<input type="checkbox" id="isPublic" name="isPublic" value="1" checked/>
 								</div>
 								<div style="padding-top:4px;"">
-									<label for="includeInSearch">includeInSearch:</label>
+									<label for="includeInSearch"><?= $LANG['IN_SEARCH'] ?>:</label>
 									<input type="hidden" name="includeInSearch" value="0"/>
 									<input type="checkbox" id="includeInSearch" name="includeInSearch" value="1" checked/>
 								</div>
@@ -138,7 +138,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							}
 							echo '</ul>';
 						}
-						echo '<h2>No Group Assigned</h2><ul>';
+						echo '<h2>'. $LANG['NO_GRP_ASSSIGNED'] . '</h2><ul>';
 						foreach ($traitList as $trait){
 							if (empty($trait['projectGroup'])) {
 								echo '<li><a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a></li>';
@@ -147,7 +147,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 						echo '</ul>';
 					}
 					else{
-						echo '<div style="font-weight:bold;font-size:120%;">' . 'No Traits' . '</div>';
+						echo '<div style="font-weight:bold;font-size:120%;">' . $LANG['NO_TRAITS'] . '</div>';
 					}
 					?>
 				</div>

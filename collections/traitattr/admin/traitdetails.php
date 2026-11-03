@@ -262,11 +262,11 @@ if(!$traitID) header('Location: index.php');
 								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['notes']) ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<label for="traitname">isPublic:</label>
+								<label for="isPublic">isPublic:</label>
 								<input type="hidden" name="isPublic" value="0"/>
 								<input type="checkbox" id="isPublic" name="isPublic" value="1" <?= $traitArr['isPublic'] === 1 ? 'checked' : '' ?> />
 
-								<label for="traitname" style="margin-left:20px;">includeInSearch:</label>
+								<label for="includeInSearch" style="margin-left:20px;">includeInSearch:</label>
 								<input type="hidden" name="includeInSearch" value="0"/>
 								<input type="checkbox" id="includeInSearch" name="includeInSearch" value="1" <?= $traitArr['includeInSearch'] === 1 ? 'checked' : '' ?> />
 							</div>
