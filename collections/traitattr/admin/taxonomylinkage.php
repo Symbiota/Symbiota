@@ -75,10 +75,10 @@ $tLinks = $keyManager->getTaxonRelevance();
 	</script>
 </head>
 <body>
-	<h3><?= $LANG['LINK_CHAR_TAXA'] ?></h3>
+	<h3><?= $LANG['LINK_TRAIT_TAXA'] ?></h3>
 	<div id="tlinkdiv" style="margin:15px;">
 		<div style="margin:10px;">
-			<b><?= $LANG['CHAR_TAXON_RELEVANCE'] ?></b> -
+			<b><?= $LANG['TRAIT_TAXON_RELEVANCE'] ?></b> -
 			<?= $LANG['TAG_TAXON_NODE'] ?>
 		</div>
 		<div style="margin:20px;">
@@ -140,7 +140,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 			else{
 				?>
 				<div style="font-weight:bold">
-					<?= $LANG['NO_CHAR_LINK'] ?>
+					<?= $LANG['NO_TRAIT_LINK'] ?>
 				</div>
 				<?php
 			}

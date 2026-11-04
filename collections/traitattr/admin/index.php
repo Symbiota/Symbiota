@@ -91,7 +91,7 @@ if($IS_ADMIN || array_key_exists("KeyAdmin",$USER_RIGHTS)){
 							</div>
 							<div class="flex-form">
 								<div>
-									<label for="description"><?= $LANG['DESC'] ?>:</label>
+									<label for="description"><?= $LANG['DESCRIPTION'] ?>:</label>
 									<input type="text" id="description" name="description" autocomplete="off" maxlength="255" />
 								</div>
 								<div>

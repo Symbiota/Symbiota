@@ -92,7 +92,7 @@ if(!$traitID) header('Location: index.php');
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
 <head>
-	<title>Trait Admin</title>
+	<title><?= $LANG['TRAIT_ADMIN'] ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
@@ -117,56 +117,6 @@ if(!$traitID) header('Location: index.php');
 			toggle('statecodeplus-'+statecodeId);
 		}
 
-		function updateUnits(obj){
-			var unitObj = document.getElementById("units");
-			if(obj.value == "IN" || obj.value == "RN"){
-				unitObj.style.display = "block";
-			}
-			else{
-				unitObj.style.display = "none";
-			}
-		}
-
-		function validateCharEditForm(f){
-			if(f.traitname.value == ""){
-				alert("Trait name must not be null");
-				return false;
-			}
-			if(f.traittype.value == ""){
-				alert("Trait type must not be null");
-				return false;
-			}
-			return true;
-		}
-
-		function validateStateAddForm(f){
-			if(f.statename.value == ""){
-				alert("Trait state must not be null");
-				return false;
-			}
-			return true;
-		}
-
-		function validateStateEditForm(f){
-			if(f.sortseq.value && !isNumeric(f.sortseq.value)){
-				alert("Sort Sequence field must be numeric");
-				return false;
-			}
-			return true;
-		}
-
-		function validateTaxonAddForm(f){
-			if(f.tid.value == ''){
-				alert("Please select a taxonomic name!");
-				return false;
-			}
-			return true;
-		}
-
-		function openHeadingAdmin(){
-			newWindow = window.open("headingadmin.php","headingWin","scrollbars=1,toolbar=0,resizable=1,width=800,height=600,left=50,top=50");
-			if (newWindow.opener == null) newWindow.opener = self;
-		}
 	</script>
 	<style>
 		.icon-img{ width: 1.1em }
@@ -180,11 +130,11 @@ if(!$traitID) header('Location: index.php');
 	include($SERVER_ROOT . '/includes/header.php');
 	?>
 	<div class='navpath'>
-		<a href='../../../index.php'>Home</a> &gt;&gt;
-		<a href='index.php'><b>Occurrence Trait Management</b></a>
+		<a href='../../../index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<a href='index.php'><b><?= $LANG['TRAIT_MGMT'] ?></b></a>
 	</div>
 	<div role="main" id="innertext">
-		<h1 class="page-heading screen-reader-only">Occurrence Trait Administration</h1>
+		<h1 class="page-heading screen-reader-only"><?= $LANG['OCCUR_TRAIT_ADMIN'] ?></h1>
 		<?php
 		if($isEditor){
 			if($statusStr){
@@ -204,22 +154,22 @@ if(!$traitID) header('Location: index.php');
 			<div style="font-weight:bold;font-size:150%;margin:15px;"><?= Sanitize::outString($traitArr['traitName']) ?></div>
 			<div id="tabs" style="margin:0px;">
 				<ul>
-					<li><a href="#traitdetaildev"><span>Details</span></a></li>
-					<li><a href="#traitstatediv"><span>Trait States</span></a></li>
-					<li><a href="taxonomylinkage.php?traitid=<?= $traitID ?>"><span>Taxonomic Linkages</span></a></li>
-					<li><a href="#traitdeldiv"><span>Admin</span></a></li>
+					<li><a href="#traitdetaildev"><span><?= $LANG['DETAILS'] ?></span></a></li>
+					<li><a href="#traitstatediv"><span><?= $LANG['TRAIT_STATES'] ?></span></a></li>
+					<li><a href="taxonomylinkage.php?traitid=<?= $traitID ?>"><span><?= $LANG['TAXON_LINKAGES'] ?></span></a></li>
+					<li><a href="#traitdeldiv"><span><?= $LANG['ADMIN'] ?></span></a></li>
 				</ul>
 				<div id="traitdetaildev">
-					<form name="traiteditform" action="traitdetails.php" method="post" onsubmit="return validateCharEditForm(this)">
+					<form name="traiteditform" action="traitdetails.php" method="post">
 						<fieldset>
-							<legend>Trait Details</legend>
+							<legend><?= $LANG['TRAIT_DETAILS'] ?></legend>
 							<div style="padding-top:4px;">
-								<label for="traitname">Trait Name</label><br />
-								<input type="text" id="traitname" name="traitname" maxlength="150" style="width:400px;" value="<?= Sanitize::outString($traitArr['traitName']) ?>" />
+								<label for="traitname"><?= $LANG['TRAIT_NAME'] ?></label><span style="color:red;">*</span><br />
+								<input type="text" id="traitname" name="traitname" maxlength="150" style="width:400px;" value="<?= Sanitize::outString($traitArr['traitName']) ?>" required />
 							</div>
 							<div style="padding-top:8px;float:left;">
 								<div style="float:left;">
-									<label for="type">Type</label><br />
+									<label for="type"><?= $LANG['TYPE'] ?></label><br />
 									<select id="type" name="traittype" style="width:180px;">
 										<option value="UM">UM</option>
 										<option value="OM">OM</option>
@@ -228,11 +178,11 @@ if(!$traitID) header('Location: index.php');
 									</select>
 								</div>
 								<div id="units" style="margin-left:15px;float:left;">
-									<label for="units">Units</label><br />
+									<label for="units"><?= $LANG['UNITS'] ?></label><br />
 									<input type="text" id="units" name="units" maxlength="45" style="width:100px;" value="<?= Sanitize::outString($traitArr['units']) ?>" />
 								</div>
 								<div style="margin-left:15px;float:left;">
-									<label for="projectGroup">Project Group:</label><br />
+									<label for="projectGroup"><?= $LANG['PROJECT_GROUP'] ?>:</label><br />
 									<input type="text" id="projectGroup" name="projectGroup" list="groups" autocomplete="off" maxlength="255" value="<?= Sanitize::outString($traitArr['projectGroup']) ?>"/>
 									<datalist id="groups">
 										<?php
@@ -245,7 +195,7 @@ if(!$traitID) header('Location: index.php');
 							</div>
 
 							<div style="padding-top:8px;clear:both;">
-								<label for="refurl">Reference URL</label><br />
+								<label for="refurl"><?= $LANG['REF_URL'] ?></label><br />
 								<input type="text" id="refurl" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($traitArr['refUrl']) ?>" />
 								<?php
 								if($traitArr['refUrl'] && substr($traitArr['refUrl'],0,4) == 'http'){
@@ -254,34 +204,34 @@ if(!$traitID) header('Location: index.php');
 								?>
 							</div>
 							<div style="padding-top:8px;">
-								<label for="description">Description</label><br />
+								<label for="description"><?= $LANG['DESCRIPTION'] ?></label><br />
 								<input type="text" id="description" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['description']) ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<label for="notes">Notes</label><br />
+								<label for="notes"><?= $LANG['NOTES'] ?></label><br />
 								<input type="text" id="notes" name="notes" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($traitArr['notes']) ?>" />
 							</div>
 							<div style="padding-top:8px;">
-								<label for="isPublic">isPublic:</label>
+								<label for="isPublic"><?= $LANG['IS_PUBLIC'] ?>:</label>
 								<input type="hidden" name="isPublic" value="0"/>
 								<input type="checkbox" id="isPublic" name="isPublic" value="1" <?= $traitArr['isPublic'] === 1 ? 'checked' : '' ?> />
 
-								<label for="includeInSearch" style="margin-left:20px;">includeInSearch:</label>
+								<label for="includeInSearch" style="margin-left:20px;"><?= $LANG['IN_SEARCH'] ?>:</label>
 								<input type="hidden" name="includeInSearch" value="0"/>
 								<input type="checkbox" id="includeInSearch" name="includeInSearch" value="1" <?= $traitArr['includeInSearch'] === 1 ? 'checked' : '' ?> />
 							</div>
 							<div style="padding-top:8px;">
-							<label for="dynamicproperties">Dynamic Properties/Input Type:</label>
+							<label for="dynamicproperties"><?= $LANG['INPUT_TYPE'] ?>:</label>
 								<select id="dynamicproperties" name="dynamicproperties">
-									<option value="radio" <?= $traitArr['dynamicProperties'] == '[{"controlType":"radio"}]' ? 'selected' : ''; ?> >Radio Button</option>
-									<option value="checkbox" <?= $traitArr['dynamicProperties'] == '[{"controlType":"checkbox"}]' ? 'selected' : ''; ?> >Checkbox</option>
-									<option value="select" <?= $traitArr['dynamicProperties'] == '[{"controlType":"select"}]' ? 'selected' : ''; ?> >Select</option>
+									<option value="radio" <?= $traitArr['dynamicProperties'] == '[{"controlType":"radio"}]' ? 'selected' : ''; ?> ><?= $LANG['RADIO_BTN'] ?></option>
+									<option value="checkbox" <?= $traitArr['dynamicProperties'] == '[{"controlType":"checkbox"}]' ? 'selected' : ''; ?> ><?= $LANG['CHECKBOX'] ?></option>
+									<option value="select" <?= $traitArr['dynamicProperties'] == '[{"controlType":"select"}]' ? 'selected' : ''; ?> ><?= $LANG['SELECT'] ?></option>
 								</select>
 							</div>
 							<div style="width:100%;padding-top:6px;">
 								<div style="float:left;">
 									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-									<button name="formsubmit" type="submit" value="saveTraitEdit">Save</button>
+									<button name="formsubmit" type="submit" value="saveTraitEdit"><?= $LANG['SAVE'] ?></button>
 								</div>
 							</div>
 						</fieldset>
@@ -289,44 +239,44 @@ if(!$traitID) header('Location: index.php');
 				</div>
 				<div id="traitstatediv">
 					<div style="float:right;margin:10px;">
-						<a href="#" title="Create New Trait State" onclick="toggle('newstatediv');">
-							<img src="../../../images/add.png" class="icon-img" alt="Create New Trait State" />
-						</a>
+						<button class="clear-icon-button" title="<?= $LANG['CREATE_TRAIT_STATE'] ?>" aria-label="<?= $LANG['CREATE_TRAIT_STATE'] ?>" onclick="toggle('newstatediv');">
+							<img src="../../../images/add.png" class="icon-img" />
+						</button>
 					</div>
 					<div id="newstatediv" style="display:<?= ($traitStateArr?'none':'block') ?>;">
 						<form name="stateaddform" action="traitdetails.php" method="post" onsubmit="return validateStateAddForm(this)">
 							<fieldset>
-								<legend>Add Trait State</legend>
+								<legend><?= $LANG['ADD_TRAIT_STATE'] ?></legend>
 								<div style="padding-top:4px;">
-									<label for="statename">Trait State Name</label><br />
-									<input type="text" id="statename" name="statename" maxlength="255" style="width:400px;" />
+									<label for="statename"><?= $LANG['TRAIT_STATE_NAME'] ?></label><span style="color:red;">*</span><br />
+									<input type="text" id="statename" name="statename" maxlength="255" style="width:400px;" required/>
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_description">Description</label><br />
+									<label for="add_description"><?= $LANG['DESCRIPTION'] ?></label><br />
 									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_description">Reference URL</label><br />
+									<label for="add_description"><?= $LANG['REF_URL'] ?></label><br />
 									<input type="text" id="add_refurl" name="refurl" maxlength="255" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_notes">Notes</label><br />
+									<label for="add_notes"><?= $LANG['NOTES'] ?></label><br />
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="sortseq">Sort Sequence</label><br />
+									<label for="sortseq"><?= $LANG['SORT_SQNCE'] ?></label><span style="color:red;">*</span><br />
 									<input type="number" id="sortseq" name="sortseq" style="width:80px;" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
 									<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-									<button name="formsubmit" type="submit" value="addState">Add Trait State</button>
+									<button name="formsubmit" type="submit" value="addState"><?= $LANG['ADD_TRAIT_STATE'] ?></button>
 								</div>
 							</fieldset>
 						</form>
 					</div>
 					<?php
 					if($traitStateArr){
-						echo '<h3>Trait States</h3>';
+						echo '<h3>' . $LANG['TRAIT_STATES']. '</h3>';
 						foreach($traitStateArr as $stateID => $stateArr){
 							?>
 							<div>
@@ -343,19 +293,19 @@ if(!$traitID) header('Location: index.php');
 											<?= Sanitize::outString($stateArr['statename']) ?>
 										</a>
 									</div>
-									<form name="stateeditform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return validateStateEditForm(this)">
+									<form name="stateeditform-<?= $stateID ?>" action="traitdetails.php" method="post">
 										<fieldset>
-											<legend>Trait State Details</legend>
-											<div>
-												<label for="statename-<?= $stateID ?>">Trait State Name</label><br />
-												<input type="text" id="statename-<?= $stateID ?>" name="statename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['statename']) ?>" />
+											<legend><?= $LANG['TRAIT_STATE_DETAILS'] ?></legend>
+											<div style="padding-top:4px;">
+												<label for="statename-<?= $stateID ?>"><?= $LANG['TRAIT_STATE_NAME'] ?></label><span style="color:red;">*</span><br />
+												<input type="text" id="statename-<?= $stateID ?>" name="statename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['statename']) ?>" required />
 											</div>
 											<div style="padding-top:4px;">
-												<label for="description-<?= $stateID ?>">Description</label><br />
+												<label for="description-<?= $stateID ?>"><?= $LANG['DESCRIPTION'] ?></label><br />
 												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<div style="padding-top:4px;">
-												<label for="refurl-<?= $stateID ?>">Reference URL</label><br />
+												<label for="refurl-<?= $stateID ?>"><?= $LANG['REF_URL'] ?></label><br />
 												<input type="text" id="refurl-<?= $stateID ?>" name="refurl" maxlength="500" style="width:90%;" value="<?= Sanitize::outString($stateArr['refUrl']) ?>" />
 												<?php
 												if($stateArr['refUrl'] && substr($stateArr['refUrl'],0,4) == 'http'){
@@ -364,23 +314,23 @@ if(!$traitID) header('Location: index.php');
 												?>
 											</div>
 											<div style="padding-top:4px;">
-												<label for="notes-<?= $stateID ?>">Notes</label><br />
+												<label for="notes-<?= $stateID ?>"><?= $LANG['NOTES'] ?></label><br />
 												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
 											</div>
 											<div style="padding-top:4px;">
-												<label for="sortseq-<?= $stateID ?>">Sort Sequence</label><br />
+												<label for="sortseq-<?= $stateID ?>"><?= $LANG['SORT_SQNCE'] ?></label><br />
 												<input type="number" id="sortseq-<?= $stateID ?>" name="sortseq" style="width:80px;" value="<?= Sanitize::outString($stateArr['sortseq']) ?>" />
 											</div>
 											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
-												<button name="formsubmit" type="submit" value="saveState">Save</button>
+												<button name="formsubmit" type="submit" value="saveState"><?= $LANG['SAVE'] ?></button>
 											</div>
 										</fieldset>
 									</form>
 									<div>
 										<fieldset>
-											<button type="button" class="clear-icon-button" style="float:right;" onclick="toggle('newdepform-<?= $stateID ?>');" title="Add New Dependency">
+											<button type="button" class="clear-icon-button" style="float:right;" onclick="toggle('newdepform-<?= $stateID ?>');" title="<?= $LANG['ADD_NEW_DEPEND'] ?>" aria-label="<?= $LANG['ADD_NEW_DEPEND'] ?>">
 												<img src="../../../images/add.png" class="icon-img"/>			
 											</button>
 											<div id="newdepform-<?= $stateID ?>" style="display:none;">
@@ -397,10 +347,10 @@ if(!$traitID) header('Location: index.php');
 													</select>
 													<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 													<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
-													<button name="formsubmit" type="submit" value="addDependency">Add</button>
+													<button name="formsubmit" type="submit" value="addDependency"><?= $LANG['ADD'] ?></button>
 												</form>
 											</div>
-											<legend>Dependencies (Trait and their States that Appear when this Trait is Selected):</legend>
+											<legend><?= $LANG['DEPENDENCIES'] ?>:</legend>
 											<?php
 											$stateDepArr = $traitManager->getStateDepArr($stateID);
 												if($stateDepArr){
@@ -412,24 +362,24 @@ if(!$traitID) header('Location: index.php');
 														$trait = $traitManager->getTraitArrById2($dependency['traitID']);
 														echo '<li style="display:flex; gap:10px; margin-bottom:10px;">
 														<a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a>
-														<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="Remove Dependency"><img src="../../../images/del.png" class="icon-img"/></button></li>';
+														<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="'. $LANG['DELETE_DEPEND'] .'" aria-label="'. $LANG['DELETE_DEPEND'] . '"><img src="../../../images/del.png" class="icon-img"/></button></li>';
 													}
 													echo '</ul></form>';
 											}
 												else {
-													echo 'No dependencies.';
+													echo $LANG['NO_DEPEND'];
 												}
 											?>
 										</fieldset>
 									</div>	
-									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character state?')">
+									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm(<?= $LANG['CONFIRM_DELETE_STATE'] ?>)">
 										<fieldset>
-											<legend>Delete Trait State</legend>
+											<legend><?= $LANG['DELETE_TRAIT_STATE'] ?></legend>
 											<div style="margin:15px;">
 												<input id="stateid" name="stateid" type="hidden" value="<?= $stateID ?>">
 												<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 												<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
-												<button name="formsubmit" type="submit" value="deleteState">Delete State</button>
+												<button name="formsubmit" type="submit" value="deleteState"><?= $LANG['DELETE_STATE'] ?></button>
 											</div>
 										</fieldset>
 									</form>
@@ -441,20 +391,20 @@ if(!$traitID) header('Location: index.php');
 					?>
 				</div>
 				<div id="traitdeldiv">
-					<form name="deltraitform" action="traitdetails.php" method="post" onsubmit="return confirm('Are you sure you want to permanently delete this character?')">
+					<form name="deltraitform" action="traitdetails.php" method="post" onsubmit="return confirm(<?= $LANG['CONFIRM_DELETE_TRAIT'] ?>)">
 						<fieldset style="width:700px;">
-							<legend><b>Delete Trait</b></legend>
+							<legend><b><?= $LANG['DELETE_TRAIT'] ?></b></legend>
 							<?php
 							if($traitStateArr){
 								?>
 								<div style="margin-bottom:15px;">
-									Trait cannot be deleted until all character states are removed
+									<?= $LANG['NOTE_TRAIT_DELETE'] ?>
 								</div>
 								<?php
 							}
 							?>
 							<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-							<button name="formsubmit" type="submit" value="deleteTrait" <?php if($traitStateArr) echo 'DISABLED' ?>>Delete</button>
+							<button name="formsubmit" type="submit" value="deleteTrait" <?php if($traitStateArr) echo 'DISABLED' ?>><?= $LANG['DELETE'] ?></button>
 						</fieldset>
 					</form>
 				</div>
@@ -463,10 +413,10 @@ if(!$traitID) header('Location: index.php');
 		}
 		else{
 			if(!$isEditor){
-				echo '<h2>You are not authorized to add characters</h2>';
+				echo '<h2>' . $LANG['NO_AUTH_ADD_TRAIT'] . '</h2>';
 			}
 			else{
-				echo '<h2>ERROR: unknown error, please contact system administrator</h2>';
+				echo '<h2>' . $LANG['UNKNOWN_ERROR'] . '</h2>';
 			}
 		}
 		?>
