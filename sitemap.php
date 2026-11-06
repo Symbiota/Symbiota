@@ -198,6 +198,16 @@ if(!$schemaVersion){
 						</ul>
 						<?php
 					}
+					if($IS_ADMIN ||  array_key_exists("KeyAdmin",$USER_RIGHTS)){
+						echo '<h2 class="subheader"><span>' . $LANG['TRAIT_EDIT'] . '<span></h2>';
+						?>
+						<ul>
+							<li>
+								<?= $LANG['AUTHOKEY'] ?> <a href="<?= $CLIENT_ROOT ?>/collections/traitattr/admin/index.php"><?= $LANG['OCCUR_TRAIT_EDIT'] ?></a>
+							</li>
+						</ul>
+						<?php
+					}
 					?>
 					<h2 class="subheader">
 						<span>
