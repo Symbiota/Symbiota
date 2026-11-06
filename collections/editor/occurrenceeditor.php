@@ -268,7 +268,7 @@ if($SYMB_UID){
 
 				try {
 					$occur_map = $occManager->getOccurMap()[$occId];
-					$path = get_occurrence_upload_path(
+					$path = Media::get_occurrence_upload_path(
 						$occur_map['institutioncode'],
 						$occur_map['collectioncode'],
 						$occur_map['catalognumber']
@@ -315,14 +315,14 @@ if($SYMB_UID){
 					$target_occur_manager = new OccurrenceEditorManager();
 					$target_occur_manager->setOccId($target_occid);
 					$target_occur_map = $target_occur_manager->getOccurMap()[$target_occid];
-					$remap_path	= get_occurrence_upload_path(
+					$remap_path	= Media::get_occurrence_upload_path(
 						$target_occur_map['institutioncode'],
 						$target_occur_map['collectioncode'],
 						$target_occur_map['catalognumber']
 					);
 
 					$occur_map = $occManager->getOccurMap()[$occId];
-					$current_path = get_occurrence_upload_path(
+					$current_path = Media::get_occurrence_upload_path(
 						$occur_map['institutioncode'],
 						$occur_map['collectioncode'],
 						$occur_map['catalognumber']

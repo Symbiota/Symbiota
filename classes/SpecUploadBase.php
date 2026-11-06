@@ -2177,7 +2177,7 @@ class SpecUploadBase extends SpecUpload{
 				return false;
 			}
 
-			$file = Media::parseFileName($testUrl);
+			$file = UploadUtil::parseFileName($testUrl);
 
 			$parsed_mime = false;
 			// If provided format is not supported try to parse it from filename.
