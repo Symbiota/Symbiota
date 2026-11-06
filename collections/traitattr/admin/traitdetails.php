@@ -282,15 +282,16 @@ if(!$traitID) header('Location: index.php');
 					if($traitStateArr){
 						echo '<h3>' . $LANG['TRAIT_STATES']. '</h3>';
 						foreach($traitStateArr as $stateID => $stateArr){
+							$isOpen = (isset($_POST['statecode']) && ($_POST['statecode']) === $stateArr['statecode']);
 							?>
 							<div>
-								<div id="statecodeplus-<?= $stateID ?>" style="margin:5px;">
+								<div id="statecodeplus-<?= $stateID ?>" style="margin:5px; <?= $isOpen ? 'display:none;' : '' ?>">
 									<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 										<img src="../../../images/plus.png" class="icon-img" >
 										<?= Sanitize::outString($stateArr['statename']) ?>
 									</a>
 								</div>
-								<div id="<?= 'statecode-'.$stateID.'Div' ?>" style="display:none;">
+								<div id="<?= 'statecode-'.$stateID.'Div' ?>" style="<?= $isOpen ? 'display:block;' : 'display:none;' ?>">
 									<div style="margin:5px;">
 										<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 											<img src="../../../images/minus.png" class="icon-img" >
@@ -355,6 +356,7 @@ if(!$traitID) header('Location: index.php');
 														</select>
 														<input name="traitid" type="hidden" value="<?= $traitID ?>" />
 														<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
+														<input name="statecode" type="hidden" value="<?= $stateArr['statecode'] ?>" />
 														<button name="formsubmit" type="submit" value="addDependency"><?= $LANG['ADD'] ?></button>
 													</fieldset>
 												</form>
@@ -365,6 +367,7 @@ if(!$traitID) header('Location: index.php');
 													echo '<form method="post">
 													<input name="traitid" type="hidden" value="'. $traitID .'" />
 													<input name="parentstateid" type="hidden" value="'. $stateID .'"/>
+													<input name="statecode" type="hidden" value="' . $stateArr['statecode'] . '" />
 													<input name="formsubmit" type="hidden" value="deleteDependency" /><ul style="padding-left:20px;">';
 													foreach ($stateDepArr as $dependency){
 														$trait = $traitManager->getTraitArrById2($dependency);
