@@ -63,11 +63,15 @@ if($formSubmit && $isEditor){
 		}
 	}
 	elseif($formSubmit == 'addDependency'){
-		$traitManager->insertTraitStateDep($_POST);
+		if(!$traitManager->insertTraitStateDep($_POST)){
+			$statusStr = $LANG['ERROR_DELETE_STATE'] . $traitManager->getErrorMessage();
+		}
 		$tabIndex = 1;
 	}
 	else if($formSubmit == 'deleteDependency') {
-		$traitManager->deleteTraitStateDep($_POST);
+		if(!$traitManager->deleteTraitStateDep($_POST)){
+			$statusStr = $LANG['ERROR_DELETE_STATE'] . $traitManager->getErrorMessage();
+		}
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'addTaxon'){
@@ -256,7 +260,7 @@ if(!$traitID) header('Location: index.php');
 									<input type="text" id="add_description" name="description" maxlength="255" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="add_description"><?= $LANG['REF_URL'] ?></label><br />
+									<label for="add_refurl"><?= $LANG['REF_URL'] ?></label><br />
 									<input type="text" id="add_refurl" name="refurl" maxlength="255" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
@@ -264,7 +268,7 @@ if(!$traitID) header('Location: index.php');
 									<input type="text" id="add_notes" name="notes" style="width:90%;" />
 								</div>
 								<div style="padding-top:4px;">
-									<label for="sortseq"><?= $LANG['SORT_SQNCE'] ?></label><span style="color:red;">*</span><br />
+									<label for="sortseq"><?= $LANG['SORT_SQNCE'] ?></label></span><br />
 									<input type="number" id="sortseq" name="sortseq" style="width:80px;" />
 								</div>
 								<div style="width:100%;padding-top:6px;">
@@ -334,35 +338,39 @@ if(!$traitID) header('Location: index.php');
 												<img src="../../../images/add.png" class="icon-img"/>			
 											</button>
 											<div id="newdepform-<?= $stateID ?>" style="display:none;">
-												<form method="post" style="display:flex;">
-													<select name="traitID">
-														<?php 
-														# Dependency name="traitID" needs to be different from a state's name="traitid"
-														foreach ($traitList as $trait) {
-															if ($trait['traitID'] !== (int)$traitID) {
-																echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
-															}		
-														}
-														?>
-													</select>
-													<input name="traitid" type="hidden" value="<?= $traitID ?>" />
-													<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
-													<button name="formsubmit" type="submit" value="addDependency"><?= $LANG['ADD'] ?></button>
+												<form method="post">
+													<fieldset style="display:flex; align-items:center; gap:10px;">
+														<legend><?= $LANG['ADD_NEW_DEPEND'] ?></legend>
+														<label for="dependency-<?= $stateID ?>"><?= $LANG['DEPENDENCY'] ?>:</label>
+														<select name="traitID" id="dependency-<?= $stateID ?>">
+															<?php
+															$stateDepArr = array_column($traitManager->getStateDepArr($stateID), 'traitID'); # Just the numbers
+															# Dependency name="traitID" needs to be different from a state's name="traitid"
+															foreach ($traitList as $trait) {
+																if ($trait['traitID'] !== (int)$traitID && !in_array($trait['traitID'], $stateDepArr)) {
+																	echo '<option value="' . $trait['traitID'] . '">' . $trait['traitName'] . '</option>';
+																}		
+															}
+															?>
+														</select>
+														<input name="traitid" type="hidden" value="<?= $traitID ?>" />
+														<input name="parentstateid" type="hidden" value="<?= $stateID ?>" />
+														<button name="formsubmit" type="submit" value="addDependency"><?= $LANG['ADD'] ?></button>
+													</fieldset>
 												</form>
 											</div>
 											<legend><?= $LANG['DEPENDENCIES'] ?>:</legend>
 											<?php
-											$stateDepArr = $traitManager->getStateDepArr($stateID);
 												if($stateDepArr){
 													echo '<form method="post">
 													<input name="traitid" type="hidden" value="'. $traitID .'" />
 													<input name="parentstateid" type="hidden" value="'. $stateID .'"/>
-													<input name="formsubmit" type="hidden" value="deleteDependency" /><ul>';
+													<input name="formsubmit" type="hidden" value="deleteDependency" /><ul style="padding-left:20px;">';
 													foreach ($stateDepArr as $dependency){
-														$trait = $traitManager->getTraitArrById2($dependency['traitID']);
+														$trait = $traitManager->getTraitArrById2($dependency);
 														echo '<li style="display:flex; gap:10px; margin-bottom:10px;">
 														<a href="traitdetails.php?traitid=' . $trait['traitID'] . '">' . $trait['traitName'] . '</a>
-														<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="'. $LANG['DELETE_DEPEND'] .'" aria-label="'. $LANG['DELETE_DEPEND'] . '"><img src="../../../images/del.png" class="icon-img"/></button></li>';
+														<button type="submit" name="traitID" value="' . $trait['traitID'] . '" class="clear-icon-button" title="'. $LANG['DELETE_DEPEND'] .'" aria-label="'. $LANG['DELETE_DEPEND'] . ' ' . $trait['traitName'] . '"><img src="../../../images/del.png" class="icon-img"/></button></li>';
 													}
 													echo '</ul></form>';
 											}
@@ -372,7 +380,7 @@ if(!$traitID) header('Location: index.php');
 											?>
 										</fieldset>
 									</div>	
-									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm(<?= $LANG['CONFIRM_DELETE_STATE'] ?>)">
+									<form name="statedelform-<?= $stateID ?>" action="traitdetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_STATE'] . $stateArr['statename'] ?>?')">
 										<fieldset>
 											<legend><?= $LANG['DELETE_TRAIT_STATE'] ?></legend>
 											<div style="margin:15px;">
@@ -391,7 +399,7 @@ if(!$traitID) header('Location: index.php');
 					?>
 				</div>
 				<div id="traitdeldiv">
-					<form name="deltraitform" action="traitdetails.php" method="post" onsubmit="return confirm(<?= $LANG['CONFIRM_DELETE_TRAIT'] ?>)">
+					<form name="deltraitform" action="traitdetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_TRAIT'] . $traitArr['traitName'] ?>?')">
 						<fieldset style="width:700px;">
 							<legend><b><?= $LANG['DELETE_TRAIT'] ?></b></legend>
 							<?php

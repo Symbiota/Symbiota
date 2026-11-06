@@ -38,6 +38,7 @@ $LANG['SORT_SQNCE'] = 'Sort Sequence';
 $LANG['TRAIT_STATE_DETAILS'] = 'Trait State Details';
 
 $LANG['ADD_NEW_DEPEND'] = 'Add New Dependency';
+$LANG['DEPENDENCY'] = 'Dependency';
 $LANG['ADD'] = 'Add';
 $LANG['DEPENDENCIES'] = 'Dependencies (Trait and their States that Appear when this Trait is Selected)';
 $LANG['DELETE_DEPEND'] = 'Remove Dependency';
@@ -64,7 +65,7 @@ $LANG['ERROR_DELETE_IMAGE'] = 'ERROR deleting Trait state image/illustration: ';
 $LANG['ERROR_ADD_REL'] = 'ERROR saving taxon relationship: ';
 $LANG['ERROR_DELETE_REL'] = 'ERROR deleting taxon relationship: ';
 
-$LANG['CONFIRM_DELETE_TRAIT'] = 'Are you sure you want to permanently delete this trait';
-$LANG['CONFIRM_DELETE_STATE'] = 'Are you sure you want to permanently delete this trait state?';
+$LANG['CONFIRM_DELETE_TRAIT'] = 'Are you sure you want to permanently delete trait ';
+$LANG['CONFIRM_DELETE_STATE'] = 'Are you sure you want to permanently delete trait state ';
 
 ?>

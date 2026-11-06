@@ -39,6 +39,7 @@ $LANG['SORT_SQNCE'] = 'Secuencia de ordenamiento';
 $LANG['TRAIT_STATE_DETAILS'] = 'Detalles del estado del rasgo';
 
 $LANG['ADD_NEW_DEPEND'] = 'Añadir nueva dependencia';
+$LANG['DEPENDENCY'] = 'Dependencia';
 $LANG['ADD'] = 'Añadir';
 $LANG['DEPENDENCIES'] = 'Dependencias (rasgos y sus estados que aparecen cuando se selecciona este rasgo)';
 $LANG['DELETE_DEPEND'] = 'Eliminar dependencia';
@@ -65,7 +66,7 @@ $LANG['ERROR_DELETE_IMAGE'] = 'ERROR al eliminar la imagen/ilustración del esta
 $LANG['ERROR_ADD_REL'] = 'ERROR al guardar la relación del taxón: ';
 $LANG['ERROR_DELETE_REL'] = 'ERROR al eliminar la relación del taxón: ';
 
-$LANG['CONFIRM_DELETE_TRAIT'] = '¿Está seguro de que desea eliminar permanentemente este rasgo?';
-$LANG['CONFIRM_DELETE_STATE'] = '¿Está seguro de que desea eliminar permanentemente este estado de rasgo?';
+$LANG['CONFIRM_DELETE_TRAIT'] = '¿Está seguro de que desea eliminar permanentemente el rasgo ';
+$LANG['CONFIRM_DELETE_STATE'] = '¿Está seguro de que desea eliminar permanentemente el estado de rasgo ';
 
 ?>

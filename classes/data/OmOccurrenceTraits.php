@@ -215,6 +215,11 @@ class OmOccurrenceTraits extends DataCore{
 			$this->errorMessage = 'DEPENDENCY_SAME_AS_TRAIT';
 			return false;
 		}
+		$same_check = $this->getStateDepArr($inputArr['parentstateid']);
+		if(in_array($inputArr['traitID'], array_column($same_check, 'traitID'))){
+			$this->errorMessage = 'DEPENDENCY_ALREADY_IN_STATE';
+			return false;
+		}
 		$this->setTraitStateDepMap();
 		return $this->insertRecord('tmtraitdependencies', $inputArr);
 	}
