@@ -23,6 +23,7 @@ class OmDatasets extends DataCore{
 		foreach($dsArr as $id => $unitArr){
 			if($unitArr['datasetName'] == 'USER_CART' && isset($GLOBALS['LANG']['USER_CART'])){
 				$dsArr[$id]['datasetName'] = $GLOBALS['LANG']['USER_CART'];
+				$dsArr[$id]['isUserCart'] = 1;
 			}
 		}
 		return $dsArr;
@@ -219,10 +220,12 @@ class OmDatasets extends DataCore{
 		}
 		elseif(is_numeric($input)){
 			$inputArr = array('datasetID' => $this->datasetID, 'occid' => $input);
+			$this->setDatasetOccurrenceMap();
 			return $this->deleteRecord('omoccurdatasetlink', $inputArr);
 		}
 		elseif($this->datasetID){
 			$inputArr = array('datasetID' => $this->datasetID);
+			$this->setDatasetOccurrenceMap();
 			return $this->deleteRecord('omoccurdatasetlink', $inputArr);
 		}
 		$this->errorMessage = 'ID_NOT_SET';

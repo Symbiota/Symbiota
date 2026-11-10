@@ -4,6 +4,8 @@
  Language: English
  ------------------
  */
+include_once('../sharedterms.en.php');
+
 $LANG['SPCHECKREL'] = 'Species Checklist Relationships';
 $LANG['VOUCHEROFFOLLOWING'] = 'Specimen voucher of the following checklists';
 $LANG['DELVOUCHER'] = 'Delete voucher link';
@@ -19,10 +21,6 @@ $LANG['VIEWABLEEDITORS'] = 'Viewable only to checklist editors';
 $LANG['ADDVOUCHER'] = 'Add Voucher';
 $LANG['UNABLETOADD'] = 'Unable to use this specimen record as a voucher because scientific name counld not be verified in the taxonomic thesaurus (misspelled?)';
 $LANG['DATASETLINKAGES'] = 'Dataset Linkages';
-$LANG['ADDED_TO_CART'] = 'Added to cart!';
-$LANG['ALREADY_IN_CART'] = 'Already in cart';
-$LANG['CART_FAILED'] = 'Unknown failure';
-$LANG['ADD_TO_CART'] = 'Add Occurrence to Cart';
 $LANG['ADD_TO_DATASET'] = 'Add Occurrence to Existing Dataset';
 $LANG['MEMBEROF'] = 'Member of the following datasets';
 $LANG['OCCURRENCENOTLINKED'] = 'Occurrence is not linked to any datasets';

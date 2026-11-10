@@ -157,6 +157,8 @@ $datasetManager = new OccurrenceDataset();
 				foreach($dataSetArr as $dsid => $dsArr){
 					if(array_key_exists('owner', $dsArr['role'])){
 						$ownedByExists = true;
+						$editImg = 'edit.png';
+						if(!empty($dsArr['isUserCart'])) $editImg = 'cart.png';
 						?>
 						<div class="dataset-item">
 							<div>
@@ -165,7 +167,7 @@ $datasetManager = new OccurrenceDataset();
 									echo '<b>' . $dsArr['datasetName'] . ' (#' . $dsid . ')</b>';
 									?>
 								</a>
-								<span style="margin-left: 5px"><a href="datasetmanager.php?datasetid=<?= $dsid ?>"><img src="../../images/edit.png" class="img-icon"></a></span>
+								<span style="margin-left: 5px"><a href="datasetmanager.php?datasetid=<?= $dsid ?>"><img src="../../images/<?= $editImg ?>" class="img-icon"></a></span>
 							</div>
 							<div style="margin-left:15px;">
 								<?php

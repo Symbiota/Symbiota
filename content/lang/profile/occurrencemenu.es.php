@@ -23,6 +23,7 @@ $LANG['COL_MANAGE'] = 'Manejo de Colecciones';
 $LANG['OBS_MANAGEMENT'] = 'Manejo de Proyectos de Observaciones';
 $LANG['GEN_OBS_ADMIN'] = 'Administración General de Observaciones';
 $LANG['MISC_TOOLS'] = 'Herramientas Misceláneas';
+$LANG['MANAGE_USER_CART'] = 'Gestionar el carrito del usuario';
 $LANG['DATASET_MANAGEMENT'] = 'Manejo de Conjuntos de Datos';
 $LANG['CROSS_COL_GEOREF'] = 'Herramienta de Georreferenciación a través de Colecciones';
 $LANG['CROSS_COL_TAXON'] = 'Herramienta de Limpieza de Taxonomía a través de Colecciones';

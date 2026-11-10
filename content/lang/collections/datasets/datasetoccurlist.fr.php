@@ -22,11 +22,10 @@ $LANG['COLLECTOR'] = 'Collecteur';
 $LANG['SCI_NAME'] = 'Nom Scientifique';
 $LANG['LOCALITY'] = 'Localité';
 $LANG['UNDEFINED'] = 'indéfini';
-$LANG['REM_SEL_OCCS'] = 'Supprimer les occurrences sélectionnées';
+$LANG['ACTION_PANEL'] = "Panneau d’actions";
+$LANG['REMOVE_SELECTED'] = 'Supprimer les occurrences sélectionnées';
+$LANG['VERIFY_REMOVE_ALL'] = 'Êtes-vous sûr de vouloir supprimer toutes les occurrences du jeu de données?';
+$LANG['REMOVE_ALL'] = 'Tout supprimer';
 $LANG['NO_OCCS_DS'] = 'Aucune occurrence liée à cet ensemble de données';
-$LANG['LINK_OCCS_VIA'] = 'Vous pouvez lier des occurrences via le';
-$LANG['OCC_SEARCH'] = 'page de recherche d\'occurrences';
-$LANG['OR_VIA_OCC_PROF'] = 'ou via l\'une des pages de profil d\'occurrence';
-$LANG['DS_NOT_IDENTIFIED'] = 'ERREUR : identifiant de l\'ensemble de données non identifié';
 
 ?>

@@ -38,4 +38,9 @@ $LANG['COLLECTION_LIST'] = 'Lista de Colecciones';
 $LANG['ALL_SPECIMEN_COLLECTIONS'] = 'Todas las colecciones de ejemplares';
 $LANG['ALL_OBSERVATION_COLLECTIONS'] = 'Todas las colecciones de observaciones';
 $LANG['ALL_COLLECTIONS'] = 'Todas las colecciones';
+
+$LANG['ADDED_TO_CART'] = '¡Añadido al carrito!';
+$LANG['ALREADY_IN_CART'] = 'Ya está en el carrito';
+$LANG['CART_FAILED'] = 'Fallo desconocido';
+$LANG['ADD_TO_CART'] = 'Añadir evento al carrito';
 ?>

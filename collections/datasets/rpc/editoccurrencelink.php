@@ -13,6 +13,8 @@ $retArr = array('status' => false);
 if($SYMB_UID && $datasetId && $occid && $action){
 
 	$datasetManager = new OccurrenceDataset();
+	$datasetManager->setDatasetID($datasetId);
+	$mdArr = $datasetManager->getDatasetMetadata();
 
 	//Verify user permissions
 	$isEditor = false;
@@ -28,10 +30,9 @@ if($SYMB_UID && $datasetId && $occid && $action){
 	}
 
 	if($isEditor){
-		$datasetManager->setDatasetID($datasetId);
 		if($action == 'deloccidlink'){
 			if($datasetManager->deleteOccurrences($occid)){
-				$retArr['stauts'] = true;
+				$retArr['status'] = true;
 			}
 			else{
 				//$retArr['error'] = $datasetManager->getErrorMessage();
@@ -41,7 +42,7 @@ if($SYMB_UID && $datasetId && $occid && $action){
 			if(array_key_exists('notes', $_REQUEST)){
 				$notes = $_REQUEST['notes'];
 				if($datasetManager->updateOccurrence($occid, $notes)){
-					$retArr['stauts'] = true;
+					$retArr['status'] = true;
 				}
 				else{
 					//$retArr['error'] = $datasetManager->getErrorMessage();
@@ -50,5 +51,5 @@ if($SYMB_UID && $datasetId && $occid && $action){
 		}
 	}
 }
-json_encode($retArr);
+echo json_encode($retArr);
 ?>

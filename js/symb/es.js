@@ -27,4 +27,6 @@ const translations = {
   // paleo search
   INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
   INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",
+  DOWNLOAD_IN_PROGRESS: "Descarga en curso...",
+  OCCURENCE_EDITOR_COLLISION_WARNING: "Se ha detectado otra sesión de consulta en el editor. Esto podría dar lugar a resultados no deseados en su consulta actual. Por favor, cierre todas las pestañas excepto una y realice la consulta de nuevo."
 };

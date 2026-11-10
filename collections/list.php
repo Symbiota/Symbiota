@@ -52,8 +52,9 @@ $_SESSION['citationvar'] = $searchVar;
 	<?php
 	include_once($SERVER_ROOT . '/includes/head.php');
 	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
+	include_once($SERVER_ROOT . '/includes/javascript_lang_tags.php');
 	?>
-	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/list.css?ver=1" type="text/css" rel="stylesheet" />
+	<link href="<?= $CSS_BASE_PATH; ?>/symbiota/collections/list.css?ver=2" type="text/css" rel="stylesheet" />
 	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
@@ -92,8 +93,34 @@ $_SESSION['citationvar'] = $searchVar;
 				behavior: 'smooth'
 			});
 		}
+
+		function addToCart(occidInput){
+			$.ajax({
+				type: "POST",
+				url: "rpc/addtocart.php",
+				dataType: "json",
+				data: { occid: occidInput },
+			}).done(function (data) {
+				const cartSpan = document.getElementById("cart-status-" + occidInput);
+				if(data.status){
+					cartSpan.textContent = "<?= $LANG['ADDED_TO_CART'] ?>";
+				}
+				else{
+					if(data.error == "ALREADY_IN_CART"){
+						cartSpan.textContent = "<?= $LANG['ALREADY_IN_CART'] ?>";
+					}
+					else cartSpan.textContent = "<?= $LANG['CART_FAILED'] ?>";
+					cartSpan.style.color = "#c2410c";
+				}
+				setTimeout(() => {
+					cartSpan.textContent = "";
+				}, 3000);
+
+			});
+		}
+
 	</script>
-	<script src="../js/symb/collections.list.js?ver=5" type="text/javascript"></script>
+	<script src="../js/symb/collections.list.js?ver=6a" type="text/javascript"></script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 </head>
 
@@ -358,20 +385,14 @@ $_SESSION['citationvar'] = $searchVar;
 									echo '</div>';
 									echo '<div style="margin-top:10px"><span class="dataset-div checkbox-elem" style="display:none;"><input name="occid[]" type="checkbox" value="' . $occid . '" /></span></div>';
 									echo '</td><td>';
-									if ($IS_ADMIN || in_array($fieldArr['collid'], $permissionArr) || ($SYMB_UID && $SYMB_UID == $fieldArr['obsuid'])) {
-										echo '<div style="float:right;" title="' . $LANG['OCCUR_EDIT_TITLE'] . '">';
-										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
-										echo '<img src="../images/edit.png" style="width:1.3em" alt="' . $LANG['IMG_EDIT_OCC'] . '" /></a></div>';
-									}
 									if (isset($fieldArr['has_audio']) && $fieldArr['has_audio']) {
-										echo '<div style="float:right; padding-right: 0.5rem"><img style="width:1.3rem; border: 0" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
+										echo '<div style="float:right; padding-right: 0.5rem"><img class="icon-img" src="' . $CLIENT_ROOT . '/images/speaker_thumbnail.png' . '"/></div>';
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" style="height:70px" alt="' . (isset($LANG['IMG_OCC']) ? $LANG['IMG_OCC'] : 'Image Associated With the Occurrence') . '"
-											onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
+										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" class="occur-img" alt="' . $LANG['IMG_OCC'] . '" onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
 										echo '</a></div>';
 									}
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
@@ -385,17 +406,31 @@ $_SESSION['citationvar'] = $searchVar;
 										echo '<img src="' . $fieldArr['media']['thumbnailurl'] . '" style="height:70px" alt="' . $LANG['IMG_OCC'] . '"/></a></div>';
 									}
 									echo '<div style="margin:4px;">';
-
-
+									$sciStr = !empty($fieldArr['family']) ? $fieldArr['family'] : 'indet.';
 									if (isset($fieldArr['sciname'])) {
-										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
+										$sciStr = '<i>' . $fieldArr['sciname'] . '</i>';
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
 										if (isset($fieldArr['tid']) && $fieldArr['tid']) {
 											$sciStr = '<a target="_blank" href="../taxa/index.php?tid=' . strip_tags($fieldArr['tid']) . '">'
 												. '<i> ' . strip_tags($splitSciname['base']) . '</i>'
 												. (!empty($nonItalicizedScinameComponent) ? (' ' . $nonItalicizedScinameComponent) : '') . '</a>';
 										}
-										echo $sciStr;
+									}
+									echo $sciStr;
+									if($SYMB_UID){
+										if ($IS_ADMIN || in_array($fieldArr['collid'], $permissionArr) || $SYMB_UID == $fieldArr['obsuid']) {
+											?>
+											<span title="<?= $LANG['OCCUR_EDIT_TITLE'] ?>" style="margin-left:5px">
+												<a href="editor/occurrenceeditor.php?occid=<?= $occid ?>" target="_blank"><img src="../images/edit.png" class="icon-img" alt="<?= $LANG['IMG_EDIT_OCC'] ?>" ></a>
+											</span>
+											<?php
+										}
+										?>
+										<span title="<?= $LANG['ADD_TO_CART'] ?>" style="margin-left:5px">
+											<a href="#" onclick="addToCart(<?= $occid ?>, 'cart-status-<?= $occid ?>');return false;"><img src="../images/cart.png" class="icon-img"></a>
+										</span>
+										<span id="cart-status-<?= $occid ?>" style="transition: all 0.3s ease; font-weight: bold; color: green;"></span>
+										<?php
 									}
 									echo '</div>';
 									echo '<div style="margin:4px">';

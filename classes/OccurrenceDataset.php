@@ -126,6 +126,11 @@ class OccurrenceDataset extends OmDatasets {
 	}
 
 	//Cart/Basket functions
+	public function getCartID(){
+		$this->setCartDatasetID();
+		return $this->datasetID;
+	}
+
 	public function addCartOccurrence($occidInput){
 		if(!$occidInput) return false;
 		if($this->setCartDatasetID()){

@@ -40,11 +40,38 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 		$(document).ready(function() {
 			setSessionQueryStr();
 		});
+
+		function addToCart(occidInput){
+			$.ajax({
+				type: "POST",
+				url: "rpc/addtocart.php",
+				dataType: "json",
+				data: { occid: occidInput },
+			}).done(function (data) {
+				const cartSpan = document.getElementById("cart-status-" + occidInput);
+				if(data.status){
+					cartSpan.textContent = "<?= $LANG['ADDED_TO_CART'] ?>";
+				}
+				else{
+					if(data.error == "ALREADY_IN_CART"){
+						cartSpan.textContent = "<?= $LANG['ALREADY_IN_CART'] ?>";
+					}
+					else cartSpan.textContent = "<?= $LANG['CART_FAILED'] ?>";
+					cartSpan.style.color = "#c2410c";
+				}
+				setTimeout(() => {
+					cartSpan.textContent = "";
+				}, 3000);
+
+			});
+		}
+
 	</script>
 	<script src="../js/symb/shared.js?ver=1" type="text/javascript"></script>
 	<style>
 		table.styledtable td { white-space: nowrap; }
 		.fieldset-like { margin: 1rem; }
+		.icon-img { height:1.2em; margin: 0px 2px; }
 		#sort-div { width: 750px; margin: 20px; margin-bottom:5px; }
 		#sort-inner-div { display: flex; }
 		#sort-inner-div div { margin-right: 10px; }
@@ -143,7 +170,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 				if($sortField2) $collManager->addSort($sortField2, $sortOrder);
 				$recArr = $collManager->getSpecimenMap($page, $tableCount);
 
-				$targetClid = $collManager->getSearchTerm("targetclid");
+				$targetClid = $collManager->getSearchTerm('targetclid') ?? 0;
 
 				$qryCnt = $collManager->getRecordCnt();
 				$navStr = '<div style="float:right;">';
@@ -191,6 +218,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 					<table class="styledtable" style="font-size:12px;">
 						<tr>
 							<th><?= $LANG['SYMB_ID'] ?></th>
+							<th>&nbsp;</th>
 							<th><?= $LANG['COLLECTION'] ?></th>
 							<th><?= $LANG['CATALOG_NUMBER'] ?></th>
 							<th><?= $LANG['FAMILY'] ?></th>
@@ -215,33 +243,48 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 							<th><?= $LANG['ELEVATION'] ?></th>
 						</tr>
 						<?php
+						$permissionArr = array();
+						if (array_key_exists('CollAdmin', $USER_RIGHTS)) $permissionArr = $USER_RIGHTS['CollAdmin'];
+						if (array_key_exists('CollEditor', $USER_RIGHTS)) $permissionArr = array_merge($permissionArr, $USER_RIGHTS['CollEditor']);
 						$recCnt = 0;
 						foreach($recArr as $occid => $occArr){
-							$isEditor = false;
-							if($SYMB_UID && ($IS_ADMIN
-									|| (array_key_exists('CollAdmin',$USER_RIGHTS) && in_array($occArr['collid'],$USER_RIGHTS['CollAdmin']))
-									|| (array_key_exists('CollEditor',$USER_RIGHTS) && in_array($occArr['collid'],$USER_RIGHTS['CollEditor'])))){
-								$isEditor = true;
-							}
 							$collection = $occArr['instcode'];
 							if($occArr['collcode']) $collection .= ':'.$occArr['collcode'];
 							if($occArr['sciname']) $occArr['sciname'] = '<i>'.$occArr['sciname'].'</i> ';
 							?>
 							<tr <?= ($recCnt%2?'class="alt"':''); ?>>
 								<td>
-									<div class="dataset-div" style="float:left;display:none"><input name="occid[]" type="checkbox" value="<?= $occid; ?>" /></div>
+									<a href="#" onclick="openIndPU(<?= $occid ?>,<?= $targetClid  ?>);return false;"><?= $occid ?></a>
+								</td>
+								<td>
 									<?php
-									echo '<a href="#" onclick="return openIndPU('.$occid.",".($targetClid ? $targetClid : "0").');">'.$occid.'</a> ';
-									if($isEditor || ($SYMB_UID && $SYMB_UID == $occArr['obsuid'])){
-										echo '<a href="editor/occurrenceeditor.php?occid=' . $occid . '" target="_blank">';
-										echo '<img src="../images/edit.png" style="height:1.3em;" title="' . $LANG['EDIT_REC'] . '" />';
-										echo '</a>';
+									if($SYMB_UID){
+										?>
+										<span class="dataset-div" style="display:none"><input name="occid[]" type="checkbox" value="<?= $occid; ?>" /></span>
+										<?php
+										if ($IS_ADMIN || in_array($occArr['collid'], $permissionArr) || $SYMB_UID == $occArr['obsuid']) {
+											?>
+											<span title="<?= $LANG['EDIT_REC'] ?>">
+												<a href="editor/occurrenceeditor.php?occid=<?= $occid ?>" target="_blank"><img src="../images/edit.png" class="icon-img"></a>
+											</span>
+											<?php
+										}
+										?>
+										<span title="<?= $LANG['ADD_TO_CART'] ?>">
+											<a href="#" onclick="addToCart(<?= $occid ?>);return false;"><img src="../images/cart.png" class="icon-img"></a>
+										</span>
+										<span id="cart-status-<?= $occid ?>" style="transition: all 0.3s ease; font-weight: bold; color: green;"></span>
+										<?php
 									}
 									if(isset($occArr['has_image'])) {
-											echo '<img src="../images/image.png" style="height:1.3em;margin-left:5px;" title="' . $LANG['HAS_IMAGE'] . '" />';
+										?>
+										<img src="../images/image.png" class="icon-img" title="<?=  $LANG['HAS_IMAGE']  ?>" >
+										<?php
 									}
 									if(isset($occArr['has_audio'])) {
-											echo '<img src="../images/speaker_thumbnail.png" style="height:1.3em;margin-left:5px;" title="' . $LANG['HAS_AUDIO'] . '" />';
+										?>
+										<img src="../images/speaker_thumbnail.png" class="icon-img" title="<?= $LANG['HAS_AUDIO'] ?>" >
+										<?php
 									}
 									?>
 								</td>

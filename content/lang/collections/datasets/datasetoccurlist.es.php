@@ -22,12 +22,10 @@ $LANG['COLLECTOR'] = 'Coleccionista';
 $LANG['SCI_NAME'] = 'Nombre Científico';
 $LANG['LOCALITY'] = 'Localidad';
 $LANG['UNDEFINED'] = 'indefinido';
-$LANG['REM_SEL_OCCS'] = 'Eliminar apariciones seleccionadas';
+$LANG['ACTION_PANEL'] = 'Panel de acciones';
+$LANG['REMOVE_SELECTED'] = 'Eliminar apariciones seleccionadas';
+$LANG['VERIFY_REMOVE_ALL'] = '¿Estás seguro de que quieres eliminar todas las apariciones del conjunto de datos?';
+$LANG['REMOVE_ALL'] = 'Eliminar todo';
 $LANG['NO_OCCS_DS'] = 'No hay ocurrencias vinculadas a este conjunto de datos';
-$LANG['LINK_OCCS_VIA'] = 'Puedes vincular ocurrencias a través de';
-$LANG['OCC_SEARCH'] = 'página de búsqueda de ocurrencias';
-$LANG['OR_VIA_OCC_PROF'] = 'o mediante cualquiera de las páginas de perfil de ocurrencia';
-$LANG['DS_NOT_IDENTIFIED'] = 'ERROR: ID del conjunto de datos no identificado';
-
 
 ?>

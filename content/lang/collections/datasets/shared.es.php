@@ -25,5 +25,6 @@ $LANG['DS_EDITOR'] = 'Editor';
 $LANG['DS_READER'] = 'Lector';
 $LANG['EXPORT_DS'] = 'Exportar conjunto de datos';
 $LANG['USER_CART'] = 'Carrito del usuario';
+$LANG['DS_NOT_IDENTIFIED'] = 'ERROR: ID del conjunto de datos no identificado';
 
 ?>

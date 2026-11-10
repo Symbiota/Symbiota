@@ -10,12 +10,17 @@ header("Content-Type: text/html; charset=" . $CHARSET);
 
 if (!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/datasets/datasetmanager.php?' . htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$datasetId = array_key_exists('datasetid', $_REQUEST) ? Sanitize::int($_REQUEST['datasetid']) : 0;
+$datasetId = array_key_exists('datasetid', $_REQUEST) ? $_REQUEST['datasetid'] : 0;
 $tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['tabindex']) : 0;
 $pageNumber = array_key_exists('pagenumber', $_REQUEST) ? Sanitize::int($_REQUEST['pagenumber']) : 1;
 $action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $datasetManager = new OccurrenceDataset();
+
+if($datasetId == 'USER_CART'){
+	$datasetId = $datasetManager->getCartID();
+}
+
 $statusStr = '';
 if($action == 'createNewDataset'){
 	if($IS_ADMIN || array_key_exists('ClCreate', $USER_RIGHTS)){
@@ -30,13 +35,16 @@ if($action == 'createNewDataset'){
 		$statusStr = "You don't have permission to create a dataset";
 	}
 }
-
+$datasetId = Sanitize::int($datasetId);
 if($datasetId){
 	$datasetManager->setDatasetID($datasetId);
 	$mdArr = $datasetManager->getDatasetMetadata(false);
 
 	$isEditor = 0;
-	if ($SYMB_UID == $mdArr['uid']) {
+	if(!empty($mdArr['isUserCart'])) {
+		$isEditor = 2;
+	}
+	elseif ($SYMB_UID == $mdArr['uid']) {
 		$isEditor = 3;
 	}
 	elseif($roles = $datasetManager->getUserRoles($datasetId, $SYMB_UID)) {
@@ -55,7 +63,12 @@ if($datasetId){
 				$statusStr = $datasetManager->getErrorMessage();
 			}
 		}
-		if ($isEditor) {
+		elseif($action == 'deleteAll'){
+			if(!$datasetManager->deleteOccurrences()) {
+				$statusStr = $datasetManager->getErrorMessage();
+			}
+		}
+		if ($isEditor == 3) {
 			if ($action == 'Save Edits') {
 				if($datasetManager->updateDataset($_POST)){
 					$mdArr = $datasetManager->getDatasetMetadata(false);
@@ -97,6 +110,9 @@ if($datasetId){
 			}
 		}
 	}
+}
+else{
+	header('Location: datasetuserlist.php');
 }
 ?>
 <!DOCTYPE html>
@@ -353,7 +369,7 @@ if($datasetId){
 				</div>
 				<?php
 			} else echo '<div style="margin:30px">' . $LANG['NOT_AUTH'] . '</div>';
-		} else echo '<div><b>' . $LANG['DS_NOT_IDENTIFIED'] . '</b></div>';
+		} else echo '<div style="margin:20px">' . $LANG['DS_NOT_IDENTIFIED'] . '</div>';
 		?>
 	</div>
 	<?php

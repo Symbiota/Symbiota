@@ -38,4 +38,9 @@ $LANG['COLLECTION_LIST'] = 'Liste des Collections';
 $LANG['ALL_SPECIMEN_COLLECTIONS'] = 'Toutes les collections de spécimens';
 $LANG['ALL_OBSERVATION_COLLECTIONS'] = 'Toutes les collections d\'observations';
 $LANG['ALL_COLLECTIONS'] = 'Toutes les collections';
+
+$LANG['ADDED_TO_CART'] = 'Ajouté au panier!';
+$LANG['ALREADY_IN_CART'] = 'Déjà dans le panier';
+$LANG['CART_FAILED'] = 'Défaillance inconnue';
+$LANG['ADD_TO_CART'] = "Ajouter l’occurrence au panier";
 ?>

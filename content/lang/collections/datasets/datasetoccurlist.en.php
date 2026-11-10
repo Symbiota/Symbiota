@@ -22,11 +22,10 @@ $LANG['COLLECTOR'] = 'Collector';
 $LANG['SCI_NAME'] = 'Scientific Name';
 $LANG['LOCALITY'] = 'Locality';
 $LANG['UNDEFINED'] = 'undefined';
-$LANG['REM_SEL_OCCS'] = 'Remove Selected Occurrences';
+$LANG['ACTION_PANEL'] = 'Action Panel';
+$LANG['REMOVE_SELECTED'] = 'Remove Selected';
+$LANG['VERIFY_REMOVE_ALL'] = 'Are you sure you want to remove all occurrences from dataset?';
+$LANG['REMOVE_ALL'] = 'Remove All';
 $LANG['NO_OCCS_DS'] = 'There are no occurrences linked to this dataset';
-$LANG['LINK_OCCS_VIA'] = 'You can link occurrences via the';
-$LANG['OCC_SEARCH'] = 'occurrence search page';
-$LANG['OR_VIA_OCC_PROF'] = 'or via any of the occurrence profile pages';
-$LANG['DS_NOT_IDENTIFIED'] = 'ERROR: dataset id not identified';
 
 ?>

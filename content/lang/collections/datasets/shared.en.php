@@ -25,5 +25,6 @@ $LANG['DS_EDITOR'] = 'Occurrence Editor';
 $LANG['DS_READER'] = 'Reader';
 $LANG['EXPORT_DS'] = 'Export Dataset';
 $LANG['USER_CART'] = 'User Cart';
+$LANG['DS_NOT_IDENTIFIED'] = 'ERROR: dataset id not identified';
 
 ?>

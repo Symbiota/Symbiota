@@ -28,6 +28,10 @@
     padding: 5px;
 }
 
+.icon-img{ 
+	width:1.1em;
+	border: 0px;
+}
 
 #sort-div {  
 }
@@ -51,9 +55,10 @@
 
 
 #omlisttable {
-    width: 90%;
+    width: 100%;
 }
 
-#omlisttable img {
+.occur-img {
     border: medium double #990000;
+    height: 70px;
 }

@@ -25,5 +25,6 @@ $LANG['DS_EDITOR'] = 'Éditeur';
 $LANG['DS_READER'] = 'Lecteur';
 $LANG['EXPORT_DS'] = "Exporter l'ensemble de données";
 $LANG['USER_CART'] = "Panier de l'utilisateur";
+$LANG['DS_NOT_IDENTIFIED'] = 'ERREUR : identifiant de l\'ensemble de données non identifié';
 
 ?>

@@ -82,6 +82,7 @@ $LANG['IMG_COPY'] = 'Botón Copiar';
 $LANG['ID_PROTECTED'] = 'Identificación protegida';
 $LANG['IMG_ADD_VOUCHER'] = 'Agregar voucher';
 $LANG['IMG_EDIT_OCC'] = 'Editar ocurrencia';
+$LANG['ADD_TO_CART'] = 'Añadir evento al carrito';
 $LANG['IMG_OCC'] = 'Imagen asociada con el suceso';
 $LANG['MAP_LINK'] = 'Enlace al Mapa';
 $LANG['SEE_MAP_POINT'] = 'Ver punto del mapa';
