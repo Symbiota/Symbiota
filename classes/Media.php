@@ -503,8 +503,6 @@ class Media {
 				if (empty($post_arr['originalUrl'])) {
 					throw new MediaException(MediaException::NoFileUploaded);
 				}
-				$post_arr['url'] ??= $post_arr['originalUrl'];
-    			$post_arr['thumbnailUrl'] ??= $post_arr['originalUrl'];
 			}
 
 			$media_metadata = self::insert($post_arr, $conn);

@@ -11,7 +11,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
-$imageCount = (int)($_REQUEST['imageCount']);
+$imageCount = (int)($_REQUEST['imageCount']) ?? 10;
 
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
@@ -90,12 +90,13 @@ if($tid){
 									<?php
 									$imgCnt = 0;
 									foreach($images as $mediaID => $imgArr){
-										$displayUrl = !empty($imgArr["thumbnailUrl"]) ? $imgArr["thumbnailUrl"] : $imgArr["url"];
+										    $displayUrl = !empty($imgArr['thumbnailUrl']) ? $imgArr['thumbnailUrl'] : (!empty($imgArr['url']) ? $imgArr['url'] : ($imgArr['originalUrl'] ?? ''));
+
 										if($imgArr['mediaType'] === 'audio') {
 											$displayUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 										}
 										if($displayUrl && substr($displayUrl,0,10) != 'processing'){
-											$webUrl = $imgArr['url'] ?? '';
+											$webUrl = !empty($imgArr['url']) ? $imgArr['url'] : ($imgArr['originalUrl'] ?? '');
 											if($GLOBALS['MEDIA_DOMAIN']){
 												if(substr($webUrl, 0, 1) == '/') $webUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr['url'];
 												if(substr($imgArr['thumbnailUrl'], 0, 1) == '/') $displayUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr['thumbnailUrl'];
