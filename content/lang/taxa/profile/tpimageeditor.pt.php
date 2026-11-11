@@ -39,4 +39,7 @@ $LANG['TP_IMAGE_EDITOR'] = 'Editor de mídia de perfil de táxon';
 $LANG['CREATOR'] = 'criador';
 $LANG['NOT_SPECIFIED'] = 'Não especificado';
 $LANG['NOT_SET'] = 'Não definido';
+$LANG['IMAGES_PER_PAGE'] = 'Imagens por página:';
+$LANG['APPLY'] = 'Aplicar';
+
 ?>

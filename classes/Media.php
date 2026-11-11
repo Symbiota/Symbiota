@@ -500,8 +500,9 @@ class Media {
 			}
 			else{
 				UploadUtil::validateFileError($file);
-				if (empty($post_arr['originalUrl']))
-        			throw new MediaException(MediaException::NoFileUploaded);
+				if (empty($post_arr['originalUrl'])) {
+					throw new MediaException(MediaException::NoFileUploaded);
+				}
 			}
 
 			$media_metadata = self::insert($post_arr, $conn);
