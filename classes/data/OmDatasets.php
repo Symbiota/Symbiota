@@ -182,22 +182,38 @@ class OmDatasets extends DataCore{
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('ii', $targetDatasetID, $this->datasetID);
 			$stmt->execute();
-			if($stmt->affectedRows) $status = true;
+			if($stmt->affected_rows) $status = true;
 			$stmt->fetch();
 			$stmt->close();
 		}
 		return $status;
 	}
 
-	public function transferOccurrences($targetDatasetID){
+	public function transferOccurrences($targetDatasetID, $input = null){
 		$status = false;
-		$sql = 'UPDATE IGNORE omoccurdatasetlink SET datasetID = ? WHERE datasetid = ?';
-		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('ii', $targetDatasetID, $this->datasetID);
-			$stmt->execute();
-			if($stmt->affectedRows) $status = true;
-			$stmt->fetch();
-			$stmt->close();
+		if($input){
+			//Transfer selected
+			$sql = 'UPDATE IGNORE omoccurdatasetlink SET datasetID = ? WHERE occid IN(' . trim(str_repeat('?,', count($input)), ',') . ') AND datasetid = ?';
+			$typeStr = 'ii' . str_repeat('i', count($input));
+			array_unshift($input, $targetDatasetID);
+			$input[] = $this->datasetID;
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param($typeStr, ...$input);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				$stmt->close();
+			}
+		}
+		else{
+			//Transfer all
+			$sql = 'UPDATE IGNORE omoccurdatasetlink SET datasetID = ? WHERE datasetid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $targetDatasetID, $this->datasetID);
+				$stmt->execute();
+				if($stmt->affected_rows) $status = true;
+				$stmt->close();
+			}
+			$this->deleteOccurrences();
 		}
 		return $status;
 	}

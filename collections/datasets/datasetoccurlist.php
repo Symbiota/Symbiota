@@ -172,28 +172,30 @@ if(!isset($isEditor)){
 			}
 		}
 
-		function validateDataSetForm(f) {
-			var dbElements = document.getElementsByName("dsids[]");
-			for (i = 0; i < dbElements.length; i++) {
-				var dbElement = dbElements[i];
-				if (dbElement.checked) return true;
+		function deleteSelected(){
+			let targetForm = document.forms["occurform"];
+			if(!validateOccurForm(targetForm)) return false;
+			if(!confirm("<?= $LANG['VERIFY_DELETE_SELECTED'] ?>")){
+				return false;
 			}
-			alert("<?= $LANG['PLS_SELECT_DS'] ?>");
-
-			var confirmStr = '';
-			if (f.submitaction.value == "Merge") {
-				confirmStr = '<?= $LANG['SURE_MERGE_DS'] ?>';
-			} else if (f.submitaction.value == "Clone (make copy)") {
-				confirmStr = '<?= $LANG['SURE_CLONE_DS'] ?>';
-			} else if (f.submitaction.value == "Delete") {
-				confirmStr = '<?= $LANG['SURE_DEL_DS'] ?>';
-			}
-			if (confirmStr == '') return true;
-			return confirm(confirmStr);
+			targetForm.submitaction.value = "deleteOccurrences";
+			targetForm.targetid.value = "";
+			targetForm.submit();
 		}
 
-		function submitOccurForm(){
-			document.forms["occurform"].requestSubmit();
+		function transferSelected(sourceForm){
+			if(sourceForm.targetid.value == ""){
+				alert("<?= $LANG['SELECT_TARGET'] ?>");
+				return false;
+			}
+			let targetForm = document.forms["occurform"];
+			if(!validateOccurForm(targetForm)) return false;
+			if(!confirm("<?= $LANG['VERIFY_TRANSFER_SELECTED'] ?>")){
+				return false;
+			}
+			targetForm.submitaction.value = "transferOccurrences";
+			targetForm.targetid.value = sourceForm.targetid.value;
+			targetForm.submit();
 		}
 
 		function validateOccurForm(f) {
@@ -207,7 +209,7 @@ if(!isset($isEditor)){
 				}
 			}
 			if (!occidChecked) {
-				alert("<?= $LANG['PLS_SEL_SPC'] ?>");
+				alert("<?= $LANG['PLEASE_SELECT_OCCUR'] ?>");
 				return false;
 			}
 			return true;
@@ -235,6 +237,8 @@ if(!isset($isEditor)){
 
 	</script>
 	<style>
+		label{ display: block; font-weight: bold; }
+		button{ display: inline; margin: 10px; }
 		.icon-img{ width: 1.2em }
 	</style>
 </head>
@@ -253,8 +257,8 @@ if(!isset($isEditor)){
 				$recordCount = $datasetManager->getOccurrenceCount($datasetId);
 				if($occurDetailArr && $isEditor > 1){
 					?>
-					<fieldset>
-						<legend><b><?= $LANG['ACTION_PANEL'] ?></b></legend>
+					<section class="fieldset-like">
+						<h2><span><b><?= $LANG['ACTION_PANEL'] ?></b></span></h2>
 						<div style="display: inline-flex; justify-content: space-evenly;width:100%;">
 							<div>
 								<form name="exportAllForm" action="../download/index.php" method="post" onsubmit="targetDownloadPopup(this)" style="display: inline">
@@ -264,20 +268,44 @@ if(!isset($isEditor)){
 								</form>
 							</div>
 							<div>
-								<button type="button" onclick="submitOccurForm()"><?= $LANG['REMOVE_SELECTED'] ?></button>
+								<button type="button" onclick="deleteSelected()"><?= $LANG['REMOVE_SELECTED'] ?></button>
 							</div>
 							<div>
 								<form name="clearDataset-Form" action="datasetmanager.php" method="post" style="display: inline">
 									<input name="datasetid" type="hidden" value="<?= $datasetId ?>" >
-									<button type="submit" name="submitaction" value="deleteAll" onlclick="<?= $LANG['VERIFY_REMOVE_ALL'] ?>"><?= $LANG['REMOVE_ALL'] ?></button>
+									<button type="submit" name="submitaction" value="deleteAll" onclick="return confirm('<?= $LANG['VERIFY_REMOVE_ALL'] ?>')"><?= $LANG['REMOVE_ALL'] ?></button>
 								</form>
 							</div>
 						</div>
-					</fieldset>
+						<hr>
+						<div style="display: inline-flex; justify-content: space-evenly;width:100%;">
+							<form name="transferDataset-Form" action="datasetmanager.php" method="post">
+								<input name="datasetid" type="hidden" value="<?= $datasetId ?>" >
+								<div>
+									<select id="targetid" name="targetid" required>
+										<option value=""><?= $LANG['SELECT_TARGET'] ?></option>
+										<option value="0"><?= $LANG['CLONE_DATASET'] ?></option>
+										<option value="">-------------------</option>
+										<?php
+										$dsList = $datasetManager->getDatasetsByUser();
+										foreach($dsList as $id => $unitArr){
+											if($datasetId == $id) continue;
+											echo '<option value="' . $id . '">' . Sanitize::outString($unitArr['datasetName']) . '</option>';
+										}
+										?>
+									</select>
+								</div>
+								<div style="display: inline-flex; justify-content: space-evenly;width:100%;">
+									<button type="button" name="submitaction" value="transferSelected" onclick="transferSelected(this.form)"><?= $LANG['TRANSFER_SELECTED'] ?></button>
+									<button type="submit" name="submitaction" value="transferAll" onclick="return confirm('<?= $LANG['VERIFY_TRANSFER_ALL'] ?>')"><?= $LANG['TRANSFER_ALL'] ?></button>
+								</div>
+							</form>
+						</div>
+					</section>
 					<?php
 				}
 				?>
-				<div class="gridlike-form-row" style="justify-content: space-between;padding-bottom: 5px;">
+				<div class="gridlike-form-row" style="justify-content: space-between;">
 					<div class="gridlike-form-row" style="text-align: left; flex-wrap: wrap; flex-grow: 1; gap: 5px;">
 						<?php
 						$pageCount = ceil($recordCount / $retLimit);
@@ -338,7 +366,8 @@ if(!isset($isEditor)){
 				</div>
 				<form name="occurform" action="datasetmanager.php" method="post" onsubmit="return validateOccurForm(this)">
 					<input name="datasetid" type="hidden" value="<?= $datasetId ?>" >
-					<input name="submitaction" type="hidden" value="deleteOccurrences" >
+					<input name="targetid" type="hidden" value="" >
+					<input name="submitaction" type="hidden" value="" >
 					<table class="styledtable" style="font-size:12px;">
 						<tr>
 							<?php
@@ -420,7 +449,7 @@ if(!isset($isEditor)){
 							</div>
 							<div class="dialog-body">
 								<input type="hidden" name="occid" id="occidInput">
-								<div><label for="notesInput">Notes</label></div>
+								<label for="notesInput">Notes</label>
 								<textarea id="notesInput" name="notes" rows="8" style="width:900px;"></textarea>
 								<div id="notesError" class="dialog-error" role="alert"></div>
 							</div>

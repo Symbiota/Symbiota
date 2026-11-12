@@ -9,6 +9,8 @@ include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.es.php');
 $LANG['OWNER'] = 'Propietario';
 $LANG['EDITOR'] = 'Editor';
 $LANG['OCCUR_REMOVED'] = 'apariciones eliminadas correctamente';
+$LANG['OCCUR_TRANSFERRED_TO'] = 'ocurrencias transferidas correctamente a';
+$LANG['TARGET_DATASET'] = 'conjunto de datos objetivo';
 $LANG['DS_EDITS_SAVED'] = '¡Éxito! Se guardaron las ediciones del conjunto de datos. ';
 $LANG['DS_MERGED'] = 'Los conjuntos de datos se fusionaron correctamente';
 $LANG['DS_CLONED'] = 'Conjuntos de datos clonados exitosamente';

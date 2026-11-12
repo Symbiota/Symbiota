@@ -6,11 +6,9 @@ Language: Español (Spanish)
 */
 include_once($SERVER_ROOT . '/content/lang/collections/datasets/shared.es.php');
 
-$LANG['PLS_SELECT_DS'] = '¡Seleccione al menos un conjunto de datos!';
-$LANG['SURE_MERGE_DS'] = '¿Está seguro de que desea fusionar los conjuntos de datos seleccionados?';
-$LANG['SURE_CLONE_DS'] = '¿Está seguro de que desea clonar los conjuntos de datos seleccionados?';
-$LANG['SURE_DEL_DS'] = '¿Está seguro de que desea eliminar los conjuntos de datos seleccionados?';
-$LANG['PLS_SEL_SPC'] = '¡Por favor seleccione al menos un espécimen!';
+$LANG['VERIFY_DELETE_SELECTED'] = '¿Está seguro de que desea eliminar los conjuntos de datos seleccionados?';
+$LANG['VERIFY_TRANSFER_SELECTED'] = '¿Estás seguro de que quieres transferir los conjuntos de datos seleccionados?';
+$LANG['PLEASE_SELECT_OCCUR'] = '¡Por favor seleccione al menos un espécimen!';
 $LANG['PAGE'] = 'Pagina';
 $LANG['OF'] = 'de';
 $LANG['COUNT'] = 'Contar';
@@ -25,6 +23,12 @@ $LANG['UNDEFINED'] = 'indefinido';
 $LANG['ACTION_PANEL'] = 'Panel de acciones';
 $LANG['REMOVE_SELECTED'] = 'Eliminar apariciones seleccionadas';
 $LANG['VERIFY_REMOVE_ALL'] = '¿Estás seguro de que quieres eliminar todas las apariciones del conjunto de datos?';
+$LANG['SELECT_TARGET'] = 'Seleccionar conjunto de datos de destino';
+$LANG['CLONE_DATASET'] = 'Clonar conjunto de datos';
+$LANG['VERIFY_TRANSFER_SELECTED'] = '¿Estás seguro de que quieres transferir todos los sucesos?';
+$LANG['TRANSFER_SELECTED'] = 'Transferir lo seleccionado';
+$LANG['VERIFY_TRANSFER_ALL'] = '¿Estás seguro de que quieres transferir todos los sucesos?';
+$LANG['TRANSFER_ALL'] = 'Transferir todas';
 $LANG['REMOVE_ALL'] = 'Eliminar todo';
 $LANG['NO_OCCS_DS'] = 'No hay ocurrencias vinculadas a este conjunto de datos';
 

@@ -68,7 +68,7 @@ if($datasetid && $SYMB_UID){
 				if($dsMetaArr['isPublic'] || $isEditor){
 					?>
 					<div class="split-div">
-						<div><h1 class="page-heading"><?= $dsMetaArr['datasetName'] ?></h1></div>
+						<h1 class="page-heading" style="margin-bottom:5px;"><?= $dsMetaArr['datasetName'] ?></h1>
 						<div>
 							<?php
 							if($SYMB_UID){
@@ -86,10 +86,16 @@ if($datasetid && $SYMB_UID){
 					</div>
 					<div>
 						<?php
-						if($dsMetaArr['datasetIdentifier']) echo '<p><b>' . $LANG['DATASET_IDENTIFIER'] . ':</b> ' . $dsMetaArr['datasetIdentifier'] . '</p>';
+						if($dsMetaArr['datasetIdentifier']){
+							echo '<p><b>' . $LANG['DATASET_IDENTIFIER'] . ':</b> ' . $dsMetaArr['datasetIdentifier'] . '</p>';
+						}
+						if($dsMetaArr['description']){
+							echo '<p>' . $dsMetaArr['description'] . '</p>';
+						}
+						if($dsMetaArr['bibliographicCitation']){
+							echo '<p>' . $dsMetaArr['bibliographicCitation'] . '</p>';
+						}
 						?>
-						<p><?= $dsMetaArr['description'] ?></p>
-						<p><?= $dsMetaArr['bibliographicCitation'] ?></p>
 					</div>
 					<div style="">
 						<?php

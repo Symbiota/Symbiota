@@ -57,7 +57,7 @@ if($datasetId){
 
 	if ($isEditor) {
 		if ($action == 'deleteOccurrences') {
-			if(!$datasetManager->deleteOccurrences($_POST['occid'])) {
+			if($datasetManager->deleteOccurrences($_POST['occid'])) {
 				$statusStr = count($_POST['occid']) . ' ' . $LANG['OCCUR_REMOVED'];
 			} else {
 				$statusStr = $datasetManager->getErrorMessage();
@@ -65,6 +65,24 @@ if($datasetId){
 		}
 		elseif($action == 'deleteAll'){
 			if(!$datasetManager->deleteOccurrences()) {
+				$statusStr = $datasetManager->getErrorMessage();
+			}
+		}
+		elseif($action == 'transferOccurrences'){
+			$targetDatasetID = Sanitize::int($_POST['targetid']);
+			if($datasetManager->transferOccurrences($targetDatasetID, $_POST['occid'])) {
+				$statusStr = count($_POST['occid']) . ' ' . $LANG['OCCUR_TRANSFERRED_TO'] . ' <a href="datasetmanager.php?datasetid=' . $targetDatasetID . '">' . $LANG['TARGET_DATASET'] . '</a>';
+			}
+			else{
+				$statusStr = $datasetManager->getErrorMessage();
+			}
+		}
+		elseif($action == 'transferAll'){
+			$targetDatasetID = Sanitize::int($_POST['targetid']);
+			if($datasetManager->transferOccurrences($targetDatasetID)) {
+				$statusStr = $LANG['OCCUR_TRANSFERRED_TO'] . ' <a href="datasetmanager.php?datasetid=' . $targetDatasetID . '">' . $LANG['TARGET_DATASET'] . '</a>';
+			}
+			else{
 				$statusStr = $datasetManager->getErrorMessage();
 			}
 		}
