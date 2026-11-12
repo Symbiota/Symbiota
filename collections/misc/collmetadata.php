@@ -73,6 +73,8 @@ if ($isEditor) {
 }
 $collData = current($collManager->getCollectionMetadata());
 $collManager->cleanOutArr($collData);
+$vvGeminiApiKey = '';
+if($collid) $vvGeminiApiKey = $collManager->getCollectionGeminiApiKey();
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -685,6 +687,14 @@ $collManager->cleanOutArr($collData);
 										?>
 									</span>
 								</span>
+							</div>
+							<div class="field-block">
+								<div id="gemini-api-key-container" style="display:<?php echo (($HAS_GEMINI_CURL_BEEN_FIXED ?? false) ?'block':'none'); ?>;">
+									<span class="field-elem">
+										<label for="vvGeminiApiKey"> <?= $LANG['VV_GEMINI_KEY'] ?>: </label>
+										<input id="vvGeminiApiKey" type="password" name="vvGeminiApiKey" value="<?= htmlspecialchars($vvGeminiApiKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) ?>" autocomplete="off" style="max-width: 100%; width:400px" />
+									</span>
+								</div>
 							</div>
 							<?php
 							if ($collid) {

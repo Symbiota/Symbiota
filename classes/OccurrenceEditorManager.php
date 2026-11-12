@@ -2426,6 +2426,7 @@ class OccurrenceEditorManager {
 		if ($imgId && $rawFrag) {
 			$statusStr = '';
 			//$rawFrag = preg_replace('/[^(\x20-\x7F)]*/','', $rawFrag);
+			$source = $source ? substr($source, 0, 150) : null;
 			$sql = 'INSERT INTO specprocessorrawlabels(mediaID,rawstr,notes,source) ' .
 				'VALUES (' . $imgId . ',"' . $this->cleanRawFragment($rawFrag) . '",' .
 				($notes ? '"' . $this->cleanInStr($notes) . '"' : 'NULL') . ',' .
@@ -2446,6 +2447,7 @@ class OccurrenceEditorManager {
 		if (is_numeric($prlId) && $rawFrag) {
 			$statusStr = '';
 			//$rawFrag = preg_replace('/[^(\x20-\x7F)]*/','', $rawFrag);
+			$source = $source ? substr($source, 0, 150) : null;
 			$sql = 'UPDATE specprocessorrawlabels ' .
 				'SET rawstr = "' . $this->cleanRawFragment($rawFrag) . '", ' .
 				'notes = ' . ($notes ? '"' . $this->cleanInStr($notes) . '"' : 'NULL') . ', ' .

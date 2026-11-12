@@ -1,7 +1,15 @@
 <?php
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/OmCollections.php');
 
 Language::load('collections/editor/includes/imgprocessor');
+
+$vvGeminiApiKey = '';
+if(!empty($collId) && is_numeric($collId)){
+	$collManager = new OmCollections('readonly');
+	$collManager->setCollid($collId);
+	$vvGeminiApiKey = $collManager->getCollectionGeminiApiKey();
+}
 
 ?>
 
@@ -56,7 +64,29 @@ Language::load('collections/editor/includes/imgprocessor');
 </script>
 <style>
 	.ocr-box{ padding: 10px; float:left; }
-	.ocr-box button{ margin: 5px; }
+	.top-breathing-room-rel { margin-top: 0.5rem; }
+	.vv-help-icon{
+		display:inline-block;
+		width:1.1em;
+		height:1.1em;
+		line-height:1.1em;
+		text-align:center;
+		font-weight:bold;
+		border:1px solid currentColor;
+		border-radius:50%;
+		font-size:0.85em;
+		vertical-align:middle;
+		font-family:Arial,sans-serif;
+	}
+	.vvAuthTokenSignupLink,
+	.vvAuthTokenSignupLink:visited{
+		color: var(--secondary-color);
+		text-decoration:underline;
+	}
+	.vvAuthTokenSignupLink:hover,
+	.vvAuthTokenSignupLink:focus{
+		color: var(--primary-color);
+	}
 </style>
 <div id="labelProcDiv" style="width:100%;height:1050px;position:relative">
 	<fieldset id="labelProcFieldset" style="background-color:white;">
@@ -65,6 +95,20 @@ Language::load('collections/editor/includes/imgprocessor');
 			<div style="float:left;margin-top:3px;margin-right:15px"><a id="zoomInfoDiv" href="#"><?php echo $LANG['ZOOM']; ?></a></div>
 			<div id="zoomInfoDialog">
 				<?php echo $LANG['ZOOM_DIRECTIONS']; ?>
+			</div>
+			<div id="vvAuthTokenHelpDialog">
+				<div style="font-size: 0.9em; margin: 3px 0px 8px;">
+					<?= $LANG['VV_AUTH_TOKEN_HINT']; ?>
+					<span style="color: var(--danger-color)">
+						<?= $LANG['VV_SYMBIOTA_CREDENTIALS_DISABLED']; ?>
+					</span>
+					<a class="vvAuthTokenSignupLink" href="https://vouchervision-go-738307415303.us-central1.run.app/signup" target="_blank" rel="noopener">
+						<?= $LANG['VV_AUTH_TOKEN_LOGIN_LINK']; ?>
+					</a>
+					<span>
+						<?= $LANG['VV_TOKEN_REFRESH_NOTE']; ?>
+					</span>
+				</div>
 			</div>
 			<div style="float:left;margin-right:15px">
 				<div id="draggableImgDiv" style="float:left" title="<?php echo $LANG['MAKE_DRAGGABLE']; ?>"><a href="#" onclick="draggableImgPanel()"><img src="../../images/draggable.png" style="width:1.3em" /></a></div>
@@ -100,7 +144,7 @@ Language::load('collections/editor/includes/imgprocessor');
 							<input type="checkbox" id="ocrfull-tess" value="1" /> <?php echo $LANG['OCR_WHOLE_IMG']; ?><br/>
 							<input type="checkbox" id="ocrbest" value="1" /> <?php echo $LANG['OCR_ANALYSIS']; ?>
 							<div>
-								<button class="button icon-button" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+								<button class="button icon-button top-breathing-room-rel" value="OCR Image" onclick="ocrImage(this,'tess', <?php echo $imgId.','.$imgCnt; ?>);" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 								<img id="workingcircle-tess-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 							</div>
 						</fieldset>
@@ -117,11 +161,21 @@ Language::load('collections/editor/includes/imgprocessor');
 							</fieldset>
 							<?php
 						}
-						if(!empty($VOUCHERVISION_API_KEY)){
+						$vvSharedKeyAvailable = !empty($VOUCHERVISION_API_KEY);
 						?>
 						<fieldset class="ocr-box">
 							<legend>VoucherVision OCR</legend>
+							<input type="hidden" id="vv-shared-key-enabled" value="<?php echo ($vvSharedKeyAvailable?1:0); ?>" />
 							<input type="checkbox" id="ocrOnly" value="1" /> <?php echo $LANG['VV_OCR_ONLY']; ?><br/>
+							<!-- <input type="checkbox" id="vv-debug" value="1" /> Debug Mode<br/> -->
+							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;">
+								<?php echo $LANG['VV_AUTH_TOKEN']; ?>
+								<a class="vvAuthTokenHelpBtn" href="#" style="cursor: pointer; margin-left: 5px;" aria-label="Authorization token help">
+									<span class="vv-help-icon" aria-hidden="true">?</span>
+								</a>
+							</div>
+							<input id="vv-auth-token" type="password" value="" autocomplete="off" style="width: 97%;" />
+							<input id="vv-gemini-api-key" type="hidden" value="<?php echo htmlspecialchars($vvGeminiApiKey, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" autocomplete="off" />
 							<div style="font-weight: bold; position: relative; left: -6px; margin: 5px 0px;"> <?php echo $LANG['VV_OCR_ENGINES']; ?></div>
 							<select id="engines" size=2 multiple>
 								<option value="gemini-3.1-flash-lite-preview" selected>Gemini 3.1 Flash Lite</option>
@@ -140,13 +194,13 @@ Language::load('collections/editor/includes/imgprocessor');
 								<option value="SLTPvM_default">SLTPvM_default</option>
 							</select><br/>
 							<div>
-									<button value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
+									<button class="button icon-button top-breathing-room-rel" value="OCR Image" onclick="ocrVV(this, '<?php echo $imgCnt; ?>');" ><?php echo $LANG['OCR_IMAGE']; ?></button>
 									<img id="workingcircle-vv-<?php echo $imgCnt; ?>" src="../../images/workingcircle.gif" style="display:none;" />
 								</div>
 						</fieldset>
-						<?php
-						}
-						?>
+						<script type="text/javascript">
+							restoreVVCredentialsFromSession();
+						</script>
 						<div style="float:right;margin-right:20px;font-weight:bold;">
 							<?php echo $LANG['IMAGE'].' '.$imgCnt.' '.$LANG['OF'].' ';
 							echo count($imgArr);
@@ -182,7 +236,7 @@ Language::load('collections/editor/includes/imgprocessor');
 									<input type="hidden" name="collid" value="<?php echo $collId; ?>" />
 									<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 									<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-									<button name="submitaction" type="submit" value="Save OCR" ><?php echo $LANG['SAVE_OCR']; ?></button>
+									<button id="save-ocr-btn" class="button icon-button top-breathing-room-rel" name="submitaction" type="submit" value="Save OCR" ><?php echo $LANG['SAVE_OCR']; ?></button>
 								</div>
 							</form>
 							<div style="font-weight:bold;float:right;"><?php echo '&lt;'.$LANG['NEW'].'&gt; '.$LANG['OF'].' '.count($fArr); ?></div>
@@ -224,7 +278,7 @@ Language::load('collections/editor/includes/imgprocessor');
 												<input type="hidden" name="occid" value="<?php echo $occId; ?>" />
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button name="submitaction" type="submit" value="Save OCR Edits" ><?php echo $LANG['SAVE_OCR_EDITS']; ?></button>
+												<button class="button button-icon top-breathing-room-rel" name="submitaction" type="submit" value="Save OCR Edits" ><?php echo $LANG['SAVE_OCR_EDITS']; ?></button>
 											</div>
 											<div style="float:left;margin-left:20px;">
 												<input type="hidden" name="iurl" value="<?php echo $iUrl; ?>" />
@@ -258,7 +312,7 @@ Language::load('collections/editor/includes/imgprocessor');
 												<input type="hidden" name="occid" value="<?php echo $occId; ?>" /><br/>
 												<input type="hidden" name="occindex" value="<?php echo $occIndex; ?>" />
 												<input type="hidden" name="csmode" value="<?php echo $crowdSourceMode; ?>" />
-												<button name="submitaction" type="submit" value="Delete OCR" ><?php echo $LANG['DELETE_OCR']; ?></button>
+												<button style="width: 15rem;" class="button button-icon" name="submitaction" type="submit" value="Delete OCR" ><?php echo $LANG['DELETE_OCR']; ?></button>
 											</form>
 										</div>
 									</div>
