@@ -597,9 +597,9 @@ class OccurrenceEditorManager {
 	private function setCustomSqlFragment($customField, $customTerm, $customValue, $cao, $cop, $ccp) {
 		$sqlFrag = '';
 		if ($customTerm == 'IS_NULL') {
-			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NULL) ' . ($ccp ? $ccp . ' ' : '');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NULL OR '. $customField . ' = \'\') ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_NULL') {
-			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NOT NULL) ' . ($ccp ? $ccp . ' ' : '');
+			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' (' . $customField . ' IS NOT NULL AND ' . $customField . ' != \'\') ' . ($ccp ? $ccp . ' ' : '');
 		} elseif ($customTerm == 'NOT_EQUALS') {
 			if (!is_numeric($customValue)) $customValue = '"' . $customValue . '"';
 			$sqlFrag .= $cao . ($cop ? ' ' . $cop : '') . ' ((' . $customField . ' != ' . $customValue . ') OR (' . $customField . ' IS NULL)) ' . ($ccp ? $ccp . ' ' : '');
@@ -642,7 +642,28 @@ class OccurrenceEditorManager {
 			} else {
 				$sqlOrderBy = $orderBy;
 			}
-			if ($sqlOrderBy) $sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $this->qryArr['orderbydir'] . ' ';
+			if ($sqlOrderBy) {
+				if ($orderBy == 'identifierValue') {
+					$selectFirst = "(SELECT id2.identifierValue FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
+					if ($this->qryArr['orderbydir'] === 'ASC') {
+						$sql .= " ORDER BY ($selectFirst) IS NULL, CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) ASC ";
+					} else {
+						$sql .= " ORDER BY CAST(REGEXP_REPLACE($selectFirst, '[^0-9]', '') AS UNSIGNED) DESC ";
+					}
+				}
+				else if ($orderBy == 'identifierName') {
+					$selectFirst = "(SELECT id2.identifierName FROM omoccuridentifiers id2 WHERE id2.occid = o.occid ORDER BY id2.idomoccuridentifiers ASC LIMIT 1)";
+					if ($this->qryArr['orderbydir'] === 'ASC') {
+						$sql .= " ORDER BY ($selectFirst IS NULL OR $selectFirst = ''), $selectFirst ASC ";
+					} else {
+						$sql .= " ORDER BY $selectFirst DESC ";
+					}
+				}
+				else {
+					$orderbydir = ($this->qryArr['orderbydir'] === 'ASC') ? ' IS NULL, o.' . $sqlOrderBy . ' ASC' : 'DESC';
+					$sql .= 'ORDER BY (o.' . $sqlOrderBy . ') ' . $orderbydir . ' ';
+				}
+			}
 		}
 	}
 
@@ -711,12 +732,15 @@ class OccurrenceEditorManager {
 		$localIndex = false;
 		$sqlFrag = '';
 		if($this->occid && !$this->direction){
-			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid WHERE (o.occid = '.$this->occid.')';
+			$sqlFrag .= 'LEFT JOIN omoccurpaleo paleo ON paleo.occid = o.occid LEFT JOIN omoccuridentifiers id ON id.occid = o.occid WHERE (o.occid = '.$this->occid.')';
 		}
 		elseif($this->sqlWhere){
 			$this->addTableJoins($sqlFrag);
 			if (strpos($sqlFrag, 'LEFT JOIN omoccurpaleo') === false) {
 				$sqlFrag .= ' LEFT JOIN omoccurpaleo paleo ON o.occid = paleo.occid ';
+			}
+			if (strpos($sqlFrag, 'LEFT JOIN omoccuridentifiers') === false) {
+				$sqlFrag .= ' LEFT JOIN omoccuridentifiers id ON o.occid = id.occid ';
 			}
 			$sqlFrag .= $this->sqlWhere;
 			if($limit){
@@ -1196,7 +1220,7 @@ class OccurrenceEditorManager {
 	private function getIdentifiers($occidStr) {
 		$retArr = array();
 		if ($occidStr) {
-			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY initialTimestamp';
+			$sql = 'SELECT occid, idomoccuridentifiers, identifierName, identifierValue FROM omoccuridentifiers WHERE occid IN(' . $occidStr . ') ORDER BY idomoccuridentifiers';
 			$rs = $this->conn->query($sql);
 			while ($r = $rs->fetch_object()) {
 				$retArr[$r->occid][$r->idomoccuridentifiers]['name'] = $r->identifierName;
