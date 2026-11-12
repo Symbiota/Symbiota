@@ -1464,7 +1464,7 @@ class OccurrenceEditorManager {
 					$dateArr['enddayofyear'] = $endDayOfYear;
 				}
 			}
-			if($occurrenceArr['eventdate2'] && $occurrenceArr['eventdate'] != $occurrenceArr['eventdate2']){
+			if(!empty($occurrenceArr['eventdate2']) && $occurrenceArr['eventdate'] != $occurrenceArr['eventdate2']){
 				$dateArr['day'] = '';
 				if (preg_match('/(\d{4})-(\d{2})-(\d{2})/', $occurrenceArr['eventdate2'], $m)) {
 					if (!empty($m[1]) && $m[1] != $dateArr['year']){
