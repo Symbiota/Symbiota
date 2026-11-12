@@ -10,7 +10,7 @@ $cSet = array_key_exists("cset", $_POST) ? $_POST["cset"] : '';
 $isPublicSearch = (empty($_REQUEST['publicsearch'])) ? 0 : 1;		//Value false by default
 
 if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
-	//Portal is configured to require
+	//Portal is configured to limit data exports to requistered users
 	http_response_code(401);
 	header('Content-Type: application/json');
 	echo json_encode(['error' => 'Unauthorized access']);
