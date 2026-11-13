@@ -52,7 +52,7 @@ if($IS_ADMIN){
 		*/
 		?>
 		<li>
-			<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php"><?= $LANG['BATCH_UPDATE_STATS'] ?></a>
+			<a href="<?= $CLIENT_ROOT ?>/collections/misc/collstats.php"><?= $LANG['BATCH_UPDATE_STATS'] ?></a>
 		</li>
 	</ul>
 	<?php
