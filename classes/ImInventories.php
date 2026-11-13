@@ -223,7 +223,7 @@ class ImInventories extends Manager{
 				$this->parameterArr['morphoSpecies'] = '';
 				$this->typeStr .= 's';
 			}
-			$sql = 'INSERT INTO fmchklsttaxalink(';
+			$sql = 'INSERT IGNORE INTO fmchklsttaxalink(';
 			$sqlValues = '';
 			$paramArr = array();
 			$delimiter = '';

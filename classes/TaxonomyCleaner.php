@@ -84,9 +84,9 @@ class TaxonomyCleaner extends Manager{
 			$taxaCnt = 1;
 			$itemCnt = 0;
 			while($r = $rs->fetch_object()){
-				$editLink = '[<a href="#" onclick="openPopup(\'' . htmlspecialchars($GLOBALS['CLIENT_ROOT'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .
+				$editLink = '[<a href="#" onclick="openPopup(\'' . $GLOBALS['CLIENT_ROOT'] .
 					'/collections/editor/occurrenceeditor.php?q_catalognumber=&occindex=0&q_customfield1=sciname&q_customtype1=EQUALS&q_customvalue1=' . urlencode($r->sciname) . '&collid=' .
-					htmlspecialchars($this->collid, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '\'); return false;">' . htmlspecialchars($r->cnt, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
+					$this->collid . '\'); return false;">' . $r->cnt . ' specimens <img src="../../images/edit.png" style="width:1.2em;" /></a>]';
 				$this->logOrEcho('<div style="margin-top:5px">Resolving #'.$taxaCnt.': <b><i>'.$r->sciname.'</i></b>'.($r->family?' ('.$r->family.')':'').'</b> '.$editLink.'</div>');
 				if($r->family) $taxonHarvester->setDefaultFamily($r->family);
 				if($r->scientificnameauthorship) $taxonHarvester->setDefaultAuthor($r->scientificnameauthorship);
@@ -146,9 +146,9 @@ class TaxonomyCleaner extends Manager{
 					}
 					$manStr = 'Manual search: ';
 					$manStr .= '<form onsubmit="return false" style="display:inline;">';
-					$manStr .= '<input class="taxon" name="taxon" type="text" value="" />';
+					$manStr .= '<input class="taxon" name="taxon" type="text" value="" style="margin-right: 5px" required />';
 					$manStr .= '<input class="tid" name="tid" type="hidden" value="" />';
-					$manStr .= '<button onclick="batchUpdate(this.form,\''.$r->sciname.'\','.$taxaCnt.')">Remap</button>';
+					$manStr .= '<button style="display:inline" onclick="batchUpdate(this.form,\''.$r->sciname.'\','.$taxaCnt.')">Remap</button>';
 					$manStr .= '<span id="remapSpan-'.$taxaCnt.'-c"></span>';
 					$manStr .= '</form>';
 					$this->logOrEcho($manStr,2);

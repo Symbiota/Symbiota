@@ -5,16 +5,19 @@ Language: English
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.' . $LANG_TAG . '.php');
+
 $LANG['FOLLOWING_WARNINGS'] = 'The following warnings occurred';
+$LANG['ERROR_PARENT_TID_NULL'] = 'ERROR adding accepted link: NULL parent identifier';
+$LANG['ERROR_ADD_LINK'] = 'ERROR adding accepted link';
 $LANG['SUCCESS_REMAPPING'] = 'Success remapping taxon!';
 $LANG['SUCCESS_DELETING'] = 'Success deleting taxon!';
-$LANG['TAX_EDITOR'] = 'Taxon Editor';
-$LANG['HOME'] = 'Home';
 $LANG['TAX_TREE_VIEW'] = 'Taxonomy Tree Viewer';
 $LANG['TAXONOMY_EDITOR'] = 'Taxonomy Editor';
 $LANG['SUCCESS'] = 'SUCCESS';
 $LANG['GO_TAX_DISPLAY'] = 'Go to taxonomy display';
 $LANG['ADD_NEW_TAXON'] = 'Add New Taxon';
+$LANG['VIEW_TP_EDITOR'] = 'View Taxon Profile Editor';
 $LANG['EDITOR'] = 'Editor';
 $LANG['TAX_STATUS'] = 'Taxonomic Status';
 $LANG['HIERARCHY'] = 'Hierarchy';

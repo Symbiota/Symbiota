@@ -5,7 +5,8 @@ Language: English
 ------------------
 */
 
-$LANG['NO_TARGET_TAXON'] = 'Target taxon does not appear to be null. Please submit a taxon to remap the resources';
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
+
 $LANG['TAXON_NOT_FOUND'] = 'ERROR: Remapping taxon not found in thesaurus. Is the name spelled correctly?';
 $LANG['TAXON_MUST_BE_EVALUATED'] = 'Taxon record first needs to be evaluated before it can be deleted from the system. The evaluation ensures that the deletion of this record will not interfere with data integrity.';
 $LANG['CHILDREN_TAXA'] = 'Children Taxa';

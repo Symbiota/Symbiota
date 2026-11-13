@@ -2,16 +2,15 @@
 /*
 ------------------
 Language: Español (Spanish)
-Translated by: Samanta Orellana
-Date Translated: 2021-08-18
+Translated by: Samanta Orellana (2021-08-18)
 ------------------
 */
-
 $LANG['COL_STATS'] = 'Estadísticas de la Colección';
 $LANG['NEED_COOKIES'] = 'Las cookies de su navegador están deshabilitadas. Para poder iniciar sesión y acceder a su perfil, deben estar habilitadas para este dominio.';
 $LANG['CHOOSE_ONE'] = '¡Por favor, elija al menos una colección!';
 $LANG['HOME'] = 'Inicio';
 $LANG['COLLECTIONS'] = 'Colecciones';
+$LANG['BATCH_UPDATE_STATS'] = 'Actualizar estadísticas de colección a nivel de portal';
 $LANG['STATISTICS'] = 'Estadísticas';
 $LANG['SELECT_COLS'] = 'Seleccionar Colecciones para ser Analizadas';
 $LANG['REC_CRITERIA'] = 'Criterios de Registros';

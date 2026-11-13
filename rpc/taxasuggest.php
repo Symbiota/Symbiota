@@ -1,28 +1,30 @@
 <?php
-/*
- * Input: term = scientific name fragment, taxonType, $rankLow = rankid lower limit, $rankHigh = rankid upper limit
- * Return: autosuggest return list
- */
 include_once('../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/TaxonSearchSupport.php');
-header('Content-Type: application/json; charset='.$CHARSET);
+include_once($SERVER_ROOT . '/classes/RpcTaxonomy.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+
+header('Content-Type: application/json; charset=' . $CHARSET);
 include_once($SERVER_ROOT . '/rpc/crossPortalHeaders.php');
 
-$term = (array_key_exists('term',$_REQUEST)?$_REQUEST['term']:'');
-$taxonType = (array_key_exists('t',$_REQUEST)?$_REQUEST['t']:0);
-$rankLow = (array_key_exists('ranklow',$_REQUEST)?$_REQUEST['ranklow']:0);
-$rankHigh = (array_key_exists('rankhigh',$_REQUEST)?$_REQUEST['rankhigh']:0);
+$term = (array_key_exists('term', $_REQUEST) ? $_REQUEST['term'] : '');
+$taxonSearchType = (array_key_exists('searchType', $_REQUEST) ? Sanitize::int($_REQUEST['searchType']) : 2);
+$rankMin = (array_key_exists('rankMin', $_REQUEST) ? Sanitize::int($_REQUEST['rankMin']) : '');
+$rankMax = (array_key_exists('rankMax', $_REQUEST) ? Sanitize::int($_REQUEST['rankMax']) : '');
+$limitToAccepted = empty($_REQUEST['limitToAccepted']) ? 0 : 1;
+$fullOutput = empty($_REQUEST['fullOutput']) ? 0 : 1;
+$taxAuthID = (array_key_exists('taxAuthID', $_REQUEST) ? Sanitize::int($_REQUEST['taxAuthID']) : 1);
 
-$nameArr = array();
+$retArr = array();
 if($term){
-   if(isset($DEFAULT_TAXON_SEARCH) && !$taxonType) $taxonType = $DEFAULT_TAXON_SEARCH;
-   $searchManager = new TaxonSearchSupport();
-   $searchManager->setQueryString($term);
-   $searchManager->setTaxonType($taxonType);
-   $searchManager->setRankLow($rankLow);
-   $searchManager->setRankHigh($rankHigh);
+	$rpcManager = new RpcTaxonomy();
+	$rpcManager->setTaxonSearchType($taxonSearchType);
+	$rpcManager->setRankMin($rankMin);
+	$rpcManager->setRankMax($rankMax);
+	$rpcManager->setLimitToAccepted($limitToAccepted);
+	$rpcManager->setFullOutput($fullOutput);
+	$rpcManager->setTaxAuthId($taxAuthID);
 
-   $nameArr = $searchManager->getTaxaSuggest();
+	$retArr = $rpcManager->getTaxaSuggest($term);
 }
-echo json_encode($nameArr);
+echo json_encode($retArr);
 ?>

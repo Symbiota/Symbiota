@@ -4,7 +4,7 @@ include_once($SERVER_ROOT.'/classes/OccurrenceCollectionProfile.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
 
-Language::load(['collections/misc/collstats','collections/search/index', 'sitemap']);
+Language::load(['collections/misc/collstats','collections/search/index']);
 
 header("Content-Type: text/html; charset=" . $CHARSET);
 ini_set('max_execution_time', 1200); //1200 seconds = 20 minutes
@@ -17,7 +17,7 @@ $cParentTaxon = isset($_REQUEST['taxon']) ? htmlspecialchars($_REQUEST['taxon'],
 $cCountry = isset($_REQUEST['country']) ? htmlspecialchars($_REQUEST['country'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
 $days = array_key_exists('days', $_REQUEST) ? filter_var($_REQUEST['days'], FILTER_SANITIZE_NUMBER_INT) : 365;
 $months = array_key_exists('months', $_REQUEST)? filter_var($_REQUEST['months'], FILTER_SANITIZE_NUMBER_INT) : 12;
-$action = array_key_exists('submitaction', $_REQUEST) ? htmlspecialchars($_REQUEST['submitaction'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) : '';
+$action = array_key_exists('submitaction', $_REQUEST) ? $_REQUEST['submitaction'] : '';
 
 $collManager = new OccurrenceCollectionProfile();
 
@@ -257,7 +257,8 @@ if($action != "Update Statistics"){
 			<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/sharedCollectionStyling.css" type="text/css" rel="stylesheet" />
             <script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 			<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-			<script src="../../js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js" type="text/javascript"></script>
+			<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 			<script type="text/javascript">
 				$(document).ready(function() {
 					if(!navigator.cookieEnabled){
@@ -265,48 +266,15 @@ if($action != "Update Statistics"){
 					}
 					$("#tabs").tabs({<?php echo ($action == "Run Statistics"?'active: 1':''); ?>});
 
-                    function split( val ) {
-                        return val.split( /,\s*/ );
-                    }
-                    function extractLast( term ) {
-                        return split( term ).pop();
-                    }
+					const taxonInput = document.querySelector('#taxon');
+					if(taxonInput){
+						taxonInput.addEventListener('focus', (event) => {
+							taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+							taxaSuggest.config.minLength = 2;
+							taxaSuggest.initiate("taxon");
+						});
+					}
 
-                    $( "#taxon" )
-                    // don't navigate away from the field on tab when selecting an item
-						.on( "keydown", function( event ) {
-                            if ( event.keyCode === $.ui.keyCode.TAB &&
-                                $( this ).data( "autocomplete" ).menu.active ) {
-                                event.preventDefault();
-                            }
-                        })
-                        .autocomplete({
-                            source: function( request, response ) {
-                                $.getJSON( "rpc/speciessuggest.php", {
-                                    term: extractLast( request.term )
-                                }, response );
-                            },
-                            search: function() {
-                                // custom minLength
-                                var term = extractLast( this.value );
-                                if ( term.length < 4 ) {
-                                    return false;
-                                }
-                            },
-                            focus: function() {
-                                // prevent value inserted on focus
-                                return false;
-                            },
-                            select: function( event, ui ) {
-                                var terms = split( this.value );
-                                // remove the current input
-                                terms.pop();
-                                // add the selected item
-                                terms.push( ui.item.value );
-                                this.value = terms.join( ", " );
-                                return false;
-                            }
-                        },{});
 				});
 
 				function toggleDisplayListOfCollectionsAnalyzed(){
@@ -390,35 +358,21 @@ if($action != "Update Statistics"){
 			<?php
 			$displayLeftMenu = (isset($collections_misc_collstatsMenu)?$collections_misc_collstatsMenu:false);
 			include($SERVER_ROOT.'/includes/header.php');
-			if(isset($collections_misc_collstatsCrumbs)){
-				if($collections_misc_collstatsCrumbs){
-					echo "<div class='navpath'>";
-					echo "<a href='" . $CLIENT_ROOT . "/index.php'>Home</a> &gt;&gt; ";
-					echo $collections_misc_collstatsCrumbs.' &gt;&gt; ';
-					echo "<b>" . $LANG['BATCH_UPDATE_STATS'] . "</b>";
-					echo "</div>";
-				}
-			}
-			else{
-				?>
-				<div class='navpath'>
-					<a href='<?php echo $CLIENT_ROOT; ?>/index.php'><?php echo htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<a href='<?php echo $CLIENT_ROOT; ?>/collections/misc/collprofiles.php'><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a> &gt;&gt;
-					<b><?php echo $LANG['BATCH_UPDATE_STATS']; ?></b>
-				</div>
-				<?php
-			}
 			?>
-			<!-- This is inner text! -->
+			<div class='navpath'>
+				<a href='<?= $CLIENT_ROOT ?>/index.php'><?= $LANG['HOME'] ?></a> &gt;&gt;
+				<a href='<?= $CLIENT_ROOT ?>/collections/misc/collprofiles.php'><?= $LANG['COLLECTIONS'] ?></a> &gt;&gt;
+				<b><?= $LANG['BATCH_UPDATE_STATS'] ?></b>
+			</div>
 			<div role="main" id="innertext" class="inntertext-tab pin-things-here inner-search">
-				<h1 class="page-heading"><?= $LANG['SELECT_COLS']; ?></h1>
+				<h1 class="page-heading"><?= $LANG['SELECT_COLS'] ?></h1>
 				<div id="error-msgs" class="errors"></div>
 				<div id="tabs" class="tabby">
 					<ul class="full-tab">
-						<li><a href="#specobsdiv"><?php echo htmlspecialchars($LANG['COLLECTIONS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a></li>
+						<li><a href="#specobsdiv"><?= $LANG['COLLECTIONS'] ?></a></li>
 						<?php
                         if($action == "Run Statistics"){
-							echo '<li><a href="#statsdiv">' . htmlspecialchars($LANG['STATISTICS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></li>';
+							echo '<li><a href="#statsdiv">' . $LANG['STATISTICS'] . '</a></li>';
 						}
 						?>
 					</ul>
@@ -446,6 +400,7 @@ if($action != "Update Statistics"){
 											<div class="record-criteria-inputs">
 												<label for="taxon"><?php echo $LANG['PARENT_CRITERIA']; ?>: </label>
 												<input type="text" id="taxon" name="taxon" size="43" value="<?php echo $cParentTaxon; ?>" />
+												<input name="tid" type="hidden" value="" >
 											</div>
 											<div class="record-criteria-inputs">
 												<label for="country"><?php echo $LANG['COUNTRY']; ?>: </label>
@@ -857,7 +812,7 @@ if($action != "Update Statistics"){
 									</section>
 									<div class="top-marg">
 										<b><?php echo $LANG['SPEC_W_COUNTRY']; ?>:</b> <?php echo number_format($total); ?><br />
-										<?php 
+										<?php
 										if ($results){
 											echo $LANG['SPEC_WO_COUNTRY']; ?>: <?php echo number_format(($results['SpecimenCount']-$total)+$results['SpecimensNullLatitude']);
 										}

@@ -176,8 +176,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 				} catch (mysqli_sql_exception $e) {
 					echo 'Duplicate: '.$this->conn->error;
 				}
-				$tidToAdd = $detArr['tidtoadd'];
-				if($tidToAdd && !is_numeric($tidToAdd)) $tidToAdd = 0;
 				$this->updateBaseOccurrence($detId);
 
 				//Add identification confidence
@@ -365,18 +363,6 @@ class OccurrenceEditorDeterminations extends OccurrenceEditorManager{
 			$rs2->free();
 		}
 		return $retArr;
-	}
-
-	public function addNomAdjustment($detArr,$isEditor){
-		$sql = 'SELECT identificationQualifier FROM omoccurrences WHERE occid = '.$this->occid;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			$detArr['identificationqualifier'] = $r->identificationQualifier;
-		}
-		$rs->free();
-		$detArr['identifiedby'] = 'Nomenclatural Adjustment';
-		$detArr['dateidentified'] = date('F').' '.date('j').', '.date('Y');
-		$this->addDetermination($detArr, $isEditor);
 	}
 
 	public function getNewDetItem($catNum, $sciName, $allCatNum = 0){

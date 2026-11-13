@@ -546,6 +546,29 @@ table.styledtable tr.alt td {
   background-color: #dfdfdf;
 }
 
+/* Taxonomy Autocomplete lookups */
+.ac-unitName {
+  font-style: italic;
+}
+
+.ac-infraRank {
+  font-weight: normal;
+}
+
+.ac-infraName {
+  font-style: italic;
+}
+
+.ac-author {
+  color: #4e7fa8;
+  font-weight: normal;
+}
+
+.ac-kingdom {
+  font-weight: normal;
+  fontSize: "0.85em";
+}
+
 /***********************************************************************/
 /* Utility classes
 ========================================================================== */
@@ -688,10 +711,6 @@ table.styledtable tr.alt td {
 
 .no-margin {
   margin: 0;
-}
-
-.search-bar {
-  width: 25rem;
 }
 
 .float-right {

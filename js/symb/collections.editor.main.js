@@ -4,12 +4,6 @@ var securityIsDefault = false;
 
 $(document).ready(function () {
   var editForm = document.fullform;
-  function split(val) {
-    return val.split(/,\s*/);
-  }
-  function extractLast(term) {
-    return split(term).pop();
-  }
 
   if (/Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent)) {
     var ffversion = new Number(RegExp.$1);
@@ -50,63 +44,6 @@ $(document).ready(function () {
     },
   });
 
-  $("#exstitleinput").autocomplete({
-    source: "rpc/exsiccatisuggest.php",
-    minLength: 2,
-    autoFocus: true,
-    select: function (event, ui) {
-      if (ui.item) {
-        $("#ometidinput").val(ui.item.id);
-        fieldChanged("ometid");
-      } else {
-        $("#ometidinput").val("");
-        fieldChanged("ometid");
-      }
-    },
-    change: function (event, ui) {
-      if ($(this).val() == "") {
-        $("#ometidinput").val("");
-      } else {
-        if ($("#ometidinput").val() == "") {
-          $.ajax({
-            type: "POST",
-            url: "rpc/exsiccativalidation.php",
-            data: { term: $(this).val() },
-          }).done(function (msg) {
-            if (msg == "") {
-              alert("Exsiccati title not found within system");
-            } else {
-              $("#ometidinput").val(msg);
-              fieldChanged("ometid");
-            }
-          });
-        }
-      }
-    },
-  });
-
-  $("#ffsciname").autocomplete({
-    source: "rpc/getspeciessuggest.php",
-    minLength: 3,
-    autoFocus: true,
-    change: function (event, ui) {
-      $("#tidinterpreted").val("");
-      $("input[name=scientificnameauthorship]").val("");
-      $("input[name=family]").val("");
-      if ($("input[name=securityreason]").val() == "") {
-        $("select[name=recordsecurity]").val(0);
-      }
-      fieldChanged("sciname");
-      fieldChanged("tidinterpreted");
-      fieldChanged("scientificnameauthorship");
-      fieldChanged("family");
-      fieldChanged("recordsecurity");
-      if ($("#ffsciname").val()) {
-        verifyFullFormSciName();
-      }
-    },
-  });
-
   var cookies = document.cookie;
   if (cookies.indexOf("localauto") > -1) {
     var cookieName = "localauto=";
@@ -123,140 +60,10 @@ $(document).ready(function () {
     }
   }
 
-  if (localityAutoLookup) {
-    $("#fflocality").autocomplete({
-      source: function (request, response) {
-        $.ajax({
-          url: "rpc/getlocality.php",
-          data: {
-            recordedby: $("input[name=recordedby]").val(),
-            eventdate: $("input[name=eventdate]").val(),
-            locality: request.term,
-          },
-          success: function (data) {
-            response(data);
-          },
-        });
-      },
-      minLength: 4,
-      select: function (event, ui) {
-        $.each(ui.item, function (k, v) {
-          var elem = $("input[name=" + k + "]");
-          if (!elem.length) elem = $("textarea[name=" + k + "]");
-          if (elem.val() == "") {
-            elem.val(v);
-            elem.css("backgroundColor", "lightblue");
-            fieldChanged(k);
-          }
-        });
-        ui.item.value = ui.item.locality;
-      },
-    });
-    if ($("input[name=localautodeactivated]").is(":checked")) {
-      $("#fflocality").autocomplete("option", "disabled", true);
-      $("#fflocality").attr("autocomplete", "on");
-    }
-  }
-
-  $("#locationid").autocomplete({
-    source: function (request, response) {
-      $.ajax({
-        url: "rpc/getlocality.php",
-        data: { locationid: request.term },
-        success: function (data) {
-          response(data);
-        },
-      });
-    },
-    minLength: 3,
-    select: function (event, ui) {
-      event.preventDefault();
-      $.each(ui.item, function (k, v) {
-        var elem = $("input[name=" + k + "]");
-        if (!elem.length) elem = $("textarea[name=" + k + "]");
-        if (elem.val() == "") {
-          elem.val(v);
-          elem.css("backgroundColor", "lightblue");
-          fieldChanged(k);
-        }
-      });
-      let baseValue = ui.item.value;
-      baseValue = baseValue.substring(0, baseValue.indexOf(" || "));
-      this.value = baseValue;
-    },
-  });
-
-  window.initLocalitySuggest({
-    country: {
-      id: "ffcountry",
-      change: () => fieldChanged("country"),
-    },
-    state_province: {
-      id: "ffstate",
-      change: () => fieldChanged("stateprovince"),
-    },
-    county: {
-      id: "ffcounty",
-      change: () => fieldChanged("county"),
-    },
-    municipality: {
-      id: "ffmunicipality",
-      change: () => fieldChanged("municipality"),
-    },
-  });
-
-  //Misc fields with lookups
-  $("textarea[name=associatedtaxa]").autocomplete(
-    {
-      source: function (request, response) {
-        $.getJSON(
-          "rpc/getspeciessuggest.php",
-          { term: extractLast(request.term) },
-          response
-        );
-      },
-      search: function () {
-        // custom minLength
-        var term = extractLast(this.value);
-        if (term.length < 4) return false;
-      },
-      focus: function () {
-        // prevent value inserted on focus
-        return false;
-      },
-      select: function (event, ui) {
-        var terms = split(this.value);
-        // remove the current input
-        terms.pop();
-        // add the selected item
-        terms.push(ui.item.value);
-        this.value = terms.join(", ");
-        return false;
-      },
-    },
-    { autoFocus: true }
-  );
-
-  autocompleteTagNames();
-
   $("#catalognumber").keydown(function (evt) {
     var evt = evt ? evt : event ? event : null;
     if (evt.keyCode == 13) return false;
   });
-
-  if (document.getElementById("hostDiv")) {
-    $("#quickhost").autocomplete({
-      source: function (request, response) {
-        var name = request.term.replace(" ", "+");
-        $.getJSON("rpc/getcolspeciessuggest.php", { term: name }, response);
-      },
-      minLength: 4,
-      autoFocus: true,
-      change: function (event, ui) {
-        fieldChanged("host");
-      },
-    });
-  }
 
   //Remember Auto Processing Status
   var apstatus = getCookie("autopstatus");
@@ -266,51 +73,8 @@ $(document).ready(function () {
   }
   //Remember Auto Duplicate search status
   if (getCookie("autodupe") == 1) editForm.autodupe.checked = true;
-});
 
-//Field changed and verification functions
-function verifyFullFormSciName() {
-  $.ajax({
-    type: "POST",
-    url: "rpc/verifysciname.php",
-    dataType: "json",
-    data: { term: $("#ffsciname").val() },
-  }).done(function (data) {
-    if (data) {
-      $("#tidinterpreted").val(data.tid);
-      $("input[name=family]").val(data.family);
-      $("input[name=tradeName]").val(data.tradename);
-      $("input[name=scientificnameauthorship]").val(data.author);
-      /*
-      if(data.rankid < 220){
-        $( 'select[name=confidenceranking]' ).val(2);
-      }
-      else{
-        $( 'select[name=confidenceranking]' ).val(8);
-      }
-      */
-      if (
-        data.status == 1 &&
-        !$("input[name=cultivationstatus]").prop("checked")
-      ) {
-        $("select[name=recordsecurity]").val(1);
-        securityChanged(document.fullform);
-      } else {
-        if (data.tid) {
-          var stateVal = $("input[name=stateprovince]").val();
-          if (stateVal != "") {
-            securityCheck();
-          }
-        }
-      }
-    } else {
-      $("select[name=confidenceranking]").val(5);
-      alert(
-        "WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor. You can continue entering this specimen using this name and the name will be resolved at a later date."
-      );
-    }
-  });
-}
+});
 
 function addIdentifierField(clickedObj) {
   $(clickedObj).hide();
@@ -339,24 +103,6 @@ function deleteIdentifier(identID, occid) {
     }).done(function (response) {
       if (response == 1) $("#idRow-" + identID).remove();
       //else alert("Error deleting identifier");
-    });
-  }
-}
-
-function securityCheck() {
-  var tidIn = $("input[name=tidinterpreted]").val();
-  var stateIn = $("input[name=stateprovince]").val();
-  if (tidIn != "" && stateIn != "") {
-    $.ajax({
-      type: "POST",
-      url: "rpc/securitycheck.php",
-      dataType: "json",
-      data: { tid: tidIn, state: stateIn },
-    }).done(function (data) {
-      if (data == "1" && !$("input[name=cultivationstatus]").prop("checked")) {
-        $("select[name=recordsecurity]").val(1);
-        securityChanged(document.fullform);
-      }
     });
   }
 }
@@ -400,10 +146,7 @@ function recordNumberChanged() {
 
 function stateProvinceChanged(stateVal) {
   fieldChanged("stateprovince");
-  var tidVal = $("#tidinterpreted").val();
-  if (tidVal != "" && stateVal != "") {
-    securityCheck();
-  }
+  localitySecurityCheck();
 }
 
 function coordinatesChanged(f, client_root) {
@@ -1153,44 +896,6 @@ function parseDate(dateStr) {
 }
 
 //Determination form methods
-function initDetAutocomplete(f) {
-  $(f.sciname).autocomplete({
-    source: "rpc/getspeciessuggest.php",
-    minLength: 3,
-    change: function (event, ui) {
-      if (f.sciname.value) {
-        verifyDetSciName(f);
-      } else {
-        f.scientificnameauthorship.value = "";
-        f.family.value = "";
-        f.tidtoadd.value = "";
-      }
-    },
-  });
-}
-
-function verifyDetSciName(f) {
-  $.ajax({
-    type: "POST",
-    url: "rpc/verifysciname.php",
-    dataType: "json",
-    data: { term: f.sciname.value },
-  }).done(function (data) {
-    if (data) {
-      f.scientificnameauthorship.value = data.author;
-      f.family.value = data.family;
-      f.tidtoadd.value = data.tid;
-    } else {
-      alert(
-        "WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor. Continue entering this specimen using this name and the name will be resolved at a later date."
-      );
-      f.scientificnameauthorship.value = "";
-      f.family.value = "";
-      f.tidtoadd.value = "";
-    }
-  });
-}
-
 function detDateChanged(f) {
   var isNew = false;
   var newDateStr = f.dateidentified.value;
@@ -1213,22 +918,6 @@ function detDateChanged(f) {
 }
 
 function verifyDetForm(f) {
-  if (f.sciname.value == "") {
-    alert("Scientific Name field must have a value");
-    return false;
-  }
-  if (f.identifiedby.value == "") {
-    alert(
-      "Determiner field must have a value (enter 'unknown' if not defined)"
-    );
-    return false;
-  }
-  if (f.dateidentified.value == "") {
-    alert(
-      "Determination Date field must have a value (enter 's.d.' if not defined)"
-    );
-    return false;
-  }
   if (f.sortsequence && !isNumeric(f.sortsequence.value)) {
     alert("Sort Sequence field must be a numeric value only");
     return false;
@@ -1350,30 +1039,4 @@ function getCookie(cName) {
       return unescape(y);
     }
   }
-}
-
-// Autocomplete for otherCatalogNumbers tagNames
-// Running as a function so that it can be activated as new rows are added
-function autocompleteTagNames() {
-  $(".idNameInput").autocomplete({
-    minLength: 0,
-    autoFocus: true,
-    source: function( request, response ) {
-      let collId = document.fullform.collid.value;
-      $.ajax({
-        type: "POST",
-        url: "rpc/tagnamesuggest.php",
-        data: {collid: document.fullform.collid.value, term: request.term},
-        success: function( data ){
-          response(data);
-        }
-      });
-    },
-    select: function(event, ui) {
-      fieldChanged('idname');
-    }
-  }).focus(function() {
-    // If the user clicks the tag name box and it's empty, provide possible values
-    if ($(this).val() === '') $(this).autocomplete("search", $(this).val());
-  });
 }

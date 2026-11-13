@@ -2,15 +2,13 @@
 /*
 ------------------
 Language: Português
-Translated by: Google Translate
-Date Translated: 2024-04-22
+Translated by: Google Translate (2024-04-22)
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.'.$LANG_TAG.'.php');
 
 $LANG['TAXON_EDITOR'] = 'Editor de Táxons';
-$LANG['ENTER_SCINAME'] = 'Por favor insira um nome científico';
 $LANG['IMG_TOO_LARGE'] = 'O arquivo de mídiaque você está tentando enviar é muito grande, reduza o tamanho do arquivo para menos de 4MB';
-$LANG['HOME'] = 'Home';
 $LANG['TAX_PROF_PUBLIC_DISP'] = 'Exibição pública do perfil do táxon';
 $LANG['TAX_PROF_EDITOR'] = 'Editor de perfil de táxon';
 $LANG['REDIRECTED_FROM'] = 'Redirecionado de';

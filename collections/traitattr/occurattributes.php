@@ -80,35 +80,36 @@ if ($traitID) {
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
-	<head>
-		<title><?= $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] ?></title>
-		<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+<head>
+	<title><?= $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] ?></title>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<?php
+	include_once($SERVER_ROOT . '/includes/head.php');
+	?>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
+	<script type="text/javascript">
+		var activeImgIndex = 1;
+		var imgArr = [];
+		var imgLgArr = [];
 		<?php
-		include_once($SERVER_ROOT . '/includes/head.php');
-		?>
-		<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-		<script src="<?= $CLIENT_ROOT ?>/js/jquery.imagetool-1.7.js?ver=160102" type="text/javascript"></script>
-		<script type="text/javascript">
-			var activeImgIndex = 1;
-			var imgArr = [];
-			var imgLgArr = [];
-			<?php
-			$imgDomain = $MEDIA_DOMAIN;
-			if(!$imgDomain) GeneralUtil::getDomain();
-			foreach($imgArr as $cnt => $iArr){
-				//Regular url
-				$url = $iArr['web'];
-				if(substr($url,0,1) == '/') $url = $imgDomain.$url;
-				echo 'imgArr['.$cnt.'] = "'.$url.'";'."\n";
-				//Large Url
-				$lgUrl = $iArr['lg'];
-				if($lgUrl){
-					if(substr($lgUrl,0,1) == '/') $lgUrl = $imgDomain.$lgUrl;
-					echo 'imgLgArr['.$cnt.'] = "'.$lgUrl.'";'."\n";
-				}
+		$imgDomain = $MEDIA_DOMAIN;
+		if(!$imgDomain) GeneralUtil::getDomain();
+		foreach($imgArr as $cnt => $iArr){
+			//Regular url
+			$url = $iArr['web'];
+			if(substr($url,0,1) == '/') $url = $imgDomain.$url;
+			echo 'imgArr['.$cnt.'] = "'.$url.'";'."\n";
+			//Large Url
+			$lgUrl = $iArr['lg'];
+			if($lgUrl){
+				if(substr($lgUrl,0,1) == '/') $lgUrl = $imgDomain.$lgUrl;
+				echo 'imgLgArr['.$cnt.'] = "'.$lgUrl.'";'."\n";
 			}
-			?>
+		}
+		?>
 
 		$(document).ready(function() {
 			setImgRes();
@@ -119,6 +120,45 @@ if ($traitID) {
 				viewportHeight: <?= $paneY ?>,
 				edgeSensitivity: 25
 			});
+
+			const taxonFilterInput = document.querySelector('#f-taxonfilter');
+			if(taxonFilterInput){
+				taxonFilterInput.addEventListener('focus', (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("f-taxonfilter", function(result) {
+						if (result.valid) {
+							document.getElementById("f-tidfilter").value = result.item.id;
+						}
+						else{
+							document.getElementById("f-tidfilter").value = "";
+							if(this.value != undefined && this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
+						}
+					});
+				});
+			}
+
+			const taxonReviewInput = document.querySelector('#r-taxonfilter');
+			if(taxonReviewInput){
+				taxonReviewInput.addEventListener('focus', (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("r-taxonfilter", function(result) {
+						if (result.valid) {
+							document.getElementById("r-tidfilter").value = result.item.id;
+						}
+						else{
+							if(this.value != undefined && this.value != ""){
+								alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+							}
+						}
+					});
+				});
+			}
 
 		});
 
@@ -191,7 +231,6 @@ if ($traitID) {
 		}
 
 		function verifyFilterForm(f) {
-			if (f.taxonfilter.value == "<?= $LANG['ALL_TAXA'] ?>") f.taxonfilter.value = '';
 			if (f.traitid.value == "") {
 				alert("<?= $LANG['OCC_TRAIT_MUST_SELECTED'] ?>");
 				return false;
@@ -212,10 +251,6 @@ if ($traitID) {
 		function verifySubmitForm(f) {
 
 			return true;
-		}
-
-		function taxonFilterFocus(formElem) {
-			if (formElem.value == "<?= $LANG['ALL_TAXA'] ?>") formElem.value = '';
 		}
 	</script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.traitattr.js" type="text/javascript"></script>
@@ -315,7 +350,7 @@ if ($traitID) {
 							<fieldset>
 								<legend><b><?= $LANG['FILTER'] ?></b></legend>
 								<div>
-									<select name="traitid">
+									<select name="traitid" required>
 										<option value=""><?= $LANG['SELECT_TRAIT_REQ'] ?></option>
 										<option value="">------------------------------------</option>
 										<?php
@@ -342,8 +377,8 @@ if ($traitID) {
 									</select>
 								</div>
 								<div>
-									<input id="taxonfilter" name="taxonfilter" type="text" value="<?= ($taxonFilter ? $taxonFilter : $LANG['ALL_TAXA']) ?>" taxonFilterFocus(this) />
-									<input id="tidfilter" name="tidfilter" type="hidden" value="<?= $tidFilter ?>" />
+									<input id="f-taxonfilter" name="taxonfilter" type="text" value="<?= $taxonFilter ?>" placeholder="<?= $LANG['ALL_TAXA'] ?>" >
+									<input id="f-tidfilter" name="tidfilter" type="hidden" value="<?= $tidFilter ?>" />
 								</div>
 								<div>
 									<input name="collid" type="hidden" value="<?= $collid ?>" />
@@ -351,9 +386,6 @@ if ($traitID) {
 									<input id="paney1" name="paney" type="hidden" value="<?= $paneY ?>" />
 									<input id="imgres1" name="imgres" type="hidden" value="<?= $imgRes ?>" />
 									<button id="filtersubmit" name="submitform" type="submit" value="Load Images"><?= $LANG['LOAD_IMAGES'] ?></button>
-
-									<span id="verify-span" style="display:none;font-weight:bold;color:green;"><?= $LANG['VERIFY_TAXONOMY'] ?></span>
-									<span id="notvalid-span" style="display:none;font-weight:bold;color:red;"><?= $LANG['TAXON_NOT_VALID'] ?></span>
 								</div>
 								<div style="margin:10px">
 									<?php if ($traitID) echo '<b> ' . $LANG['TARGET_SPECIMEN'] . '</b> ' . $attrManager->getSpecimenCount($traitID) ?>
@@ -377,7 +409,7 @@ if ($traitID) {
 							<fieldset>
 								<legend><b><?= $LANG['REVIEWER'] ?></b></legend>
 								<div>
-									<select name="traitid">
+									<select name="traitid" required>
 										<option value=""><?= $LANG['SELECT_TRAIT_REQ'] ?></option>
 										<option value="">------------------------------------</option>
 										<?php
@@ -447,8 +479,8 @@ if ($traitID) {
 									</select>
 								</div>
 								<div>
-									<input id="taxonfilter" name="taxonfilter" type="text" value="<?= ($taxonFilter ? $taxonFilter : 'All Taxa') ?>" onfocus="taxonFilterFocus(this)" />
-									<input id="tidfilter" name="tidfilter" type="hidden" value="<?= $tidFilter ?>" />
+									<input id="r-taxonfilter" name="taxonfilter" type="text" value="<?= $taxonFilter ?>" placeholder="<?= $LANG['ALL_TAXA'] ?>" >
+									<input id="r-tidfilter" name="tidfilter" type="hidden" value="<?= $tidFilter ?>" />
 								</div>
 								<div style="margin:10px;">
 									<input name="collid" type="hidden" value="<?= $collid ?>" />

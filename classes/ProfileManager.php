@@ -705,20 +705,22 @@ class ProfileManager extends Manager{
 
 	//User Taxonomy functions
 	private function setUserTaxonomy(&$person){
-		$sql = 'SELECT ut.idusertaxonomy, t.tid, t.sciname, '.
-			'ut.editorstatus, ut.geographicscope, ut.notes, ut.modifieduid, ut.modifiedtimestamp '.
-			'FROM usertaxonomy ut INNER JOIN taxa t ON ut.tid = t.tid '.
-			'WHERE ut.uid = ?';
+		$sql = 'SELECT ut.idusertaxonomy, t.tid, t.sciname, t.author, t.rankid,
+			ut.editorstatus, ut.geographicscope, ut.notes, ut.modifieduid, ut.modifiedtimestamp
+			FROM usertaxonomy ut INNER JOIN taxa t ON ut.tid = t.tid
+			WHERE ut.uid = ?';
 		$statement = $this->conn->prepare($sql);
 		$uid = $person->getUid();
 		$statement->bind_param('i', $uid);
 		$statement->execute();
-		$statement->bind_result($id, $tid, $sciname, $editorStatus, $geographicScope, $notes, $modifiedUid, $modifiedtimestamp);
+		$statement->bind_result($id, $tid, $sciname, $author, $rankid, $editorStatus, $geographicScope, $notes, $modifiedUid, $modifiedtimestamp);
 		while($statement->fetch()){
-			$person->addUserTaxonomy($editorStatus, $id,'sciname',$sciname);
-			$person->addUserTaxonomy($editorStatus, $id,'tid',$tid);
-			$person->addUserTaxonomy($editorStatus, $id,'geographicScope',$geographicScope);
-			$person->addUserTaxonomy($editorStatus, $id,'notes',$notes);
+			$person->addUserTaxonomy($editorStatus, $id, 'sciname', $sciname);
+			$person->addUserTaxonomy($editorStatus, $id, 'author', $author);
+			$person->addUserTaxonomy($editorStatus, $id, 'rankid', $rankid);
+			$person->addUserTaxonomy($editorStatus, $id, 'tid', $tid);
+			$person->addUserTaxonomy($editorStatus, $id, 'geographicScope', $geographicScope);
+			$person->addUserTaxonomy($editorStatus, $id, 'notes', $notes);
 		}
 		$statement->close();
 	}
@@ -814,41 +816,32 @@ class ProfileManager extends Manager{
 	}
 
 
-	public function addUserTaxonomy($taxon, $editorStatus, $geographicScope, $notes){
-		$statusStr = 'SUCCESS adding taxonomic relationship';
-
-		$tid = 0;
-		//Get tid for taxon
-		$sql1 = 'SELECT tid FROM taxa WHERE sciname = ?';
-		if($stmt1 = $this->conn->prepare($sql1)){
-			$stmt1->bind_param('s', $taxon);
-			$stmt1->execute();
-			$stmt1->bind_result($tid);
-			$stmt1->fetch();
-			$stmt1->close();
-		}
+	public function addUserTaxonomy($tid, $editorStatus, $geographicScope, $notes){
+		$status = false;
 		if($tid){
-			$sql = 'INSERT INTO usertaxonomy(uid, tid, taxauthid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) VALUES(?,?,?,?,?,?,?,?)';
+			$sql = 'INSERT IGNORE INTO usertaxonomy(uid, tid, taxauthid, editorstatus, geographicScope, notes, modifiedUid, modifiedtimestamp) VALUES(?,?,?,?,?,?,?,?)';
 			$this->resetConnection();
 			if($stmt = $this->conn->prepare($sql)) {
 				$taxAuthID = 1;
 				$symbUid = $GLOBALS['SYMB_UID'];
 				$modDate = date('Y-m-d H:i:s');
-
 				$stmt->bind_param('iiisssis', $this->uid, $tid, $taxAuthID, $editorStatus, $geographicScope, $notes, $symbUid, $modDate);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if($stmt->error){
+					$this->errorMessage = $stmt->error;
+				}
+				else{
 					if($this->uid == $GLOBALS['SYMB_UID']){
 						$this->userName = $GLOBALS['USERNAME'];
 						$this->authenticate();
 					}
+					$status = true;
 				}
-				elseif($stmt->error) $this->errorMessage = 'ERROR adding taxonomic relationship: '.$stmt->error;
 				$stmt->close();
 			}
-			else $this->errorMessage = 'ERROR preparing statement for adding taxonomic relationship: '.$this->conn->error;
+			else $this->errorMessage = $this->conn->error;
 		}
-		return $statusStr;
+		return $status;
 	}
 
 	/**

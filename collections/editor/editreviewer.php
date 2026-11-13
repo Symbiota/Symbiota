@@ -193,7 +193,7 @@ $navStr .= '</div>';
 		$displayLeftMenu = false;
 		include($SERVER_ROOT.'/includes/header.php');
 		echo '<div class="navpath">';
-		echo '<a href="../../index.php">' . htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		echo '<a href="../../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
 		if($reviewManager->getObsUid()){
 			echo '<a href="../../profile/viewprofile.php?tabindex=1">' . htmlspecialchars($LANG['PERS_SPEC_MNG'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
 		}

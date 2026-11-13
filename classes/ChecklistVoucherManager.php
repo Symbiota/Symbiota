@@ -5,6 +5,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 
 	private $tid;
 	private $taxonName;
+	private $taxonAuthor;
 
 	function __construct() {
 		parent::__construct();
@@ -17,10 +18,10 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 	public function getChecklistData(){
 		$checklistData = Array();
 		if($this->tid && $this->clid){
-			$sql = 'SELECT t.SciName, cllink.Habitat, cllink.Abundance, cllink.Notes, cllink.internalnotes, cllink.source, cllink.familyoverride, cl.Name, cl.type, cl.locality '.
-				'FROM fmchecklists cl INNER JOIN fmchklsttaxalink cllink ON cl.CLID = cllink.CLID '.
-				'INNER JOIN taxa t ON cllink.TID = t.TID '.
-				'WHERE (cllink.TID = '.$this->tid.') AND (cllink.CLID = '.$this->clid.')';
+			$sql = 'SELECT t.SciName, t.author, cllink.Habitat, cllink.Abundance, cllink.Notes, cllink.internalnotes, cllink.source, cllink.familyoverride, cl.Name, cl.type, cl.locality
+				FROM fmchecklists cl INNER JOIN fmchklsttaxalink cllink ON cl.CLID = cllink.CLID
+				INNER JOIN taxa t ON cllink.TID = t.TID
+				WHERE (cllink.TID = '.$this->tid.') AND (cllink.CLID = '.$this->clid.')';
 			$result = $this->conn->query($sql);
 			if($row = $result->fetch_object()){
 				$checklistData['habitat'] = $this->cleanOutStr($row->Habitat);
@@ -33,6 +34,7 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 				$checklistData['locality'] = $row->locality;
 				if(!$this->clName) $this->clName = $this->cleanOutStr($row->Name);
 				if(!$this->taxonName) $this->taxonName = $this->cleanOutStr($row->SciName);
+				if(!$this->taxonAuthor) $this->taxonAuthor = $this->cleanOutStr($row->author);
 			}
 			$result->free();
 		}
@@ -213,6 +215,10 @@ class ChecklistVoucherManager extends ChecklistVoucherAdmin{
 
 	public function getTaxonName(){
 		return $this->taxonName;
+	}
+
+	public function getTaxonFormatted(){
+		return '<i>' . $this->taxonName . '</i> ' . $this->taxonAuthor;
 	}
 }
 ?>

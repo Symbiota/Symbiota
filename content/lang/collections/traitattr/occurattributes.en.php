@@ -6,13 +6,12 @@ Language: English
 */
 
 $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Occurrence Attribute Batch Editor';
+$LANG['SELECT_FROM_LIST'] = 'You must select a taxon from list';
 $LANG['HOME'] = 'Home';
 $LANG['COLLECTION_MANAGEMENT'] = 'Collection Management';
 $LANG['FILTER'] = 'Filter';
 $LANG['SELECT_TRAIT_REQ'] = 'Select Trait (required)';
 $LANG['ALL_COUNTRIES_STATES'] = 'All Counties & All States';
-$LANG['VERIFY_TAXONOMY'] = 'verifying taxonomy...';
-$LANG['TAXON_NOT_VALID']  = 'taxon not valid...';
 $LANG['REVIEWER'] = 'Reviewer';
 $LANG['ATTRIBUTE_REVIEWER'] = 'Attribute Reviewer';
 $LANG['ATTRIBUTE_EDITOR'] = 'Attribute Editor';

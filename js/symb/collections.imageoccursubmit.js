@@ -1,77 +1,11 @@
 $(document).ready(function() {
 
-	$("#sciname").autocomplete({ 
-		source: "rpc/getspeciessuggest.php", 
-		minLength: 3,
-		change: function(event, ui) {
-			$( "#tidinterpreted" ).val("");
-			$( 'input[name=scientificnameauthorship]' ).val("");
-			$( 'input[name=family]' ).val("");
-			$( 'input[name=recordsecurity]' ).prop('checked', false);
-			if($( "#sciname" ).val()){
-				verifySciName();
-			}
-			else{
-				$( "#tidinterpreted" ).val("");
-				$( 'input[name=scientificnameauthorship]' ).val("");
-				$( 'input[name=family]' ).val("");
-				$( 'input[name=recordsecurity]' ).prop('checked', false);
-			}
-		}
-	});
-
 	$("#catalognumber").keydown(function(evt){
 		var evt  = (evt) ? evt : ((event) ? event : null);
 		if ((evt.keyCode == 13)) { return false; }
 	});
+
 });
-
-//Field changed and verification functions
-function verifySciName(){
-	$.ajax({
-		type: "POST",
-		url: "rpc/verifysciname.php",
-		dataType: "json",
-		data: { term: $( "#sciname" ).val() }
-	}).done(function( data ) {
-		if(data){
-			$( "#tidinterpreted" ).val(data.tid);
-			$( 'input[name=family]' ).val(data.family);
-			$( 'input[name=scientificnameauthorship]' ).val(data.author);
-			if(data.status == 1){ 
-				$( 'input[name=recordsecurity]' ).prop('checked', true);
-			}
-			else{
-				if(data.tid){
-					var stateVal = $( 'input[name=stateprovince]' ).val();
-					if(stateVal != ""){
-						localitySecurityCheck($( "#imgoccurform" ));
-					}
-				}
-			}
-		}
-		else{
-            alert("WARNING: Taxon not found. It may be misspelled or needs to be added to taxonomic thesaurus by a taxonomic editor.");
-		}
-	});
-}
-
-function localitySecurityCheck(f){
-	var tidIn = f.tidinterpreted.value;
-	var stateIn = f.stateprovince.value;
-	if(tidIn != "" && stateIn != ""){
-		$.ajax({
-			type: "POST",
-			url: "rpc/securitycheck.php",
-			dataType: "json",
-			data: { tid: tidIn, state: stateIn }
-		}).done(function( data ) {
-			if(data == "1"){
-				$( 'input[name=recordsecurity]' ).prop('checked', true);
-			}
-		});
-	}
-}
 
 //Validate forms
 function validateImgOccurForm(f){

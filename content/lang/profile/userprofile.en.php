@@ -6,6 +6,11 @@ Language: English
 */
 
 $LANG['DETAILS'] = 'Profile Details';
+$LANG['SELECT_FROM_LIST'] = 'You must select a taxon from list';
+$LANG['PWD_NO_SPACE'] = 'Password cannot start or end with a space, but they can include spaces within the password';
+$LANG['PWD_TOO_SHORT'] = 'Password must be 10 characters or more';
+$LANG['PWD_DONT_MATCH'] = 'Password do not match';
+$LANG['PWD_UNALLOWED_CHRS'] = 'Login name should only contain 0-9A-Za-z_.!@ (spaces are not allowed)';
 $LANG['EDIT_PROFILE'] = 'Edit Profile';
 $LANG['CHANGE_PASSWORD'] = 'Change Password';
 $LANG['CHANGE_LOGIN'] = 'Change Login';

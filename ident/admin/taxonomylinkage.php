@@ -21,37 +21,31 @@ $tLinks = $keyManager->getTaxonRelevance();
 	?>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$( "#relevanceinput" ).autocomplete({
-				source: "rpc/taxasuggest.php",
-				minLength: 2,
-				autoFocus: true,
-				select: function( event, ui ) {
-					if(ui.item){
-						$( "#relevancetidinput" ).val(ui.item.id);
-					}
-					else{
-						$( "#relevancetidinput" ).val("");
-					}
-				},
-				change: function( event, ui ) {
-					if($( "#relevancetidinput" ).val() == ""){
-						$.ajax({
-							type: "POST",
-							url: "rpc/taxonvalidation.php",
-							data: { term: $( this ).val() }
-						}).done(function( msg ) {
-							if(msg == ""){
-								alert("Taxonomic name not found with thesaurus ");
+
+			const taxonInput = document.querySelector("#relevanceinput");
+			if(taxonInput){
+				taxonInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.minLength = 2;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("relevanceinput", function(result) {
+						if(result.valid) {
+							$("#relevancetidinput").val(result.item.id);
+						}
+						else{
+							$("#relevancetidinput").val("");
+							if(this.value != undefined && this.value != ""){
+								alert("Select a taxon from the list");
 							}
-							else{
-								$( "#relevancetidinput" ).val(msg);
-							}
-						});
-					}
-				}
-			});
+						}
+					});
+				});
+			}
+
 		});
 
 		$( "#relevanceinput" ).focus(function() {
@@ -59,12 +53,8 @@ $tLinks = $keyManager->getTaxonRelevance();
 		});
 
 		function validateRelevanceForm(f){
-			if(f.relsciname.value == ""){
-				alert("Taxon field is empty");
-				return false;
-			}
-			if(f.tid.value == ""){
-				alert("unable to obtain taxonomic thesaurus identifier for " + f.relsciname.value);
+			if(f.relsciname.value != "" && f.tid.value == ""){
+				alert("Select a taxon from the list");
 				return false;
 			}
 			return true;
@@ -91,8 +81,10 @@ $tLinks = $keyManager->getTaxonRelevance();
 							?>
 							<div style="margin:3px;clear:both;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								$notes = '';
+								if($tArr['notes']) $notes = ' - ' . $tArr['notes'];
 								?>
+								<div style="float:left;"><b><?= $tArr['sciname'] ?></b> <?= $tArr['author'] . $notes ?></div>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
@@ -115,8 +107,10 @@ $tLinks = $keyManager->getTaxonRelevance();
 							?>
 							<div style="margin:3px;">
 								<?php
-								echo '<div style="float:left;"><b>'.$tArr['sciname'].'</b>'.($tArr['notes']?' - '.$tArr['notes']:'').'</div> ';
+								$notes = '';
+								if($tArr['notes']) $notes = ' - ' . $tArr['notes'];
 								?>
+								<div style="float:left;"><b><?= $tArr['sciname'] ?></b> <?= $tArr['author'] . $notes ?></div>
 								<form name="delTaxonForm" action="chardetails.php" method="post" style="float:left;margin-left:5px;" onsubmit="return comfirm('Are you sure you want to delete this relationship?')">
 									<input name="cid" type="hidden" value="<?php echo $cid; ?>" />
 									<input name="tid" type="hidden" value="<?php echo $tid; ?>" />
@@ -148,7 +142,7 @@ $tLinks = $keyManager->getTaxonRelevance();
 					<div style="height:15px;">
 						<div style="margin:3px;">
 							<b>Taxon Name:</b>
-							<input type="text" id="relevanceinput" name="relsciname" style="width:300px" />
+							<input type="text" id="relevanceinput" name="relsciname" style="width:300px" required />
 							<input type="hidden" id="relevancetidinput" name="tid" />
 						</div>
 						<div style="float:left;margin:3px;">

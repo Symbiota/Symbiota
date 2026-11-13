@@ -26,5 +26,4 @@ $LANG['INFRA_EPITHET_FIELD'] = 'Infraspecific Epithet Field';
 $LANG['RANK_FIELD'] = 'Rank Field';
 $LANG['RUN_QUICK_PARSE'] = 'Parse';
 $LANG['REQUIRED'] = "* = Required Field"
-
 ?>

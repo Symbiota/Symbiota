@@ -8,6 +8,7 @@ Translated by: Google Translate (2024-09-05)
 
 $LANG['IMG_DETAILS'] = 'Detalles de la Imagen';
 $LANG['ERROR_FILE_PATH'] = 'ERROR: Se debe ingresar la ruta del archivo';
+$LANG['ERROR_TID_ISNULL'] = 'ERROR: identificador del taxón es nulo; por favor, introduzca un taxón de la lista';
 $LANG['ENTER_TAXON_NAME'] = 'Ingrese el nombre del taxón al que se transferirá el medios';
 $LANG['TAXON_PROFILE_EDITING'] = 'Ir a la página de edición del perfil de taxón';
 $LANG['EDITING_PRIVILEGES'] = 'Debe tener privilegios de edición para administrar la imagen de esta colección';

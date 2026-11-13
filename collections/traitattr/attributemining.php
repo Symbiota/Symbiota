@@ -93,9 +93,34 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 		<?php
 		include_once($SERVER_ROOT.'/includes/head.php');
 		?>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-		<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 		<script type="text/javascript">
+
+			$(document).ready(function() {
+
+				const taxonFilterInput = document.querySelector('#taxonfilter');
+				if(taxonFilterInput){
+					taxonFilterInput.addEventListener('focus', (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+						taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+						taxaSuggest.initiate("taxonfilter", function(result) {
+							if (result.valid) {
+								document.getElementById("tidfilter").value = result.item.id;
+							}
+							else{
+								document.getElementById("tidfilter").value = "";
+								if(this.value != undefined && this.value != ""){
+									alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+								}
+							}
+						});
+					});
+				}
+
+			});
 
 			function verifyFilterForm(f){
 				if(f.traitid.value == ""){
@@ -163,7 +188,7 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 				toggle("detailDiv");
 			}
 		</script>
-		<script src="../../js/symb/collections.traitattr.js" type="text/javascript"></script>
+		<script src="../../js/symb/collections.traitattr.js?ver=1a" type="text/javascript"></script>
 		<script src="../../js/symb/shared.js" type="text/javascript"></script>
 		<style>
 			button{ margin-bottom: 5px; }
@@ -223,9 +248,9 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 					<fieldset>
 						<legend><?php echo $LANG['HARVESTING_FILTER'] ?></legend>
 						<form name="filterform" method="post" action="attributemining.php" onsubmit="return verifyFilterForm(this)" >
-							<div>
+							<div style="margin-bottom: 5px">
 							<?php echo $LANG['OCC_TRAIT'] ?>
-								<select name="traitid">
+								<select name="traitid" required>
 									<option value=""><?php echo $LANG['SELECT_TARGET_TRAIT'] ?></option>
 									<option value="">------------------------------------</option>
 									<?php
@@ -241,9 +266,9 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 									?>
 								</select>
 							</div>
-							<div>
+							<div style="margin-bottom: 5px">
 							    <?php echo $LANG['VERBATIM_TEXT_SOURCE'] ?>
-								<select name="fieldname">
+								<select name="fieldname" required>
 									<option value=""><?php echo $LANG['SELECT_SOURCE_FIELD'] ?></option>
 									<option value="">------------------------------------</option>
 									<?php
@@ -265,8 +290,6 @@ $fieldArr = array('habitat' => 'Habitat', 'substrate' => 'Substrate', 'occurrenc
 								<?php echo $LANG['FILTER_BY_TAXON'] ?>
 								<input id="taxonfilter" name="taxonfilter" type="text" value="<?php echo $taxonFilter; ?>" />
 								<input id="tidfilter" name="tidfilter" type="hidden" value="<?php echo $tidFilter; ?>" />
-								<span id="verify-span" style="display:none;font-weight:bold;color:green;"><?php echo $LANG['VERIFYING_TAXONOMY'] ?></span>
-								<span id="notvalid-span" style="display:none;font-weight:bold;color:red;"><?php echo $LANG['TAXON_NOT_VALID'] ?></span>
 							</div>
 						</form>
 					</fieldset>

@@ -21,9 +21,9 @@ $LANG['UNACCEPT_REASON'] = 'Razón de No Ser Aceptado';
 $LANG['SUBMIT_NEW_NAME'] = 'Enviar Nuevo Nombre';
 $LANG['GENUS_OR_BASE'] = 'Género o Nombre Base';
 $LANG['EPITHET'] = 'Epíteto';
+$LANG['SPECIF_EPITHET_FIELD'] = 'Campo de epíteto específico';
 $LANG['INFRA_EPITHET_FIELD'] = 'Campo de epíteto infraespecífico';
 $LANG['RANK_FIELD'] = 'Campo de clasificación';
 $LANG['RUN_QUICK_PARSE'] = 'Análisis rápido';
 $LANG['REQUIRED'] = "* = Campo Obligatorio";
-
 ?>

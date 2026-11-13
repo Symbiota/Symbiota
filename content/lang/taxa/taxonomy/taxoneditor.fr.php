@@ -2,21 +2,22 @@
 /*
 ------------------
 Language: Français (French)
-Translated by: Google Translate
-Translation date: 2024-10-16
+Translated by: Google Translate (2024-10-16)
 ------------------
 */
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.' . $LANG_TAG . '.php');
 
 $LANG['FOLLOWING_WARNINGS'] = 'Les avertissements suivants se sont produits';
+$LANG['ERROR_PARENT_TID_NULL'] = "Erreur lors de l'ajout du lien accepté : identifiant de parent NULL";
+$LANG['ERROR_ADD_LINK'] = "Erreur lors de l'ajout du lien accepté";
 $LANG['SUCCESS_REMAPPING'] = 'Remappage réussi du taxon!';
 $LANG['SUCCESS_DELETING'] = 'Suppression réussie du taxon!';
-$LANG['TAX_EDITOR'] = 'Éditeur de taxons';
-$LANG['HOME'] = 'Accueil';
 $LANG['TAX_TREE_VIEW'] = "Visionneuse d'arbre de taxonomie";
 $LANG['TAXONOMY_EDITOR'] = 'Éditeur de taxonomie';
 $LANG['SUCCESS'] = 'SUCCESS';
 $LANG['GO_TAX_DISPLAY'] = "Accéder à l'affichage de la taxonomie";
 $LANG['ADD_NEW_TAXON'] = 'Ajouter un nouveau taxon';
+$LANG['VIEW_TP_EDITOR'] = "Voir l'éditeur de profil de taxon";
 $LANG['EDITOR'] = 'Éditeur';
 $LANG['TAX_STATUS'] = 'Statut taxonomique';
 $LANG['HIERARCHY'] = 'Hiérarchie';

@@ -27,6 +27,83 @@ if(isset($SYMB_UID) && $SYMB_UID){
 <html lang="<?= $LANG_TAG ?>">
 	<head>
 		<title><?= $LANG['DETAILS']; ?></title>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
+		<script>
+			$(document).ready(function() {
+
+				const taxonInput = document.querySelector("#taxoninput");
+				if(taxonInput){
+					taxonInput.addEventListener("focus", (event) => {
+						taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+						taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+						taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+						taxaSuggest.initiate("taxoninput", function(result){
+							if (result.valid) {
+								document.getElementById("tidinput").value = result.item.id;
+							}
+							else{
+								document.getElementById("tidinput").value = "";
+								if(this.value != undefined && this.value != ""){
+									alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+								}
+							}
+						});
+					});
+				}
+
+			});
+
+			function verifyPwdForm(f){
+			    var pwd1 = f.newpwd.value;
+			    var pwd2 = f.newpwd2.value;
+				if(pwd1.charAt(0) == " " || pwd1.slice(-1) == " "){
+					alert("<?= $LANG['PWD_NO_SPACE'] ?>");
+					return false;
+				}
+				if(pwd1.length < 10){
+					alert("<?= $LANG['PWD_TOO_SHORT'] ?>");
+					return false;
+				}
+			    if(pwd1 != pwd2){
+			        window.alert("<?= $LANG['PWD_DONT_MATCH'] ?>");
+			        f.newpwd.value = "";
+			        f.newpwd2.value = "";
+			        f.newpwd.focus();
+			        return false;
+			    }
+			    return true;
+			}
+
+			function verifyModifyLoginForm(f){
+			    var newLogin = f.newlogin.value;
+				if( /[^0-9A-Za-z_!@#$-+.]/.test( newLogin ) ) {
+			        alert("<?= $LANG['PWD_UNALLOWED_CHRS'] ?>");
+			        return false;
+			    }
+			    return true;
+			}
+
+			function toggleEditingTools(targetStr){
+				document.getElementById("logineditdiv").style.display = "none";
+				document.getElementById("pwdeditdiv").style.display = "none";
+				document.getElementById("profileeditdiv").style.display = "none";
+				toggle(targetStr);
+			}
+
+			function verifyTaxonomyForm(f){
+				if(f.tid.value == ""){
+					alert("<?= $LANG['SELECT_FROM_LIST'] ?>");
+					return false;
+				}
+				return true;
+			}
+
+		</script>
+		<style>
+			.icon-img{ border: 0px; width: 1em; }
+		</style>
 	</head>
 	<body>
 		<?php
@@ -193,7 +270,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 												<b><?= $LANG['CURRENT_PWORD'] ?>:</b>
 											</td>
 											<td>
-												<input id="oldpwd" name="oldpwd" type="password"/>
+												<input id="oldpwd" name="oldpwd" type="password" required>
 											</td>
 										</tr>
 										<?php
@@ -204,7 +281,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 											<b><?= $LANG['NEW_PWORD'] ?>:</b>
 										</td>
 										<td>
-											<input id="newpwd" name="newpwd" type="password" minlength="10">
+											<input id="newpwd" name="newpwd" type="password" minlength="10" required>
 										</td>
 									</tr>
 									<tr>
@@ -212,7 +289,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 											<b><?= $LANG['PWORD_AGAIN'] ?>:</b>
 										</td>
 										<td>
-											<input id="newpwd2" name="newpwd2" type="password" minlength="10">
+											<input id="newpwd2" name="newpwd2" type="password" minlength="10" required>
 										</td>
 									</tr>
 									<tr>
@@ -229,11 +306,11 @@ if(isset($SYMB_UID) && $SYMB_UID){
 						<fieldset style='padding:15px;width:550px;'>
 							<legend><b><?= $LANG['CHANGE_USERNAME'] ?></b></legend>
 							<form name="modifyloginform" action="viewprofile.php" method="post" onsubmit="return verifyModifyLoginForm(this);">
-								<div><b><?= $LANG['NEW_USERNAME'] ?>:</b> <input name="newlogin" type="text" /></div>
+								<div><b><?= $LANG['NEW_USERNAME'] ?>:</b> <input name="newlogin" type="text" required /></div>
 								<?php
 								if($isSelf){
 									?>
-									<div><b><?= $LANG['CURRENT_PWORD'] ?>:</b> <input name="newloginpwd" id="newloginpwd" type="password" /></div>
+									<div><b><?= $LANG['CURRENT_PWORD'] ?>:</b> <input name="newloginpwd" id="newloginpwd" type="password" required /></div>
 									<?php
 								}
 								?>
@@ -264,8 +341,8 @@ if(isset($SYMB_UID) && $SYMB_UID){
 					<div>
 						<div>
 							<b><span style="text-decoration: underline;"><?= $LANG['TAXON_RELS'] ?></span></b>
-							<a href="#" onclick="toggle('addtaxonrelationdiv')" title="<?= $LANG['ADD_TAXON_REL'] ?>" aria-label="<?= $LANG['CREATE_TAXON_REL'] ?>" >
-								<img style='border:0px;width:1.3em;' src='../images/add.png' alt='<?= $LANG['ADD_ICON'] ?>'/>
+							<a href="#" onclick="toggle('addtaxonrelationdiv'); return false;" title="<?= $LANG['ADD_TAXON_REL'] ?>" aria-label="<?= $LANG['CREATE_TAXON_REL'] ?>" >
+								<img class="icon-img" src='../images/add.png' alt='<?= $LANG['ADD_ICON'] ?>'/>
 							</a>
 						</div>
 						<div id="addtaxonrelationdiv" style="display:none;">
@@ -274,14 +351,15 @@ if(isset($SYMB_UID) && $SYMB_UID){
 								<div style="margin-bottom:10px;">
 									<?= $LANG['TAX_FORM'] ?>
 								</div>
-								<form name="addtaxonomyform" action="viewprofile.php" method="post" onsubmit="return verifyAddTaxonomyForm(this)">
+								<form name="addtaxonomyform" action="viewprofile.php" method="post" onsubmit="return verifyTaxonomyForm(this)">
 									<div style="margin:3px;">
 										<b><?= $LANG['TAXON'] ?></b><br/>
-										<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" onfocus="initTaxonAutoComplete()" />
+										<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" required />
+										<input id="tidinput" name="tid" type="hidden" value="" >
 									</div>
 									<div style="margin:3px;">
 										<b><?= $LANG['SCOPE_OF_REL'] ?></b><br/>
-										<select name="editorstatus">
+										<select name="editorstatus" required>
 											<option value="RegionOfInterest"><?= $LANG['REGION'] ?></option>
 											<!-- <option value="OccurrenceEditor">Occurrence Editor</option> -->
 										</select>
@@ -295,7 +373,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										<input name="notes" type="text" value="" style="width:90%;" />
 									</div>
 									<div style="margin:20px 10px;">
-										<button name="action" type="submit" value="Add Taxonomic Relationship"><?= $LANG['ADD_TAX'] ?></button>
+										<button name="action" type="submit" value="addTaxonomicRelationship"><?= $LANG['ADD_TAX'] ?></button>
 									</div>
 								</form>
 							</fieldset>
@@ -313,10 +391,13 @@ if(isset($SYMB_UID) && $SYMB_UID){
 								echo '<ul style="margin:10px;">';
 								foreach($userTaxArr as $utid => $utArr){
 									echo '<li>';
-									echo $utArr['sciname'];
+									$sciname = $utArr['sciname'];
+									if($utArr['rankid'] >= 180) $sciname = '<i>' . $sciname . '</i>';
+									$sciname .= ' ' . $utArr['author'];
+									echo $sciname;
 									if($utArr['geographicScope']) echo ' - '.$utArr['geographicScope'].' ';
 									if($utArr['notes']) echo ', '.$utArr['notes'];
-									echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . $utid . '&userid=' . $userId . '"><img src="../images/drop.png" style="width:1.2em;" /></a>';
+									echo ' <a href="viewprofile.php?action=delusertaxonomy&utid=' . $utid . '&userid=' . $userId . '"><img class="icon-img" src="../images/drop.png" ></a>';
 									echo '</li>';
 								}
 								echo '</ul>';
