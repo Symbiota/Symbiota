@@ -539,32 +539,34 @@ class OccurrenceController extends Controller {
 	 *		 response="400",
 	 *		 description="Error: Bad request. Occurrence identifier is required.",
 	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="404",
+	 *		 description="Error: Resource not found.",
+	 *	 ),
 	 * )
 	 */
 	public function showOneOccurrence($id, Request $request) {
 		$this->validate($request, [
-			'includeMedia' => 'integer',
-			'includeIdentifications' => 'integer',
-			'includeDatasets' => 'integer'
+			'includeMedia' => 'sometimes|in:0,1',
+			'includeIdentifications' => 'sometimes|in:0,1',
+			'includeDatasets' => 'sometimes|in:0,1'
 		]);
-		if(!is_numeric($id)){
-			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
-			if (!$id){
-				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
-			}
-		}
-		$occurrenceModel = Occurrence::where('occid', $id);
-		$occurrenceModel->with('identifier');
-		if ($request->input('includeMedia')) $occurrenceModel->with('media');
-		if ($request->input('includeIdentifications')) $occurrenceModel->with('identification');
-		if ($request->input('includeDatasets')) $occurrenceModel->with('dataset');
-		$occurrence = $occurrenceModel->get();
-		if ($occurrence->isEmpty()) {
-			return response()->json(['error' => 'Occurrence not found'], 404);
+		$includeMedia = $request->boolean('includeMedia');
+		$includeIdentifications = $request->boolean('includeIdentifications');
+		$includeDatasets = $request->boolean('includeDatasets');
+
+		$with = ['identifier'];
+		if ($includeMedia) $with[] = 'media';
+		if ($includeIdentifications) $with[] = 'identification';
+		if ($includeDatasets) $with[] = 'dataset';
+
+		$occurrence = $this->getOccurrenceModel($id, $with);
+
+		if (!$occurrence) {
+			return $this->getOccurrenceNotFoundResponse();
 		}
 		return response()->json($occurrence);
 	}
-
 
 	/**
 	 * @OA\Get(
@@ -590,22 +592,12 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request) {
-		if(!is_numeric($id)){
-			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
-			if (!$id){
-				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
-			}
+		$occurrence = $this->getOccurrenceModel($id);
+		if(!$occurrence){
+			return $this->getOccurrenceNotFoundResponse();
 		}
-		$occurrence = Occurrence::find($id);
-		if ($occurrence->isEmpty()) {
-			return response()->json(['error' => 'Occurrence not found'], 404);
-		}
-		$identification = null;
-		$identification = $occurrence->identification;
-		if ($identification->isEmpty()) {
-			return response()->json(['error' => 'Occurrence found, but no identification found'], 404);
-		}
-		return response()->json($identification);
+		$identifications = $occurrence->identification;
+		return response()->json($identifications);
 	}
 
 	/**
@@ -632,24 +624,31 @@ class OccurrenceController extends Controller {
 	 * )
 	 */
 	public function showOneOccurrenceMedia($id, Request $request) {
-		if(!is_numeric($id)){
-			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
-			if (!$id){
-				return response()->json(['error' => 'Occurrence not found with that ID'], 404);
-			}
+		$occurrence = $this->getOccurrenceModel($id);
+		if(!$occurrence){
+			return $this->getOccurrenceNotFoundResponse();
 		}
-		$occurrence = Occurrence::find($id);
-		if ($occurrence->isEmpty()) {
-			return response()->json(['error' => 'Occurrence not found'], 404);
-		}
-		$media = null;
-		if ($occurrence) {
-			$media=$occurrence->media;
-		}
-		if ($media->isEmpty()) {
-			return response()->json(['error' => 'Occurrence found, but no media found'], 404);
-		}
+		$media = $occurrence->media;
 		return response()->json($media);
+	}
+
+	/**
+	 * Retrieve occurrence model using occid, recordID, or occurrenceID.
+	 *
+	 * @param mixed $id
+	 * @param array $with
+	 * @return Occurrence|null
+	 */
+	private function getOccurrenceModel($id, array $with = []): ?Occurrence {
+		if (!is_numeric($id)){
+			$id = Occurrence::where('recordID', $id)->orWhere('occurrenceID', $id)->value('occid');
+		}
+		if (!$id) return null;
+		return Occurrence::with($with)->find($id);
+	}
+
+	private function getOccurrenceNotFoundResponse(){
+		return response()->json(['status' => false, 'error' => 'Occurrence not found with that ID'], 404);
 	}
 
 	/**
