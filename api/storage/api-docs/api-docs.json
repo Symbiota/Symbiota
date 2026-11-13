@@ -586,39 +586,17 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
-                    {
-                        "name": "limit",
-                        "in": "query",
-                        "description": "Pagination parameter: maximum number of records per page",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 100
-                        }
-                    },
-                    {
-                        "name": "offset",
-                        "in": "query",
-                        "description": "Pagination parameter: page number",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 0
-                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "Returns list of occurrences associated with an installations",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
+                    "201": {
+                        "description": "Success: Registration of event was successful"
                     },
                     "400": {
-                        "description": "Error: Bad request. Identifier of remote installation is required."
+                        "description": "Error: Bad request."
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
                 }
             }
@@ -660,6 +638,9 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Identifier of remote installation is required."
+                    },
+                    "422": {
+                        "description": "Error: Bad request."
                     }
                 }
             }
@@ -2079,6 +2060,9 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Occurrence identifier is required."
+                    },
+                    "404": {
+                        "description": "Error: Resource not found."
                     }
                 }
             }
@@ -2111,6 +2095,9 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Occurrence identifier is required."
+                    },
+                    "404": {
+                        "description": "Error: Resource not found."
                     }
                 }
             }
@@ -2143,6 +2130,9 @@
                     },
                     "400": {
                         "description": "Error: Bad request. Occurrence identifier is required."
+                    },
+                    "404": {
+                        "description": "Error: Resource not found."
                     }
                 }
             }
