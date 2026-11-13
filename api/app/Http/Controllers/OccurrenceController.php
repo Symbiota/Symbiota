@@ -589,6 +589,10 @@ class OccurrenceController extends Controller {
 	 *		 response="400",
 	 *		 description="Error: Bad request. Occurrence identifier is required.",
 	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="404",
+	 *		 description="Error: Resource not found.",
+	 *	 ),
 	 * )
 	 */
 	public function showOneOccurrenceIdentifications($id, Request $request) {
@@ -620,6 +624,10 @@ class OccurrenceController extends Controller {
 	 *	 @OA\Response(
 	 *		 response="400",
 	 *		 description="Error: Bad request. Occurrence identifier is required.",
+	 *	 ),
+	 *	 @OA\Response(
+	 *		 response="404",
+	 *		 description="Error: Resource not found.",
 	 *	 ),
 	 * )
 	 */
