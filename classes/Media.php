@@ -1175,14 +1175,17 @@ class Media {
 	 */
 	public static function getByTid(int $tid, ?string $media_type = null, ?Paginator $paginator = null): Array {
 		if(!$tid) return [];
-		$parameters = [$tid];
+		$parameters = [$tid, $tid];
 
-		$sql ='SELECT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m '.
+		$sql = 'SELECT DISTINCT ' . implode(',', self::MEDIA_ITEM_SELECT_SCHEMA) . ' FROM media m ' .
 			'INNER JOIN taxstatus ts ON m.tid = ts.tid ' .
+			'INNER JOIN taxaenumtree e ON ts.tidaccepted = e.tid ' .
+			'INNER JOIN taxstatus a ON e.tid = a.tid ' .
 			'INNER JOIN taxa t ON m.tid = t.tid ' .
-			// 'LEFT JOIN taxa t ON t.tid = m.tid ' .
-			'LEFT JOIN users u on u.uid = m.creatorUid ' .
-			'WHERE ts.tid = ? and ts.taxauthid = 1';
+			'LEFT JOIN users u ON u.uid = m.creatorUid ' .
+			'WHERE e.taxauthid = 1 AND a.taxauthid = 1 ' .
+			'AND a.tid = a.tidaccepted ' .
+			'AND (e.tid = ? OR e.parentTid = ?)';
 
 		if($media_type) {
 			$sql .= ' AND mediaType = ?';
@@ -1204,12 +1207,17 @@ class Media {
 
 	public static function countByTid(int $tid, string $media_type = null): int {
 		if(!$tid) return 0;
-		$parameters = [$tid];
+		$parameters = [$tid, $tid];
 
-		$sql ='SELECT ' . 'count(*) as cnt' . ' FROM media m '.
-			'LEFT JOIN taxa t ON t.tid = m.tid ' .
-			'LEFT JOIN users u on u.uid = m.creatorUid ' .
-			'WHERE m.tid = ?';
+		$sql = 'SELECT COUNT(DISTINCT m.mediaid) as cnt FROM media m ' .
+			'INNER JOIN taxstatus ts ON m.tid = ts.tid ' .
+			'INNER JOIN taxaenumtree e ON ts.tidaccepted = e.tid ' .
+			'INNER JOIN taxstatus a ON e.tid = a.tid ' .
+			'INNER JOIN taxa t ON m.tid = t.tid ' .
+			'LEFT JOIN users u ON u.uid = m.creatorUid ' .
+			'WHERE e.taxauthid = 1 AND a.taxauthid = 1 ' .
+			'AND a.tid = a.tidaccepted ' .
+			'AND (e.tid = ? OR e.parentTid = ?)';
 
 		if($media_type) {
 			$sql .= ' AND mediaType = ?';
