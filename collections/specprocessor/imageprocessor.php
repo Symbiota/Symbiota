@@ -594,7 +594,7 @@ if($spprid) $specManager->setProjVariables($spprid);
 											<label><?php echo $LANG['REPLACEMENT_STR']; ?>:</label>
 											<div style="float:left;">
 												<?php
-												echo str_replace(' ', '&lt;space&gt;', $specManager->getReplaceStr());
+												echo str_replace(' ', '&lt;space&gt;', $specManager->getReplaceStr() ?? '');
 												?>
 												<input type='hidden' name='replacestr' value='<?php echo $specManager->getReplaceStr(); ?>' />
 											</div>

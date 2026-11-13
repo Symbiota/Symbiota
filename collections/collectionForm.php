@@ -1,9 +1,10 @@
 <?php
 global $SERVER_ROOT, $LANG_TAG, $LANG, $CLIENT_ROOT;
 include_once($SERVER_ROOT.'/classes/Database.php');
+include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/Language.php');
-include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/Sanitize.php');
 
 Language::load('collections/sharedterms');
 
@@ -80,7 +81,7 @@ function toggleCategory(categoryId, event=null) {
 		'CATORD' => $requestSuppliedCatOrd ?? $CATORD ?? [],
 		'CATEXPND' =>  $requestSuppliedCatExpnd ?? $CATEXPND ?? [],
 		'CATCHK' => $requestSuppliedCatChk ?? $CATCHK ?? [],
-		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+		'CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI']),
 	]) ?>'></div>
 <div>
 	<?php

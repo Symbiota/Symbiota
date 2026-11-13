@@ -1,0 +1,179 @@
+
+/* Defaults */
+
+.support-tiers a {
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.support-tiers h2 {
+    margin-top: 2lh;
+}
+
+ul.tier-1,
+ul.tier-2,
+ul.tier-3 {
+    padding-inline: unset;
+}
+
+.tier-1 {
+     grid-template-columns: repeat(3, minmax(0, 1fr));
+     gap: 30px; 
+}
+
+.tier-2 {
+     grid-template-columns: repeat(4, minmax(0, 1fr));
+     gap: 20px; 
+}
+
+.tier-3 {
+     grid-template-columns: repeat(5, minmax(0, 1fr));
+     gap: 10px;
+}
+
+.tier-1 p {
+    font-size: 1.6rem;
+    line-height: revert !important;
+}
+
+.tier-2 p {
+    font-size: 1.4rem;
+    line-height: revert !important;
+}
+
+.tier-3 p {
+    font-size: 1.1rem;
+    line-height: revert !important;
+}
+
+.tier-1.table-view,
+.tier-2.table-view,
+.tier-3.table-view{
+    list-style: none;
+    display: grid;
+    grid-auto-rows: 1fr; 
+}
+
+.bullet-view{
+    padding-inline: 1rem !important;
+}
+
+ul.bullet-view {
+    column-count: 2;
+    column-gap: 25px;
+    line-height: normal;
+}
+
+.bullet-view li {
+    text-align: left;
+}
+
+.bullet-view li img{
+    display: none;
+}
+
+ul.bullet-view li p {
+    line-height: normal !important;;
+    margin-top: .5rem;
+}
+
+.table-view li {
+    justify-content: center;
+    text-align: center;
+    border-bottom: solid var(--bright-color) 1px;
+}
+
+.table-view li:not(:has(img)) {
+    display: grid;
+    align-items: center; 
+}
+
+ul.table-view li p {
+    margin: 0 0 .5rem 0;
+}
+
+.tier-1 img {
+        max-width: 220px;
+        max-height: 110px;
+}
+
+.tier-2 img {
+    max-width: 190px;
+    max-height: 90px;
+}
+
+.tier-3 img {
+    max-width: 150px;
+    max-height: 75px;
+}
+
+.nologo {
+  display: grid;
+  align-content: center; /* Vertically centers the child */
+  
+}
+
+@media (max-width: 768px) {
+    .tier-1.table-view{
+        grid-template-columns: repeat(2, minmax(0, 1fr)); 
+    }
+    .tier-2.table-view{
+        grid-template-columns: repeat(3, minmax(0, 1fr)); 
+    }
+    .tier-3.table-view{
+        grid-template-columns: repeat(4, minmax(0, 1fr)); 
+    }
+
+
+    /* Slightly reduce sizes on tablets */
+    .tier-1 img {
+        max-width: 190px;
+        max-height: 95px;
+    }
+
+    .tier-2 img {
+        max-width: 150px;
+        max-height: 75px;
+    }
+
+    .tier-3 img {
+        max-width: 110px;
+        max-height: 60px;
+    }
+}
+
+/* ---------------------------------
+SMALL PHONES
+--------------------------------- */
+
+@media (max-width: 480px) {
+
+    .support-tiers h2 {
+        text-align: center;
+    }
+
+    .tier-1.table-view,
+    .tier-2.table-view,
+    .tier-3.table-view{
+        grid-template-columns: 1fr; 
+    }
+
+
+
+    /* Keep the tier hierarchy on mobile */
+    .tier-1 img {
+        max-width: 150px;
+    }
+
+    .tier-2 img {
+        max-width: 120px;
+    }
+
+    .tier-3 img {
+        max-width: 90px;
+    }
+
+    ul.bullet-view {
+        column-count: 1;
+    }
+}

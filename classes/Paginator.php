@@ -54,6 +54,9 @@ class Paginator {
 	}	
 
 	private function summaryText(): String {
+		if($this->totalCount < $this->perPage){
+			return $this->activePage . ', records 1 - ' . $this->totalCount . ' of ' . $this->totalCount;
+		}
 		return $this->activePage . ', records ' . (( ($this->activePage - 1) * $this->perPage) + 1) . ' - ' . $this->perPage * $this->activePage . ' of ' . $this->totalCount;
 	}
 

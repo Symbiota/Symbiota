@@ -1,25 +1,26 @@
 <?php
-  include_once('../config/symbini.php');
-  include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
-  include_once($SERVER_ROOT.'/classes/TraitPlotManager.php');
-  include_once($SERVER_ROOT.'/classes/TraitPolarPlot.php');
-  include_once($SERVER_ROOT . '/classes/utilities/Language.php');
-  Language::load('taxa/index');
+include_once('../config/symbini.php');
+include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
+include_once($SERVER_ROOT . '/classes/TraitPlotManager.php');
+include_once($SERVER_ROOT . '/classes/TraitPolarPlot.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-  Header('Content-Type: text/html; charset='.$CHARSET);
+Language::load('taxa/index');
 
-  $tid = $_REQUEST['tid'];
-  $taxAuthId = array_key_exists('taxauthid',$_REQUEST)?$_REQUEST['taxauthid']:1;
-  if(isset($CALENDAR_TRAIT_PLOTS)) {
-    $traitstateids = explode(",", $CALENDAR_TRAIT_PLOTS);
-    $traitstateids = array_map('trim', $traitstateids);
-  } else {
-    $traitstateids = array("0");
-  }
+Header('Content-Type: text/html; charset='.$CHARSET);
 
-  //Sanitation
-  if(!is_numeric($tid)) $tid = 0;
-  if(!is_array($traitstateids)) $traitstateids = array(0);
+$tid = Sanitize::int($_REQUEST['tid']);
+$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
+if(isset($CALENDAR_TRAIT_PLOTS)) {
+	$traitstateids = explode(",", $CALENDAR_TRAIT_PLOTS);
+	$traitstateids = array_map('trim', $traitstateids);
+} else {
+	$traitstateids = array("0");
+}
+
+//Sanitation
+if(!is_array($traitstateids)) $traitstateids = array(0);
 ?>
 
 <script type="text/javascript">
@@ -60,7 +61,7 @@
       echo '<svg height="'.$traitPlotter->getViewboxHeight().'px" viewbox="0 0 ' . $traitPlotter->getViewboxWidth() . ' ' . $traitPlotter->getViewboxHeight() . '" ><g>' . PHP_EOL;
       echo $traitPlotter->display();
       echo '</g></svg>';
-      echo '<p class="PlotCaption">'.$traitPlotter->getPlotCaption().'</p>';
+      echo '<p class="PlotCaption">' . Sanitize::outString($traitPlotter->getPlotCaption()) . '</p>';
     } else {
       echo '<div class="resource-title">'.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</div>';
       echo '<p class="PlotCaption">No specimens encoded for '.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</p>';
@@ -81,7 +82,7 @@
       echo '<svg height="'.$traitPlotter->getViewboxHeight().'px" viewbox="0 0 ' . $traitPlotter->getViewboxWidth() . ' ' . $traitPlotter->getViewboxHeight() . '" ><g>' . PHP_EOL;
       echo $traitPlotter->display();
       echo '</g></svg>';
-      echo '<p class="PlotCaption">'.$traitPlotter->getPlotCaption().'</p>';
+      echo '<p class="PlotCaption">' . Sanitize::outString($traitPlotter->getPlotCaption()) . '</p>';
     } else {
       echo '<div class="resource-title">'.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</div>';
       echo '<p class="PlotCaption">No specimens encoded for '.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</p>';
@@ -102,7 +103,7 @@
       echo '<svg height="'.$traitPlotter->getViewboxHeight().'px" viewbox="0 0 ' . $traitPlotter->getViewboxWidth() . ' ' . $traitPlotter->getViewboxHeight() . '" ><g>' . PHP_EOL;
       echo $traitPlotter->display();
       echo '</g></svg>';
-      echo '<p class="PlotCaption">'.$traitPlotter->getPlotCaption().'</p>';
+      echo '<p class="PlotCaption">' . Sanitize::outString($traitPlotter->getPlotCaption()) . '</p>';
     } else {
       echo '<div class="resource-title">'.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</div>';
       echo '<p class="PlotCaption">No specimens encoded for '.$traitPlotter->getTraitName(). ': '.$traitPlotter->getStateName().'</p>';

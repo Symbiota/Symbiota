@@ -11,36 +11,6 @@ include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('classes/Media');
 
-function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
-	$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
-
-	if($catalognumber) {
-		//Clean out Symbols that would interfere with
-		$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
-
-		//Grab any characters in the range of 0-8 then any amount digits
-		if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
-			//Truncate cat number to keep directories from getting out of hand
-			$derived_cat_num = substr($matches[1], 0, -3);
-
-			//If derived catalog number is a number less then five pad front with 0's
-			if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
-				$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
-			}
-
-			$root .= $derived_cat_num . '/';
-			//backup catalogNumber
-		} else {
-			$root .= '00000/';
-		}
-		//Use date as a backup so that main directory doesn't get filled up but can debug
-	} else {
-		$root .= date('Ym') . '/';
-	}
-
-	return str_replace(' ', '_', $root);
-}
-
 class Media {
 	private static $mediaRootPath;
 	private static $mediaRootUrl;
@@ -111,29 +81,43 @@ class Media {
 	}
 
 	/**
-	 * Pulls file name out of directory path or url
-	 *
-	 * Note: The url parsing expects the filename to not be in the query or hash
-	 *
-	 * @param string $filepath Can be a file or url path
-	 * return array<string,mixed>
-	 * @return array<string,mixed>
+	 * 
+	 * @param mixed $institutioncode
+	 * @param mixed $collectioncode
+	 * @param mixed $catalognumber Optional; defaults to null.
+	 * @return string
 	 */
-	public static function parseFileName(string $filepath): array {
-		$file_name = $filepath;
+	public static function get_occurrence_upload_path($institutioncode, $collectioncode, $catalognumber = null) {
+		$root = $institutioncode . ($collectioncode? '_'. $collectioncode: '') . '/';
 
-		//Filepath maybe a url so clear out url query if it exists
-		$query_pos = strpos($file_name,'?');
-		if($query_pos) $file_name = substr($file_name, 0, $query_pos);
+		if($catalognumber) {
+			//Clean out Symbols that would interfere with
+			$derived_cat_num = str_replace(array('/','\\',' '), '', $catalognumber);
 
-		$file_parts = pathinfo($file_name);
+			//Grab any characters in the range of 0-8 then any amount digits
+			if(preg_match('/^(\D{0,8}\d{4,})/', $derived_cat_num, $matches)){
+				//Truncate cat number to keep directories from getting out of hand
+				$derived_cat_num = substr($matches[1], 0, -3);
 
-		return [
-			'name' => $file_parts['filename'],
-			'tmp_name' => $filepath,
-			'extension' => (!empty($file_parts['extension'])) ? strtolower($file_parts['extension']) : ''
-		];
+				//If derived catalog number is a number less then five pad front with 0's
+				if(is_numeric($derived_cat_num) && strlen($derived_cat_num) < 5) {
+					$derived_cat_num = str_pad($derived_cat_num, 5, "0", STR_PAD_LEFT);
+				}
+
+				$root .= $derived_cat_num . '/';
+				//backup catalogNumber
+			} else {
+				$root .= '00000/';
+			}
+			//Use date as a backup so that main directory doesn't get filled up but can debug
+		} else {
+			$root .= date('Ym') . '/';
+		}
+
+		return str_replace(' ', '_', $root);
 	}
+
+
 	/**
 	 * @return string
 	 * @param array<int,mixed> $media_arr
@@ -315,32 +299,6 @@ class Media {
 		}
 	}
 
-	/**
-	 * Strips out undesired characters from from a pure file name string
-	 *
-	 * @param string $file_name A file name without the extension
-	 * return string
-	 */
-	public static function cleanFileName(string $file_name):string {
-		$file_name = str_replace(".","", $file_name);
-		$file_name = str_replace(array("%20","%23"," ","__"),"_",$file_name);
-		$file_name = str_replace("__","_",$file_name);
-		$file_name = str_replace(array(chr(231),chr(232),chr(233),chr(234),chr(260)),"a",$file_name);
-		$file_name = str_replace(array(chr(230),chr(236),chr(237),chr(238)),"e",$file_name);
-		$file_name = str_replace(array(chr(239),chr(240),chr(241),chr(261)),"i",$file_name);
-		$file_name = str_replace(array(chr(247),chr(248),chr(249),chr(262)),"o",$file_name);
-		$file_name = str_replace(array(chr(250),chr(251),chr(263)),"u", $file_name);
-		$file_name = str_replace(array(chr(264),chr(265)),"n",$file_name);
-		$file_name = preg_replace("/[^a-zA-Z0-9\-_]/", "", $file_name);
-		$file_name = trim($file_name,' _-');
-
-		if(strlen($file_name) > 30) {
-			$file_name = substr($file_name, 0, 30);
-		}
-
-		return $file_name;
-	}
-
 	private static function isValidFile($file): bool {
 		return $file && !empty($file) && isset($file['error']) && $file['error'] === 0;
 	}
@@ -360,8 +318,8 @@ class Media {
 			$media_upload_type = MediaType::tryFrom($media_upload_type);
 		}
 
-		$parsed_file = self::parseFileName($url);
-		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
+		$parsed_file = UploadUtil::parseFileName($url);
+		$parsed_file['name'] = UploadUtil::cleanFileName($parsed_file['name']);
 
 		if(!$parsed_file['extension'] && $file_type_mime) {
 			$parsed_file['extension'] = UploadUtil::mime2ext($file_type_mime);
@@ -523,7 +481,7 @@ class Media {
 		try {
 			if(self::isValidFile($file)) {
 				$pathInfo =	pathinfo($file['name']);
-				$pathInfo['filename'] = self::cleanFileName($pathInfo['filename']);
+				$pathInfo['filename'] = UploadUtil::cleanFileName($pathInfo['filename']);
 				$file['name'] = $pathInfo['filename'] . '.' . ($pathInfo['extension'] ?? '');
 				$file['full_path'] = $file['name'];
 			} else if($post_arr['copytoserver'] ?? false) {
@@ -696,7 +654,7 @@ class Media {
 		$move_files = [];
 
 		if($media_arr['url']) {
-			$file = self::parseFileName($media_arr['url']);
+			$file = UploadUtil::parseFileName($media_arr['url']);
 			$filename = $file['name'] . $file['extension'];
 
 			//Check if stored in our system if so move to path
@@ -709,7 +667,7 @@ class Media {
 		$remap_urls = ['url', 'originalUrl', 'thumbnailUrl'];
 		foreach($remap_urls as $url) {
 			if($media_arr[$url]) {
-				$file = self::parseFileName($media_arr[$url]);
+				$file = UploadUtil::parseFileName($media_arr[$url]);
 				$filename = $file['name'] . '.' . $file['extension'];
 
 				//Check if stored in our system if so move to path
@@ -786,8 +744,8 @@ class Media {
 
 	private static function check_file_rename(string $old_filepath, string $new_filepath) {
 		if($old_filepath && $new_filepath) {
-			$old_file = self::parseFileName($old_filepath);
-			$new_file = self::parseFileName($new_filepath);
+			$old_file = UploadUtil::parseFileName($old_filepath);
+			$new_file = UploadUtil::parseFileName($new_filepath);
 
 			if($old_file['extension'] != $new_file['extension']) {
 				throw new MediaException(MediaException::IllegalRenameChangedFileType);
