@@ -38,7 +38,7 @@ $LANG['BUILDDKEY'] = 'dynamically build a key using georeferenced specimen recor
 $LANG['MANAGTOOL'] = 'Data Management Tools';
 $LANG['ADMIN_MENU'] = 'Administrative Functions (Super Admins only)';
 $LANG['IDKEYS'] = 'Identification Keys';
-$LANG['KEYMODULE'] = 'Note: The Identification Key module is deactivated within this portal. However, you can override by activating idividual keys within the checklist administration page.';
+$LANG['KEYMODULE'] = 'Note: The Identification Key module is deactivated within this portal. However, you can override by activating individual keys within the checklist administration page.';
 $LANG['AUTHOKEY'] = 'You are authorized to access the';
 $LANG['CHARASTATES'] = 'Characters and Character States Editor';
 $LANG['AUTHIDKEY'] = 'You are authorized to edit Identification Keys';
@@ -105,5 +105,7 @@ $LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
 $LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
 $LANG['BATCH_UPDATE_STATS'] = 'Update Portal-wide Collection Statistics';
 $LANG['POLICIES'] = 'Policies';
+$LANG['TRAIT_EDIT'] = 'Trait Editing';
+$LANG['OCCUR_TRAIT_EDIT'] = 'Occurrence Traits Editor';
 
 ?>

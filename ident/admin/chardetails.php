@@ -58,7 +58,7 @@ if($formSubmit && $isEditor){
 		$tabIndex = 1;
 	}
 	elseif($formSubmit == 'deleteState'){
-		if(!$charManager->deleteCharacterState($_POST['cs'])){
+		if(!$charManager->deleteCharacterState($_POST['stateid'], $_POST['cs'])){
 			$statusStr = $LANG['ERROR_DELETE_STATE'] . $charManager->getErrorMessage();
 		}
 		$tabIndex = 1;
@@ -181,66 +181,67 @@ if(!$cid) header('Location: index.php');
 		function verifyCharStateDeletion(f){
 			var cid = f.cid.value;
 			var cs = f.cs.value;
+			var stateid = f.stateid.value;
 
 			//Restriction when images are linked
-			document.getElementById("delvercsimgspan-"+cs).style.display = "block";
-			verifyCharStateImages(cid,cs);
+			document.getElementById("delvercsimgspan-"+stateid).style.display = "block";
+			verifyCharStateImages(cid,cs,stateid);
 
 			//Restriction when language definitions are linked
-			document.getElementById("delvercslangspan-"+cs).style.display = "block";
-			verifyCharStateLang(cid,cs);
+			document.getElementById("delvercslangspan-"+stateid).style.display = "block";
+			verifyCharStateLang(cid,cs,stateid);
 
 			//Restriction when descriptions are linked
-			document.getElementById("delverdescrspan-"+cs).style.display = "block";
-			verifyDescr(cid,cs);
+			document.getElementById("delverdescrspan-"+stateid).style.display = "block";
+			verifyDescr(cid,cs,stateid);
 
 			f.formsubmit.disabled = false;
 		}
 
-		function verifyCharStateImages(cid,cs){
+		function verifyCharStateImages(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getcharstateimgcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delvercsimgspan-"+cs).style.display = "none";
+				document.getElementById("delvercsimgspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("delcsimgfaildiv-"+cs).style.display = "block";
+					document.getElementById("delcsimgfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("delcsimgappdiv-"+cs).style.display = "block";
+					document.getElementById("delcsimgappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
 
-		function verifyCharStateLang(cid,cs){
+		function verifyCharStateLang(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getcharstatelangcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delvercslangspan-"+cs).style.display = "none";
+				document.getElementById("delvercslangspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("delcslangfaildiv-"+cs).style.display = "block";
+					document.getElementById("delcslangfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("delcslangappdiv-"+cs).style.display = "block";
+					document.getElementById("delcslangappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
 
-		function verifyDescr(cid,cs){
+		function verifyDescr(cid,cs,stateid){
 			$.ajax({
 				type: "POST",
 				url: 'rpc/getdescrcnt.php',
 				data: { cidinput: cid, csinput: cs }
 			}).done(function( msg ) {
-				document.getElementById("delverdescrspan-"+cs).style.display = "none";
+				document.getElementById("delverdescrspan-"+stateid).style.display = "none";
 				if(msg > 0){
-					document.getElementById("deldescrfaildiv-"+cs).style.display = "block";
+					document.getElementById("deldescrfaildiv-"+stateid).style.display = "block";
 				}
 				else{
-					document.getElementById("deldescrappdiv-"+cs).style.display = "block";
+					document.getElementById("deldescrappdiv-"+stateid).style.display = "block";
 				}
 			});
 		}
@@ -343,7 +344,7 @@ if(!$cid) header('Location: index.php');
 										$headingArr = $charManager->getCharacterHeadingArr();
 										asort($headingArr);
 										foreach($headingArr as $k => $v){
-											echo '<option value="' . $k . '" ' . ($k==$charArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['name']) . '</option>';
+											echo '<option value="' . $k . '" ' . ($k==$charArr['hid']?'SELECTED':'') . '>' . Sanitize::outString($v['headingName']) . '</option>';
 										}
 										?>
 									</select>
@@ -466,39 +467,39 @@ if(!$cid) header('Location: index.php');
 					<?php
 					if($charStateArr){
 						echo '<h3>' . $LANG['CHAR_STATES'] . '</h3>';
-						foreach($charStateArr as $cs => $stateArr){
+						foreach($charStateArr as $stateID => $stateArr){
 							?>
 							<div>
-								<div id="csplus-<?= $cs ?>" style="margin:5px;">
-									<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
+								<div id="csplus-<?= $stateID ?>" style="margin:5px;">
+									<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 										<img src="../../images/plus.png" class="icon-img" >
 										<?= Sanitize::outString($stateArr['charStateName']) ?>
 									</a>
 								</div>
-								<div id="<?= 'cs-'.$cs.'Div' ?>" style="display:none;">
+								<div id="<?= 'cs-'.$stateID.'Div' ?>" style="display:none;">
 									<div style="margin:5px;">
-										<a href="#" onclick="toggleCharState(<?= $cs ?>);return false;">
+										<a href="#" onclick="toggleCharState(<?= $stateID ?>);return false;">
 											<img src="../../images/minus.png" class="icon-img" >
 											<?= Sanitize::outString($stateArr['charStateName']) ?>
 										</a>
 									</div>
-									<form name="stateeditform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
+									<form name="stateeditform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return validateStateEditForm(this)">
 										<fieldset>
 											<legend><?= $LANG['CHAR_STATE_DETAILS'] ?></legend>
 											<div>
-												<label for="charstatename-<?= $cs ?>"><?= $LANG['CHAR_STATE_NAME'] ?></label><br />
-												<input type="text" id="charstatename-<?= $cs ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
+												<label for="charstatename-<?= $stateID ?>"><?= $LANG['CHAR_STATE_NAME'] ?></label><br />
+												<input type="text" id="charstatename-<?= $stateID ?>" name="charstatename" maxlength="255" style="width:300px;" value="<?= Sanitize::outString($stateArr['charStateName']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
-												<label for="description-<?= $cs ?>"><?= $LANG['DESCRIPTION'] ?></label><br />
-												<input type="text" id="description-<?= $cs ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
+												<label for="description-<?= $stateID ?>"><?= $LANG['DESCRIPTION'] ?></label><br />
+												<input type="text" id="description-<?= $stateID ?>" name="description" maxlength="255" style="width:90%;" value="<?= Sanitize::outString($stateArr['description']) ?>"/>
 											</div>
 											<?php
 											if($glossaryArr){
 												?>
 												<div style="padding-top:8px;padding-bottom:8px;clear:both;">
-													<label for="glossid-<?= $cs ?>"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
-													<select id="glossid-<?= $cs ?>" name="glossid" style="max-width: 90%">
+													<label for="glossid-<?= $stateID ?>"><?= $LANG['GLOSSARY_LINK'] ?></label><br />
+													<select id="glossid-<?= $stateID ?>" name="glossid" style="max-width: 90%">
 														<option value="">------------------------</option>
 														<?php
 														foreach($glossaryArr as $glossArr){
@@ -520,22 +521,22 @@ if(!$cid) header('Location: index.php');
 											}
 											?>
 											<div style="padding-top:2px;">
-												<label for="notes-<?= $cs ?>"><?= $LANG['NOTES'] ?></label><br />
-												<input type="text" id="notes-<?= $cs ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
+												<label for="notes-<?= $stateID ?>"><?= $LANG['NOTES'] ?></label><br />
+												<input type="text" id="notes-<?= $stateID ?>" name="notes" style="width:90%;" value="<?= Sanitize::outString($stateArr['notes']) ?>" />
 											</div>
 											<div style="padding-top:2px;">
 												<div style="float:right;">
-													<label for="enteredby-<?= $cs ?>"><?= $LANG['ENTERED_BY'] ?>:</label><br/>
-													<input type="text" id="enteredby-<?= $cs ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
+													<label for="enteredby-<?= $stateID ?>"><?= $LANG['ENTERED_BY'] ?>:</label><br/>
+													<input type="text" id="enteredby-<?= $stateID ?>" name="enteredby" value="<?= Sanitize::outString($stateArr['enteredBy']) ?>" disabled />
 												</div>
 												<div>
-													<label for="sortsequence-<?= $cs ?>"><?= $LANG['SORT_SQNCE'] ?></label><br />
-													<input type="text" id="sortsequence-<?= $cs ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
+													<label for="sortsequence-<?= $stateID ?>"><?= $LANG['SORT_SQNCE'] ?></label><br />
+													<input type="text" id="sortsequence-<?= $stateID ?>" name="sortsequence" value="<?= $stateArr['sortSequence'] ?>" style="width:80px" />
 												</div>
 											</div>
-											<div style="width:100%;margin:20px 0px 10px 20px;">
+											<div style="width:100%;margin:10px 0px 10px 0px;">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
-												<input name="cs" type="hidden" value="<?= $cs ?>" />
+												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="saveState"><?= $LANG['SAVE'] ?></button>
 											</div>
 										</fieldset>
@@ -543,7 +544,8 @@ if(!$cid) header('Location: index.php');
 									<fieldset>
 										<legend>Illustration</legend>
 										<?php
-										if($imgArr = $charManager->getCharacterStateImageArr()){
+										$imgArr = $charManager->getCharacterStateImageArr();
+										if($imgArr['cs'] === $stateArr['cs']){
 											?>
 											<div style="padding-top:2px;">
 												<a href="<?= Sanitize::outString($imgArr['url']) ?>" target="_blank"><img src="<?= Sanitize::outString($imgArr['url']) ?>" style="width:200px;" /></a>
@@ -551,7 +553,7 @@ if(!$cid) header('Location: index.php');
 											<form name="stateillustdelform-<?= $imgArr['csImgID'] ?>" action="chardetails.php" method="post" onsubmit="return verifyStateIllustDelForm(this)" >
 												<div style="margin:10px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
-													<input name="cs" type="hidden" value="<?= $cs ?>" />
+													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 													<input name="csimgid" type="hidden" value="<?= $imgArr['csImgID'] ?>" />
 													<button name="formsubmit" type="submit" value="deleteImage"><?= $LANG['DELETE_IMAGE'] ?></button>
 												</div>
@@ -560,23 +562,23 @@ if(!$cid) header('Location: index.php');
 										}
 										else{
 											?>
-											<form name="stateillustform-<?= $cs ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
+											<form name="stateillustform-<?= $stateID ?>" action="chardetails.php" method="post" enctype="multipart/form-data" onsubmit="return verifyStateIllustForm(this)" >
 												<div style="padding-top:2px;">
-													<label for="urlupload-<?= $cs ?>"><?= $LANG['FILE_UPLOAD'] ?>:</label>
-													<input id="urlupload-<?= $cs ?>" name="urlupload" type="file" size="50" />
+													<label for="urlupload-<?= $stateID ?>"><?= $LANG['FILE_UPLOAD'] ?>:</label>
+													<input id="urlupload-<?= $stateID ?>" name="urlupload" type="file" size="50" />
 													<input name="MAX_FILE_SIZE" type="hidden" value="1000000" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgnotes-<?= $cs ?>"><?= $LANG['NOTES'] ?>:</label>
-													<input id="imgnotes-<?= $cs ?>" name="notes" type="text" style="width:90%" />
+													<label for="imgnotes-<?= $stateID ?>"><?= $LANG['NOTES'] ?>:</label>
+													<input id="imgnotes-<?= $stateID ?>" name="notes" type="text" style="width:90%" />
 												</div>
 												<div style="padding-top:2px;">
-													<label for="imgsortsequence-<?= $cs ?>"><?= $LANG['SORT'] ?>:</label>
-													<input id="imgsortsequence-<?= $cs ?>" name="sortsequence" type="text" />
+													<label for="imgsortsequence-<?= $stateID ?>"><?= $LANG['SORT'] ?>:</label>
+													<input id="imgsortsequence-<?= $stateID ?>" name="sortsequence" type="text" />
 												</div>
 												<div style="padding-top:2px;">
 													<input name="cid" type="hidden" value="<?= $cid ?>" />
-													<input name="cs" type="hidden" value="<?= $cs ?>" />
+													<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 													<button name="formsubmit" type="submit" value="uploadImage"><?= $LANG['UPLOAD_IMAGE'] ?></button>
 												</div>
 											</form>
@@ -584,7 +586,7 @@ if(!$cid) header('Location: index.php');
 										}
 										?>
 									</fieldset>
-									<form name="statedelform-<?= $cs ?>" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_STATE'] ?>')">
+									<form name="statedelform-<?= $stateID ?>" action="chardetails.php" method="post" onsubmit="return confirm('<?= $LANG['CONFIRM_DELETE_STATE'] ?>')">
 										<fieldset>
 											<legend><?= $LANG['DELETE_CHAR_STATE'] ?></legend>
 											<div>
@@ -595,43 +597,44 @@ if(!$cid) header('Location: index.php');
 											</div>
 											<div id="delverimgdiv" style="margin:15px;">
 												<b><?= $LANG['IMAGE_LINKS'] ?>: </b>
-												<span id="delvercsimgspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_IMAGE_LINKS'] ?></span>
-												<div id="delcsimgfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delvercsimgspan-<?= $stateID ?>" style="color:orange;display:none;"><?= $LANG['CHECK_IMAGE_LINKS'] ?></span>
+												<div id="delcsimgfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
 													<?= $LANG['DELETE_WARN_IMAGE'] ?>
 												</div>
-												<div id="delcsimgappdiv-<?= $cs ?>" style="display:none;">
+												<div id="delcsimgappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
 													<?= $LANG['NO_ASSOC_IMAGE'] ?>
 												</div>
 											</div>
 											<div id="delverlangdiv" style="margin:15px;">
 												<b><?= $LANG['LANG_LINKS'] ?>: </b>
-												<span id="delvercslangspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_LANG_LINKS'] ?></span>
-												<div id="delcslangfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delvercslangspan-<?= $stateID ?>" style="color:orange;display:none;"><?= $LANG['CHECK_LANG_LINKS'] ?></span>
+												<div id="delcslangfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
 													<?= $LANG['DELETE_WARN_LANG'] ?>
 												</div>
-												<div id="delcslangappdiv-<?= $cs ?>" style="display:none;">
+												<div id="delcslangappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
 													<?= $LANG['NO_ASSOC_LANG'] ?>
 												</div>
 											</div>
 											<div id="delverdescrdiv" style="margin:15px;">
 												<b><?= $LANG['DESC_LINKS'] ?>: </b>
-												<span id="delverdescrspan-<?= $cs ?>" style="color:orange;display:none;"><?= $LANG['CHECK_DESC_LINKS'] ?></span>
-												<div id="deldescrfaildiv-<?= $cs ?>" style="display:none;style:0px 10px 10px 10px;">
+												<span id="delverdescrspan-<?= $stateID ?>" style="color:orange;display:none;"><?= $LANG['CHECK_DESC_LINKS'] ?></span>
+												<div id="deldescrfaildiv-<?= $stateID ?>" style="display:none;style:0px 10px 10px 10px;">
 													<span style="color:red;"><?= $LANG['WARNING'] ?>:</span>
 													<?= $LANG['DELETE_WARN_DESC'] ?>
 												</div>
-												<div id="deldescrappdiv-<?= $cs ?>" style="display:none;">
+												<div id="deldescrappdiv-<?= $stateID ?>" style="display:none;">
 													<span style="color:green;"><?= $LANG['APPROVE_DELETE'] ?></span>
 													<?= $LANG['NO_ASSOC_DESC'] ?>
 												</div>
 											</div>
 											<div style="margin:15px;">
+												<input id="stateid" name="stateid" type="hidden" value="<?= $stateID ?>">
 												<input name="cid" type="hidden" value="<?= $cid ?>" />
-												<input name="cs" type="hidden" value="<?= $cs ?>" />
+												<input name="cs" type="hidden" value="<?= $stateArr['cs'] ?>" />
 												<button name="formsubmit" type="submit" value="deleteState" disabled><?= $LANG['DELETE_STATE'] ?></button>
 											</div>
 										</fieldset>

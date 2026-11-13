@@ -105,5 +105,7 @@ $LANG['TAXINTER'] = 'Permissões de Usuário de Interesse Taxonômico';
 $LANG['OTHER_CAT_TRANSFER'] = 'Outra Ferramenta de Transferência de Número de Catálogo';
 $LANG['BATCH_UPDATE_STATS'] = 'Atualizar Estatísticas de Coleção em Todo o Portal';
 $LANG['POLICIES'] = 'Políticas';
+$LANG['TRAIT_EDIT'] = 'Edição de Traços';
+$LANG['OCCUR_TRAIT_EDIT'] = 'Editor de Traços de Ocorrência';
 
 ?>

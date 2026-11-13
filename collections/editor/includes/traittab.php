@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/editor/includes/traittab');
@@ -11,7 +11,7 @@ $occid = $_GET['occid'];
 $occIndex = $_GET['occindex'];
 $collid = isset($_GET['collid'])?$_GET['collid']:'';
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 $attrManager->setOccid($occid);
 
 $isEditor = 0;
@@ -145,12 +145,12 @@ if($isEditor){
 						</div>
 						<div style="clear:both;padding:10px 5px;">
 							<div >
-								<?php echo $LANG['NOTES'];?>:
-								<input name="notes" type="text" style="width:300px" value="<?php echo $notes; ?>" />
+								<label for="notes-<?= $traitID ?>"><?php echo $LANG['NOTES'];?>:</label>
+								<input name="notes" id="notes-<?= $traitID ?>" type="text" style="width:300px" value="<?php echo $notes; ?>" />
 							</div>
 							<div style="margin:10px 0px">
-								<?php echo $LANG['SOURCE'];?>:
-								<select name="source">
+								<label for="source-<?= $traitID ?>"><?php echo $LANG['SOURCE'];?>:</label>
+								<select name="source" id="source-<?= $traitID ?>">
 									<option value=""></option>
 									<?php
 									$sourceControlArr = $attrManager->getSourceControlledArr($source);
@@ -161,8 +161,8 @@ if($isEditor){
 								</select>
 							</div>
 							<div style="margin-left:5;">
-								<?php echo $LANG['STATUS'];?>:
-								<select name="setstatus">
+								<label for="setstatus-<?= $traitID ?>"><?php echo $LANG['STATUS'];?>:</label>
+								<select name="setstatus" id="setstatus-<?= $traitID ?>">
 									<option value="0"><?php echo $LANG['NOT_REVIEWED'];?></option>
 									<option value="5" <?php echo ($statusCode=='5'?'selected':''); ?>><?php echo $LANG['EXPERT_NEEDED'];?></option>
 									<option value="10" <?php echo ($statusCode=='10'?'selected':''); ?>><?php echo $LANG['REVIEWED'];?></option>

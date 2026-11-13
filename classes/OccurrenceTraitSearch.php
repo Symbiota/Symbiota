@@ -1,9 +1,9 @@
 <?php
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 
-class OccurrenceAttributeSearch extends OccurrenceAttributes {
+class OccurrenceTraitSearch extends OccurrenceTraitAttributes {
 
-	//use $setAttributes = false in call to ->getTraitArr, if reverting to using OccurrenceAttributes class
+	//use $setAttributes = false in call to ->getTraitArr, if reverting to using OccurrenceTraitAttributes class
 
 	//private $traitSearchArr = array();
 	public function __construct(){

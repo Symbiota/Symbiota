@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 $occid = $_REQUEST['occid'];
@@ -9,7 +9,7 @@ $action = array_key_exists('submitAction',$_REQUEST)?$_REQUEST['submitAction']:'
 
 $status = 0;
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 $attrManager->setOccid($occid);
 
 $isEditor = false;
@@ -32,7 +32,7 @@ if($isEditor){
 	$stateArr = json_decode($_REQUEST['stateData'],true);
 	$postArr = array_merge($postArr,$stateArr);
 	if($action == 'addTraitCoding'){
-		if($attrManager->addAttributes($postArr,$SYMB_UID)){
+		if($attrManager->addAttributes($postArr)){
 			$status = 1;
 		}
 	}

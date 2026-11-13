@@ -5,7 +5,7 @@ include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
-include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceTraitSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
@@ -96,7 +96,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 			expandButton.removeAttribute('style', 'display: none;');
 		};
 
-		document.addEventListener('DOMContentLoaded', () => {			
+		document.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.accordion-header').forEach(accordionHeader => {
 				accordionHeader.addEventListener('keydown', (e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
@@ -501,7 +501,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 				<!-- Traits -->
 				<?php
 				if (!empty($SEARCH_BY_TRAITS)) {
-					$attribSearch = new OccurrenceAttributeSearch();
+					$attribSearch = new OccurrenceTraitSearch();
 					$traitArr = $attribSearch->getTraitSearchArr($SEARCH_BY_TRAITS);
 					if ($traitArr) {
 				?>

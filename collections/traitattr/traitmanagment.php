@@ -1,6 +1,6 @@
 <?php
 include_once(__DIR__ . '/../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/OccurrenceAttributes.php');
+include_once($SERVER_ROOT.'/classes/OccurrenceTraitAttributes.php');
 header("Content-Type: text/html; charset=".$CHARSET);
 
 if(!$SYMB_UID) header('Location: '.$CLIENT_ROOT.'/profile/index.php?refurl=../collections/editor/extras/attributemining.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
@@ -29,7 +29,7 @@ if($SYMB_UID){
 	}
 }
 
-$attrManager = new OccurrenceAttributes();
+$attrManager = new OccurrenceTraitAttributes();
 
 $statusStr = '';
 if($isEditor){
