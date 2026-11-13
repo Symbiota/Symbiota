@@ -17,7 +17,6 @@ $LANG['PARENT_CRITERIA'] = 'Parent Taxon';
 $LANG['SEL_OR_DESEL'] = 'Select/Deselect All';
 $LANG['MORE_INFO'] = 'More Info';
 $LANG['UPDATE_STATS'] = 'Update Statistics';
-$LANG['NO_COLLECTIONS'] = 'There are currently no collections to analyze.';
 $LANG['SEL_COL_STATS'] = 'Selected Collection Statistics';
 $LANG['DISPLAY_LIST'] = 'Display List of Collections Analyzed';
 $LANG['OCC_RECORDS'] = 'occurrence records';

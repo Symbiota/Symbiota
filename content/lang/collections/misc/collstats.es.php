@@ -20,7 +20,6 @@ $LANG['SEL_OR_DESEL'] = 'Seleccionar/Deseleccionar Todo';
 $LANG['MORE_INFO'] = 'Más Información';
 $LANG['RUN_STATS'] = 'Ejecutar Estadísticas';
 $LANG['UPDATE_STATS'] = 'Actualizar Estadísticas';
-$LANG['NO_COLLECTIONS'] = 'Actualmente no hay colecciones para analizar.';
 $LANG['SEL_COL_STATS'] = 'Estadísticas de Colecciones Seleccionadas';
 $LANG['DISPLAY_LIST'] = 'Desplegar Listado de Colecciones Analizadas';
 $LANG['OCC_RECORDS'] = 'registros de ocurrencia';
