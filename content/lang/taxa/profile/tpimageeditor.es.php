@@ -39,5 +39,7 @@ $LANG['TP_IMAGE_EDITOR'] = 'Editor medios de perfiles de taxones';
 $LANG['CREATOR'] = 'Creador';
 $LANG['NOT_SPECIFIED'] = 'No especificado';
 $LANG['NOT_SET'] = 'No establecido';
+$LANG['IMAGES_PER_PAGE'] = 'Imágenes por página:';
+$LANG['APPLY'] = 'Aplicar';
 
 ?>

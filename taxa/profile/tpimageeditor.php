@@ -11,6 +11,7 @@ header('Content-Type: text/html; charset=' . $CHARSET);
 
 $tid = filter_var($_REQUEST['tid'], FILTER_SANITIZE_NUMBER_INT);
 $category = array_key_exists('cat', $_REQUEST) ? $_REQUEST['cat'] : '';
+$imageCount = (int)($_REQUEST['imageCount']) ?? 10;
 
 $imageEditor = new TPImageEditorManager();
 $isEditor = false;
@@ -47,6 +48,11 @@ if($tid){
 		.line-button:focus-visible {
 			outline: 2px solid blue !important;
 		}
+		.image-count-form {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+		}
 	</style>
 </head>
 <body>
@@ -56,31 +62,41 @@ if($tid){
 		if($isEditor && $tid){
 			if($category == "imagequicksort"){
 				$sortPaginator = new Paginator(
-					Media::countByTid($tid), 10, 'mediaSortPage',
+					Media::countByTid($tid), $imageCount, 'mediaSortPage',
 					'tpeditor.php', [
 						'tid' => $tid,
 						'tabindex' => 2,
-						'mediaPage' => Paginator::getPageRequestVar('mediaPage')
+						'mediaPage' => Paginator::getPageRequestVar('mediaPage'),
+						'imageCount' => $imageCount,
 					]
 				);
 				if($images = Media::getByTid($tid, null, $sortPaginator) ){
 					?>
 					<?php echo $sortPaginator->renderPagination() ?>
+					<form action="tpeditor.php" method="post" target="_self" class="image-count-form">
+						<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
+						<input type="hidden" name="tabindex" value="2" />
+						<label for="imageCountqs"><?= $LANG['IMAGES_PER_PAGE'] ?></label>
+						<input name="imageCount" id="imageCountqs" type="number" value="<?php echo $imageCount; ?>" style="width:7ch;" />
+						<button type="submit"><?= $LANG['APPLY'] ?></button>
+					</form>
 					<div style='clear:both;'>
 						<form action='tpeditor.php' method='post' target='_self'>
 							<input name='tid' type='hidden' value='<?php echo $imageEditor->getTid(); ?>'>
 							<input type="hidden" name="tabindex" value="2" />
+							<input type="hidden" name="imageCount" value="<?php echo $imageCount; ?>"/>
 							<table border='0' cellspacing='0'>
 								<tr>
 									<?php
 									$imgCnt = 0;
 									foreach($images as $mediaID => $imgArr){
-										$displayUrl = !empty($imgArr["thumbnailUrl"]) ? $imgArr["thumbnailUrl"] : $imgArr["url"];
+										    $displayUrl = !empty($imgArr['thumbnailUrl']) ? $imgArr['thumbnailUrl'] : (!empty($imgArr['url']) ? $imgArr['url'] : ($imgArr['originalUrl'] ?? ''));
+
 										if($imgArr['mediaType'] === 'audio') {
 											$displayUrl = $CLIENT_ROOT . '/images/speaker_thumbnail.png';
 										}
 										if($displayUrl && substr($displayUrl,0,10) != 'processing'){
-											$webUrl = $imgArr['url'] ?? '';
+											$webUrl = !empty($imgArr['url']) ? $imgArr['url'] : ($imgArr['originalUrl'] ?? '');
 											if($GLOBALS['MEDIA_DOMAIN']){
 												if(substr($webUrl, 0, 1) == '/') $webUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr['url'];
 												if(substr($imgArr['thumbnailUrl'], 0, 1) == '/') $displayUrl = $GLOBALS['MEDIA_DOMAIN'] . $imgArr['thumbnailUrl'];
@@ -145,7 +161,7 @@ if($tid){
 								</tr>
 							</table>
 							<?php
-							if($imgCnt%5 != 0) echo "<div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
+							if($imgCnt%5 != 0) echo "<hr><div style='margin-top:2px;'><button type='submit' name='action' id='imgsortsubmit' value='Submit Image Sort Edits'>" . $LANG['SUBMIT_SORT_EDITS'] . "</button></div>\n";
 							?>
 						</form>
 					</div>
@@ -188,7 +204,7 @@ if($tid){
 										<input type='text' id='originalUrl' name='originalUrl' size='70'/>
 									</div>
 									<div style="margin-left:10px;">
-										<input type="checkbox" id="importurl" name="importurl" value="1" /> <label for="importurl"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
+										<input type="checkbox" id="copytoserver" name="copytoserver" value="1" /> <label for="copytoserver"><?php echo $LANG['IMPORT_IMG_LOCAL']; ?></label>
 									</div>
 									<button type="button" class="line-button" onclick="toggle('targetdiv')">
 										<?php echo $LANG['UPLOAD_LOCAL']; ?>
@@ -253,16 +269,24 @@ if($tid){
 			}
 			else{
 				$paginator = new Paginator(
-					Media::countByTid($tid), 10, 'mediaPage',
+					Media::countByTid($tid), $imageCount, 'mediaPage',
 					'tpeditor.php', [
 						'tid' => $tid,
 						'tabindex' => 1,
-						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage')
+						'mediaSortPage' => Paginator::getPageRequestVar('mediaSortPage'),
+						'imageCount' => $imageCount,
 					]
 				);
 				if($images = Media::getByTid($tid, null, $paginator)){
 					?>
 				<?php echo $paginator->renderPagination() ?>
+				<form action="tpeditor.php" method="post" target="_self" class="image-count-form">
+					<input type="hidden" name="tid"  value="<?php echo $imageEditor->getTid();?>">
+					<input type="hidden" name="tabindex" value="1" />
+					<label for="imageCount"><?= $LANG['IMAGES_PER_PAGE'] ?></label>
+					<input name="imageCount" id="imageCount" type="number" value="<?php echo $imageCount; ?>" style="width:7ch;" />
+					<button type="submit"><?= $LANG['APPLY'] ?></button>
+				</form>
 					<div style='clear:both;'>
 						<section class="gridlike-form">
 							<?php
@@ -414,7 +438,7 @@ if($tid){
 					<?php
 				}
 				else{
-					echo '<h2>' . $LANG['NO_IMAGES'] . '</h2>';
+					echo '<h2>' . $LANG['NO_IMAGES'] . '.</h2>';
 				}
 			}
 		}

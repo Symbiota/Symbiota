@@ -46,7 +46,7 @@ if($isEditor){
 				<legend><?= $LANG['NEW_DESC_BLOCK'] ?></legend>
 				<div>
 					<label for="langid"><?= $LANG['LANGUAGE'] ?>:</label>
-					<select id=langid" name="langid">
+					<select id="langid" name="langid">
 						<option value=""><?= $LANG['SEL_LANGUAGE'] ?></option>
 						<?php
 						foreach($langArr as $langID => $langName){
