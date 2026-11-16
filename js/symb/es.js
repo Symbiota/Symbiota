@@ -9,14 +9,12 @@ const translations = {
   TAXON: "Taxón",
   PARENT_TAXON: "Taxón padre",
   FIELD_TOO_LONG: "El texto del campo es demasiado largo. El límite de caracteres para este campo es",
-  PARENT_TAXON_REQUIRED: "Taxón Superior requerido.",
-  PARENT_ID_NOT_SET: "¡El identificador principal no está configurado! Asegúrese de seleccionar el taxón principal de la lista.",
+  PARENT_TAXON_REQUIRED: "¡Taxón Superior requerido! Asegúrese de seleccionar el taxón principal de la lista.",
   ACC_NAME_NEEDS_VALUE: "El nombre aceptado debe tener un valor.",
   SCI_NAME_RANK_REQUIRED: "Nombre/Rango de taxón requerido.",
   ALREADY_EXISTS: "Ya existe en la base de datos.",
   UNIT_NAME_REQUIRED: "Campo de nombre de unidad 1 (género o uninomial) requerido.",
   TAXON_RANK_REQUIRED: "Rango de Taxón requerido.",
-  SELECT_ACCEPTED_NAME: "Debe seleccionar un nombre de la lista. Si el nombre aceptado no está en la lista, debe agregarse o se encuentra en el sistema como un sinónimo no aceptado",
   SELECT_PARENT_NAME: "Debe seleccionar un nombre de la lista. Si Taxón Superior no está en la lista, podría ser necesario agregarlo",
   TAXON_NOT_EXISTS: "No existe. Por favor, agregue primero el padre al sistema.",
   MATCHES_TWO: "Coincide con dos nombres diferentes en el tesauro. Por favor, seleccione el taxón con el autor correcto.",
@@ -24,9 +22,13 @@ const translations = {
   SPECIMEN: "Especimen",
   OBSERVATION: "Observación",
   IDENTIFIER_DELETE: "Esto eliminará permanentemente el identificador seleccionado y volverá a guardar este registro de catálogo inmediatamente. ¿Desea continuar?",
+
   // paleo search
   INTERVAL_MISSING: "Es necesario seleccionar un valor tanto para el Intervalo Temprano como para el Intervalo Tardío, incluso si son iguales.",
   INTERVALS_WRONG_ORDER: "El Intervalo Temprano debe ser geológicamente más antiguo que el Intervalo Tardío.",
+
   DOWNLOAD_IN_PROGRESS: "Descarga en curso...",
-  OCCURENCE_EDITOR_COLLISION_WARNING: "Se ha detectado otra sesión de consulta en el editor. Esto podría dar lugar a resultados no deseados en su consulta actual. Por favor, cierre todas las pestañas excepto una y realice la consulta de nuevo."
+  OCCURENCE_EDITOR_COLLISION_WARNING: "Se ha detectado otra sesión de consulta en el editor. Esto podría dar lugar a resultados no deseados en su consulta actual. Por favor, cierre todas las pestañas excepto una y realice la consulta de nuevo.",
+  SELECT_FROM_LIST: "Es obligatorio seleccionar el nombre del taxón de la lista.",
+  WARNING_TAXON_NOT_FOUND: "ADVERTENCIA: Taxón no encontrado. Es posible que esté mal escrito o que deba ser añadido al tesauro taxonómico por un editor taxonómico. Puede continuar registrando este espécimen con este nombre; el nombre se resolverá más adelante."
 };

@@ -740,15 +740,15 @@ class ChecklistManager extends Manager{
 		$term = preg_replace('/[^a-zA-Z_\-\. ]+/', '', $term);
 		if(!is_numeric($clid)) $clid = 0;
 		if($term && $clid){
-			$sql = '(SELECT t.sciname '.
-				'FROM taxa t INNER JOIN fmchklsttaxalink cl ON t.tid = cl.tid '.
-				'WHERE t.sciname LIKE "'.$term.'%" AND cl.clid = '.$clid.') ';
+			$sql = '(SELECT t.sciname
+				FROM taxa t INNER JOIN fmchklsttaxalink cl ON t.tid = cl.tid
+				WHERE t.sciname LIKE "'.$term.'%" AND cl.clid = '.$clid.') ';
 			if($deep){
-				$sql .= 'UNION DISTINCT '.
-					'(SELECT DISTINCT t.sciname '.
-					'FROM fmchklsttaxalink cl INNER JOIN taxaenumtree e ON cl.tid = e.tid '.
-					'INNER JOIN taxa t ON e.parenttid = t.tid '.
-					'WHERE e.taxauthid = 1 AND t.sciname LIKE "'.$term.'%" AND cl.clid = '.$clid.')';
+				$sql .= 'UNION DISTINCT
+					(SELECT DISTINCT t.sciname
+					FROM fmchklsttaxalink cl INNER JOIN taxaenumtree e ON cl.tid = e.tid
+					INNER JOIN taxa t ON e.parenttid = t.tid
+					WHERE e.taxauthid = 1 AND t.sciname LIKE "'.$term.'%" AND cl.clid = '.$clid.')';
 			}
 			$rs = $this->conn->query($sql);
 			while($r = $rs->fetch_object()){
@@ -756,25 +756,6 @@ class ChecklistManager extends Manager{
 			}
 			$rs->free();
 			sort($retArr);
-		}
-		return $retArr;
-	}
-
-	public function getSpeciesSearch($term){
-		$retArr = array();
-		$term = preg_replace('/[^a-zA-Z\-\. ]+/', '', $term);
-		$term = preg_replace('/\s{1}x{1}\s{0,1}$/i', ' _ ', $term);
-		$term = preg_replace('/\s{1}[\D]{1}\s{1}/i', ' _ ', $term);
-
-		if($term){
-
-			$sql = 'SELECT tid, sciname, author FROM taxa WHERE (rankid > 179) AND (sciname LIKE "'.$term.'%")';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[] = (object) [ 'value' => $r->sciname . ' ' . $r->author,
-				'id' => $r->tid];
-			}
-			$rs->free();
 		}
 		return $retArr;
 	}

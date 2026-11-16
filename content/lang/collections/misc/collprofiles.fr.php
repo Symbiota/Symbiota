@@ -14,6 +14,7 @@ $LANG['HOMEPAGE'] = 'Page d\'accueil';
 $LANG['MORE_INFO'] = 'Plus d\'Information';
 $LANG['COLLECTION_SEARCH'] = 'Page de Recherche de Collections';
 $LANG['UPDATE_STATISTICS'] = 'Nous mettons à jour les statistiques relatives à cette collecte...';
+$LANG['BATCH_UPDATE_STATS'] = 'Mettre à jour les statistiques de la collection à l\'échelle du portail';
 $LANG['DEACTIVATED'] = 'Deactivated';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certaines options de gestion ne sont disponibles que pour les ensembles de données gérés en direct. Contactez l\'administrateur du portail si la collection doit être reclassée.';
 $LANG['TOGGLE_MAN'] = 'Basculer Panneau de Configuration du Gestionnaire';

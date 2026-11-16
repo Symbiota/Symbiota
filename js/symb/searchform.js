@@ -1013,7 +1013,7 @@ function setSearchForm(frm) {
       }
     }
     if (urlVar.taxa) {
-      if (frm?.taxa) {
+      if (frm?.taxa && frm.taxa.value == "") {
         frm.taxa.value = urlVar.taxa;
       }
     }

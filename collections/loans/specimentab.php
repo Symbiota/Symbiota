@@ -39,7 +39,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 				else{
 					f.scientificnameauthorship.value = "";
 					f.family.value = "";
-					f.tidtoadd.value = "";
+					f.tidinterpreted.value = "";
 				}
 			}
 		});
@@ -55,13 +55,13 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 			if(data){
 				f.scientificnameauthorship.value = data.author;
 				f.family.value = data.family;
-				f.tidtoadd.value = data.tid;
+				f.tidinterpreted.value = data.tid;
 			}
 			else{
 	            alert("<?php echo $LANG['TAXON_NOT_FOUND']; ?>");
 				f.scientificnameauthorship.value = "";
 				f.family.value = "";
-				f.tidtoadd.value = "";
+				f.tidinterpreted.value = "";
 			}
 		});
 	}
@@ -332,7 +332,7 @@ $specList = $loanManager->getSpecimenList($loanId, $sortTag);
 					<div style='margin:3px;'>
 						<label for="dafsciname"><b><?php echo $LANG['SCI_NAME']; ?></b></label>:
 						<input type="text" id="dafsciname" name="sciname" required style="width:350px;" onfocus="initLoanDetAutocomplete(this.form)" />
-						<input type="hidden" id="daftidtoadd" name="tidtoadd" value="" />
+						<input type="hidden" id="daftidtoadd" name="tidinterpreted" value="" />
 						<input type="hidden" name="family" value="" />
 					</div>
 					<div style='margin:3px;'>

@@ -130,7 +130,7 @@ function setHarvestParamsForm(frm) {
 	if (urlVar.taxontype) {
 	  frm.taxontype.value = urlVar.taxontype;
 	}
-	if (urlVar.taxa) {
+	if (urlVar.taxa && frm.taxa.value == "") {
 	  frm.taxa.value = urlVar.taxa;
 	}
 	if (urlVar.country) {

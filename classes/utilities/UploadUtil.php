@@ -1,5 +1,4 @@
 <?php global $SERVER_ROOT;
-include_once($SERVER_ROOT . "/classes/Media.php");
 include_once($SERVER_ROOT . "/classes/MediaException.php");
 
 class UploadUtil {
@@ -597,13 +596,13 @@ class UploadUtil {
 
 		// Use filename sent in response header.  Otherwise fallback to contents of URL.
 		if(!empty($response_file_name)){
-			$parsed_file = Media::parseFileName($response_file_name);
+			$parsed_file = self::parseFileName($response_file_name);
 		}
 		else {
-			$parsed_file = Media::parseFileName($url);
+			$parsed_file = self::parseFileName($url);
 		}
 
-		$parsed_file['name'] = Media::cleanFileName($parsed_file['name']);
+		$parsed_file['name'] = self::cleanFileName($parsed_file['name']);
 		$parsed_file['extension'] = self::mime2ext($file_type_mime);
 
 		return [
@@ -712,5 +711,67 @@ class UploadUtil {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Pulls file name out of directory path or url
+	 *
+	 * Note: The url parsing expects the filename to not be in the query or hash
+	 *
+	 * @param string $filepath Can be a file or url path
+	 * return array<string,mixed>
+	 * @return array<string,mixed>
+	 */
+	public static function parseFileName(string $filepath): array {
+		$file_name = $filepath;
+
+		//Filepath maybe a url so clear out url query if it exists
+		$query_pos = strpos($file_name,'?');
+		if($query_pos) $file_name = substr($file_name, 0, $query_pos);
+
+		$file_parts = pathinfo($file_name);
+
+		return [
+			'name' => $file_parts['filename'],
+			'tmp_name' => $filepath,
+			'extension' => (!empty($file_parts['extension'])) ? strtolower($file_parts['extension']) : ''
+		];
+	}
+
+	/**
+	 * Strips out undesired characters from from a pure file name string
+	 *
+	 * @param string $file_name A file name without the extension
+	 * return string
+	 */
+	public static function cleanFileName(string $file_name):string {
+		global $CHARSET;
+
+		// Remove periods
+		$file_name = str_replace('.', '', $file_name);
+
+		// Convert encoded spaces, encoded # signs, and literal spaces to underscores.
+		$file_name = str_ireplace(
+			['%20', '%23', ' '],
+			'_',
+			$file_name
+		);
+
+		// Transliterate UTF-8 characters to ASCII where possible.
+		$transliterated = iconv($CHARSET, 'ASCII//TRANSLIT//IGNORE', $file_name);
+		if ($transliterated !== false) {
+			$file_name = $transliterated;
+		}
+
+		// Remove characters other than ASCII letters, digits, underscores, and hyphens.
+		$file_name = preg_replace('/[^a-zA-Z0-9_-]/', '', $file_name) ?? '';
+
+		// Collapse repeated underscores and trim unwanted edge separators.
+		$file_name = preg_replace('/_+/', '_', $file_name) ?? '';
+		$file_name = trim($file_name, ' _-');
+
+		// Limit the result to 30 ASCII characters.
+		return substr($file_name, 0, 30);
+
 	}
 }

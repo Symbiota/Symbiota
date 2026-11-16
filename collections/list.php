@@ -390,9 +390,13 @@ $_SESSION['citationvar'] = $searchVar;
 									}
 									$targetClid = $collManager->getSearchTerm("targetclid");
 									if (isset($fieldArr['has_image']) && $fieldArr['has_image']) {
+										if($MEDIA_DOMAIN && isset($fieldArr['media']['thumbnail']) && (substr($fieldArr['media']['thumbnail'], 0, 4) != 'http')){
+											$thumbnail = $MEDIA_DOMAIN . $fieldArr['media']['thumbnail'];
+										}
+										else $thumbnail = $fieldArr['media']['thumbnail'];
 										echo '<div style="float:right;margin:5px 25px;">';
 										echo '<a href="#" onclick="return openIndPU(' . $occid . ',' . ($targetClid ? $targetClid : "0") . ');">';
-										echo '<img src="' . $fieldArr['media']['thumbnail'] . '" class="occur-img" alt="' . $LANG['IMG_OCC'] . '" onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
+										echo '<img src="' . $thumbnail . '" style="height:70px" alt="' . $LANG['IMG_OCC'] . '" onerror="this.onerror=null; this.src=\'' . $CLIENT_ROOT . '/images/image-icon.svg\';" />';
 										echo '</a></div>';
 									}
 									if ($collManager->getClName() && $targetTid && array_key_exists('mode', $_REQUEST)) {
