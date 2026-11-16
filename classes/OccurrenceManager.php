@@ -281,7 +281,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 		}
 		elseif(!empty($this->searchTermArr['footprintGeoJson'])){
 			$sqlWhere .= "AND (MBRCONTAINS(ST_GeomFromGeoJSON('" . $this->searchTermArr['footprintGeoJson'] . "'), p.lngLatPoint))
-				AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('" . $this->searchTermArr['footprintGeoJson'] . "'))) ";
+				AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('" . $this->searchTermArr['footprintGeoJson'] . "', 1, 0))) ";
 			$this->displaySearchArr[] = $this->LANG['POLYGON_SEARCH'];
 		}
 		if(array_key_exists('collector',$this->searchTermArr)){

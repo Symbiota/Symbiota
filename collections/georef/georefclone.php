@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceGeorefTools.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -168,7 +168,7 @@ if($coorArr && count($coorArr) == 4){
 			}
 
 			try{
-				if(data.err == 0) data.err = "";	
+				if(data.err == 0) data.err = "";
 const update_arr = [
 					["#decimallatitude", data.lat],
 					["#decimallongitude", data.lng],

@@ -1,26 +1,26 @@
 <?php
-include_once('../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
-include_once($SERVER_ROOT . '/classes/TraitPlotManager.php');
-include_once($SERVER_ROOT . '/classes/TraitPolarPlot.php');
-include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
-include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+  include_once(__DIR__ . '/../config/symbini.php');
+  include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
+  include_once($SERVER_ROOT.'/classes/TraitPlotManager.php');
+  include_once($SERVER_ROOT.'/classes/TraitPolarPlot.php');
+  include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
+  include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
-Language::load('taxa/index');
+  Language::load('taxa/index');
 
-Header('Content-Type: text/html; charset='.$CHARSET);
+  Header('Content-Type: text/html; charset='.$CHARSET);
 
-$tid = Sanitize::int($_REQUEST['tid']);
-$taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
-if(isset($CALENDAR_TRAIT_PLOTS)) {
-	$traitstateids = explode(",", $CALENDAR_TRAIT_PLOTS);
-	$traitstateids = array_map('trim', $traitstateids);
-} else {
-	$traitstateids = array("0");
-}
+  $tid = Sanitize::int($_REQUEST['tid']);
+  $taxAuthId = array_key_exists('taxauthid', $_REQUEST) ? Sanitize::int($_REQUEST['taxauthid']) : 1;
+  if(isset($CALENDAR_TRAIT_PLOTS)) {
+    $traitstateids = explode(",", $CALENDAR_TRAIT_PLOTS);
+    $traitstateids = array_map('trim', $traitstateids);
+  } else {
+    $traitstateids = array("0");
+  }
 
-//Sanitation
-if(!is_array($traitstateids)) $traitstateids = array(0);
+  //Sanitation
+  if(!is_array($traitstateids)) $traitstateids = array(0);
 ?>
 
 <script type="text/javascript">

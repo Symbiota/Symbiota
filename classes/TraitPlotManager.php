@@ -1,10 +1,11 @@
 <?php
-include_once('../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/TaxonProfile.php');
-include_once($SERVER_ROOT . '/classes/TraitPolarPlot.php');
-include_once($SERVER_ROOT . '/classes/TraitBarPlot.php');
-include_once($SERVER_ROOT . '/classes/TraitLinePlot.php');
+include_once(__DIR__ . '/../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/TaxonProfile.php');
+include_once($SERVER_ROOT.'/classes/TraitPolarPlot.php');
+include_once($SERVER_ROOT.'/classes/TraitBarPlot.php');
+include_once($SERVER_ROOT.'/classes/TraitLinePlot.php');
 include_once($SERVER_ROOT . '/classes/utilities/GeneralUtil.php');
+
 
 class TraitPlotManager extends TaxonProfile {
 	// consider extending TPEditorManager to have plots written to description block statements instead

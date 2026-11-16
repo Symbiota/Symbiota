@@ -107,6 +107,7 @@ $LANG['IMAGE_SRC'] = 'Source de l\'image';
 $LANG['ALL_IMG'] = 'toutes les images';
 $LANG['LINKED_IMG'] = 'images de bons liés uniquement';
 $LANG['SELECT_TAXON'] = 'Veuillez sélectionner un taxon dans la liste';
+$LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
 
 //from dynamicchecklist.php
 $LANG['ERROR_GEN_CHECK'] = 'ERREUR lors de la génération de la liste';

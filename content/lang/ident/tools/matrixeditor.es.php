@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: Espa�ol (Spanish)
+Language: Español (Spanish)
 ------------------
 */
 $LANG['CHAR_MASS_UPD'] = 'Actualizador masivo de caracteres';

@@ -100,4 +100,10 @@ $LANG['DATASETS'] = 'Conjuntos de dados';
 $LANG['ALLPUBDAT'] = 'Todos os Conjuntos de Dados Visíveis Publicamente';
 $LANG['DATMANPAG'] = 'Página de Gerenciamento de Conjunto de Dados';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'conjuntos de dados yo você está autorizado a editar';
+$LANG['MANAGE_TAXON_THUMBNAILS'] = 'Gerenciar Miniaturas do Mapa de Perfis de Táxons';
+$LANG['TAXINTER'] = 'Permissões de Usuário de Interesse Taxonômico';
+$LANG['OTHER_CAT_TRANSFER'] = 'Outra Ferramenta de Transferência de Número de Catálogo';
+$LANG['BATCH_UPDATE_STATS'] = 'Atualizar Estatísticas de Coleção em Todo o Portal';
+$LANG['POLICIES'] = 'Políticas';
+
 ?>

@@ -1,6 +1,6 @@
 <?php
-include_once('../../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/MapSupport.php');
+include_once(__DIR__ . '/../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/MapSupport.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('collections/map/staticmaphandler');
@@ -119,7 +119,6 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 			}
 
 			let maxCount = taxon_groups.reduce((max, tg) => max + tg.taxa_list.length, 0);
-
 			document.getElementById('loading-bar-max').innerHTML = `/ ${maxCount}`;
 			let autoSnap = document.getElementById('auto-snap-coords').checked;
 
@@ -464,37 +463,37 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 			<label for="taxa"><?= $LANG['TYPE_TAXON'] ?>:</label>
 			<input id="taxa" type="text" size="60" name="taxa" id="taxa" value="" title="<?= $LANG['SEPARATE_MULTIPLE']; ?>" /><br/><br/>
 
-			<fieldset>
-				<legend><?= $LANG['MAP_TYPE'] ?></legend>
-				<input type="radio" name="maptype" id ="heatmap" value="heatmap" checked />
-				<label for="heatmap">
-					<?= $LANG['HEAT_MAP'] ?>
-					<span id="heat-radius-container" style="display: flex; align-items:center">
-						<label for="heat-radius"><?= $LANG['HEAT_RADIUS'] ?>: 0.1</label>
-						<input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
-					</span>
-					<label for="heat-min-density"><?= $LANG['MIN_DENSITY'] ?>: </label>
-					<input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
-					<label for="heat-max-density"><?= $LANG['MAX_DENSITY'] ?>: </label>
-					<input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
-					<br/>
-				</label><br/>
-				<input type="radio" name="maptype" id ="dotmap" value="dotmap"/>
-				<label for="dotmap">
-					<?= $LANG['DOT_MAP'] ?>:
-					<div style="display:flex">
-						<label for="dotColor"><?= $LANG['COLOR'] ?>: </label>
-						<input data-role="none" id="dot-color" name="dot-color" class="color" style="margin-left: 0.5rem;cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="B2BEB5"/>
-					</div>
-				</label><br/>
-			</fieldset><br/>
-			<fieldset>
-				<legend><?= $LANG['BOUNDS'] ?></legend>
-				<?= $LANG['UPPER_BOUND'] ?><br/>
-				<label for="upper_lat"><?= $LANG['LATITUDE'] ?></label>
-				<input id="upper_lat" name="upper_lat" onkeydown="return event.key != 'Enter';" value="<?= $boundLatMax?>" placeholder="<?= $boundLatMax?>"/>
-				<label for="upper_lng"><?= $LANG['LONGITUDE'] ?></label>
-				<input id="upper_lng" name="upper_lng" onkeydown="return event.key != 'Enter';" value="<?= $boundLngMax?>" placeholder="<?= $boundLngMax?>"/><br>
+            <fieldset>
+               <legend><?php echo $LANG['MAP_TYPE'] ?></legend>
+               <input type="radio" name="maptype" id ="heatmap" value="heatmap" checked />
+               <label for="heatmap">
+                  <?php echo $LANG['HEAT_MAP'] ?>
+                  <span id="heat-radius-container" style="display: flex; align-items:center">
+                     <label for="heat-radius"><?php echo $LANG['HEAT_RADIUS'] ?>: 0.1</label>
+                     <input style="margin: 0 1rem;"type="range" value="70" id="heat-radius" name="heat-radius" min="1" max="100">1
+                  </span>
+                  <label for="heat-min-density"><?php echo $LANG['MIN_DENSITY'] ?>: </label>
+                  <input style="margin: 0 1rem; width: 5rem;"value="1" id="heat-min-density" name="heat-min-density">
+                  <label for="heat-max-density"><?php echo $LANG['MAX_DENSITY'] ?>: </label>
+                  <input style="margin: 0 1rem; width: 5rem;"value="3" id="heat-max-density" name="heat-max-density">
+                  <br/>
+               </label><br/>
+            <input type="radio" name="maptype" id ="dotmap" value="dotmap"/>
+               <label for="dotmap">
+                  <?php echo $LANG['DOT_MAP'] ?>:
+                  <div style="display:flex">
+                     <label for="dot-color"><?php echo $LANG['COLOR'] ?>: </label>
+                     <input data-role="none" id="dot-color" name="dot-color" class="color" style="margin-left: 0.5rem;cursor:pointer;border:1px black solid;height:12px;width:12px;margin-bottom:-2px;font-size:0px;" value="B2BEB5"/>
+                  </div>
+               </label><br/>
+            </fieldset><br/>
+            <fieldset>
+               <legend><?php echo $LANG['BOUNDS'] ?></legend>
+               <?php echo $LANG['UPPER_BOUND'] ?><br/>
+               <label for="upper_lat"><?php echo $LANG['LATITUDE'] ?></label>
+               <input id="upper_lat" name="upper_lat" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLatMax?>" placeholder="<?php echo $boundLatMax?>"/>
+               <label for="upper_lng"><?php echo $LANG['LONGITUDE'] ?></label>
+               <input id="upper_lng" name="upper_lng" onkeydown="return event.key != 'Enter';" value="<?php echo $boundLngMax?>" placeholder="<?php echo $boundLngMax?>"/><br>
 
 				<?= $LANG['LOWER_BOUND'] ?><br/>
 				<label for="lower_lat"><?= $LANG['LATITUDE'] ?></label>
@@ -528,4 +527,3 @@ if(!isset($IS_ADMIN) || !$IS_ADMIN || !isset($SYMB_UID) || !$SYMB_UID) {
 	<?php include($SERVER_ROOT . '/includes/footer.php');?>
 </body>
 </html>
-

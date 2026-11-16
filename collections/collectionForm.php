@@ -204,13 +204,13 @@ function toggleCategory(categoryId, event=null) {
 				>
 					<?php foreach($category['collections'] as $collection): ?>
 					<?php
-						$ariaCollid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
+						$ariaCollName = array_key_exists('collectionname', $collection) ? $collection['collectionname'] : null;
 						$codeStr = $collectionFormManager->generateCodeStr($collection);
 					?>
 					<div style="display:flex; align-items: center; gap: 0.5rem;">
 						<img width="30px" height="30px" src="<?= $collection['icon'] ?>" style="object-fit:contain; min-width: 30px; height: 30px;">
 						<input
-							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $ariaCollid ?>" data-role="none"
+							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $ariaCollName ?>" data-role="none"
 							data-codeStr="<?= $codeStr ?>"
 							style="margin:0;"
 							id="<?= $category['name'] . '_' . $collection['collid'] ?>"

@@ -1,5 +1,9 @@
 <?php
-include_once('../config/symbini.php');
+/*
+ * Input: term = scientific name fragment, taxonType, $rankLow = rankid lower limit, $rankHigh = rankid upper limit
+ * Return: autosuggest return list
+ */
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/RpcTaxonomy.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 

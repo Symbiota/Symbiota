@@ -1,7 +1,7 @@
 <?php
 // error_reporting(E_ALL);
 // ini_set('display_errors', '1');
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceManager.php');
@@ -252,21 +252,18 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div>
 								<div class="input-text-container">
 									<label for="country" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['COUNTRY'] ?></span>
 										<input type="text" name="country" id="country" data-chip="<?php echo $LANG['COUNTRY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['COUNTRY'] ?></span>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="state" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['STATE'] ?></span>
 										<input type="text" name="state" id="state" data-chip="<?php echo $LANG['STATE'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['STATE'] ?></span>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="county" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['COUNTY'] ?></span>
 										<input type="text" name="county" id="county" data-chip="<?php echo $LANG['COUNTY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['COUNTY'] ?></span>
 									</label>
@@ -275,7 +272,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div>
 								<div class="input-text-container">
 									<label for="local" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
 										<input type="text" name="local" id="local" data-chip="<?php echo $LANG['LOCALITY'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LOCALITY_LOCALITIES'] ?></span>
 									</label>
@@ -283,14 +279,12 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								<div class="grid grid--half">
 									<div class="input-text-container">
 										<label for="elevlow" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
 											<input type="number" step="any" name="elevlow" id="elevlow" data-chip="<?php echo $LANG['MIN_ELEVATION'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['MINIMUM_ELEVATION'] ?></span>
 										</label>
 									</div>
 									<div class="input-text-container">
 										<label for="elevhigh" class="input-text--outlined">
-											<span class="screen-reader-only"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 											<input type="number" step="any" name="elevhigh" id="elevhigh" data-chip="<?php echo $LANG['MAX_ELEVATION'] ?>" />
 											<span class="inset-input-label"><?php echo $LANG['MAXIMUM_ELEVATION'] ?></span>
 										</label>
@@ -332,7 +326,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								<button type="button" onclick="openCoordAid({map_mode: MAP_MODES.RECTANGLE, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_IN_MAP'] ?></button>
 								<div class="input-text-container">
 									<label for="upperlat" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 										<input type="number" step="any" min="0" max="90" id="upperlat" name="upperlat" data-chip="<?php echo $LANG['UPPER_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['NORTHERN_LATITUDE'] ?></span>
 										<span class="assistive-text"><?php echo $LANG['VALUE_BETWEEN_NUM'] ?></span>
@@ -349,7 +342,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								</div>
 								<div class="input-text-container">
 									<label for="bottomlat" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 										<input type="number" step="any" min="0" max="90" id="bottomlat" name="bottomlat" data-chip="<?php echo $LANG['BOTTOM_LAT'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['SOUTHERN_LATITUDE'] ?></span>
 									</label>
@@ -364,7 +356,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								</div>
 								<div class="input-text-container">
 									<label for="leftlong" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['LEFT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="0" max="180" id="leftlong" name="leftlong" data-chip="<?php echo $LANG['LEFT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['WESTERN_LONGITUDE'] ?></span>
 										<span class="assistive-text"><?php echo $LANG['VALUES_BETWEEN_0_TO_180'] ?></span>
@@ -380,7 +371,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								</div>
 								<div class="input-text-container">
 									<label for="rightlong" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['RIGHT_LONGITUDE'] ?></span>
 										<input type="number" step="any" min="0" max="180" id="rightlong" name="rightlong" data-chip="<?php echo $LANG['RIGHT_LONG'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['EASTERN_LONGITUDE'] ?></span>
 									</label>
@@ -399,7 +389,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								<button type="button" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT ?>'});return false;"><?php echo $LANG['SELECT_MAP_POLYGON'] ?></button>
 								<div class="text-area-container">
 									<label for="footprintwkt" class="text-area--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['POLYGON'] ?></span>
 										<textarea id="footprintwkt" name="footprintGeoJson" class="full-width-pcnt" rows="5" onchange="cleanPolygon(this)"></textarea>
 										<span class="inset-input-label"><?php echo $LANG['POLYGON'] ?></span>
 										<span class="assistive-text"><?= $LANG['GEOJSON_FORMAT'] ?></span>
@@ -441,7 +430,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								</div>
 								<div class="input-text-container">
 									<label for="radius" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['RADIUS'] ?></span>
 										<input type="number" min="0" step="any" id="radius" name="radius" data-chip="<?php echo $LANG['RADIUS'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['RADIUS'] ?></span>
 									</label>
@@ -470,21 +458,18 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						<div id="search-form-coll-event">
 							<div class="input-text-container">
 								<label for="eventdate1" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['COLLECTION_START_DATE'] ?></span>
 									<input type="text" name="eventdate1" id="eventdate1" placeholder="<?= $LANG['DATE_FORMAT'] ?>" data-chip="<?php echo $LANG['EVENT_DATE_START'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTION_START_DATE'] ?></span>
 								</label>
 							</div>
 							<div class="input-text-container">
 								<label for="eventdate2" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['COLLECTION_END_DATE'] ?></span>
 									<input type="text" name="eventdate2" id="eventdate2" placeholder="<?= $LANG['DATE_FORMAT'] ?>" data-chip="<?php echo $LANG['EVENT_DATE_END'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTION_END_DATE'] ?></span>
 								</label>
 							</div>
 							<div class="input-text-container">
 								<label for="collector" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['COLLECTOR_NAME'] ?></span>
 									<input type="text" id="collector" size="32" name="collector" value="" data-chip="<?php echo $LANG['COLLECTOR_NAME'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTOR_NAME']; ?></span>
 									<span class="assistive-text"><?= $LANG['SEPARATE_MULTIPLE'] ?></span>
@@ -492,7 +477,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							</div>
 							<div class="input-text-container">
 								<label for="collnum" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['COLLECTOR_NUMBER_'] ?></span>
 									<input type="text" id="collnum" size="31" name="collnum" value="" data-chip="<?php echo $LANG['COLLECTOR_NUMBER'] ?>" />
 									<span class="inset-input-label"><?php echo $LANG['COLLECTOR_NUMBER']; ?></span>
 									<span class="assistive-text"><?= htmlspecialchars($LANG['TITLE_TEXT_2'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></span>
@@ -518,7 +502,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 								</div>
 								<div class="input-text-container">
 									<label for="catnum" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 										<input type="text" name="catnum" id="catnum" data-chip="<?php echo $LANG['CATALOG_NUMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['CATALOG_NUMBER'] ?></span>
 									</label>
@@ -584,7 +567,7 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<!-- Accordion selector -->
 							<input type="checkbox" id="trait" class="accordion-selector" />
 							<!-- Accordion header -->
-							<label for="trait" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] ?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
+							<label for="trait" class="accordion-header" tabindex="0" role="button"><?php echo $LANG['TRAIT_CRITERIA'] ?> <a href="https://docs.symbiota.org/User_Guide/traits" target="_blank" title="<?= $LANG['MORE_INFO'] . $LANG['OPENS_NEW_TAB']?>" alt="<?= $LANG['MORE_INFO'] ?>"><img class="docimg" src="../../images/qmark.png" /></a></label>
 							<!-- Accordion content -->
 							<div class="content">
 								<div id="search-form-trait">
@@ -657,7 +640,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 						<div style="display: flex;">
 							<div id="associated-taxa-text" class="input-text-container" style="margin-left: 1rem; margin-right: 1rem; width: 40vw;">
 								<label for="associated-taxa" class="input-text--outlined">
-									<span class="screen-reader-only"><?php echo $LANG['TAXON'] ?></span>
 									<input type="text" name="associated-taxa" id="associated-taxa" data-chip="<?php echo $LANG['ASSOCIATIONS'] . "-" . $LANG['TAXON']?>" />
 									<span class="inset-input-label"><?php echo $LANG['TAXON'] ?></span>
 								</label>
@@ -809,28 +791,24 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 							<div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 10px;">
 								<div class="input-text-container">
 									<label for="lithogroup" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['LITHOGROUP'] ?></span>
 											<input type="text" name="lithogroup" id="lithogroup" data-chip="<?php echo $LANG['LITHOGROUP'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['LITHOGROUP'] ?></span>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="formation" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['FORMATION'] ?></span>
 											<input type="text" name="formation" id="formation" data-chip="<?php echo $LANG['FORMATION'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['FORMATION'] ?></span>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="member" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['MEMBER'] ?></span>
 											<input type="text" name="member" id="member" data-chip="<?php echo $LANG['MEMBER'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['MEMBER'] ?></span>
 									</label>
 								</div>
 								<div class="input-text-container">
 									<label for="bed" class="input-text--outlined">
-										<span class="screen-reader-only"><?php echo $LANG['BED'] ?></span>
 											<input type="text" name="bed" id="bed" data-chip="<?php echo $LANG['BED'] ?>" />
 										<span class="inset-input-label"><?php echo $LANG['BED'] ?></span>
 									</label>

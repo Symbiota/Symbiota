@@ -1,4 +1,4 @@
-<?php
+<?php global $SERVER_ROOT, $LANG_TAG, $LANG;
 
 include_once($SERVER_ROOT.'/traits/TaxonomyTrait.php');
 include_once($SERVER_ROOT.'/classes/Manager.php');

@@ -21,7 +21,7 @@
  *
  */
 
-include_once('../config/symbini.php');
+include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 
 $un = array_key_exists('un',$_POST)?$_POST['un']:'';

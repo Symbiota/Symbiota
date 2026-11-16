@@ -1,6 +1,6 @@
 <?php
 $LANG = array();
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
@@ -288,7 +288,7 @@ $verifyArr = $taxonEditorObj->verifyDeleteTaxon();
 			<form name="remaptaxonform" method="post" action="taxoneditor.php" onsubmit="return validateRemapTaxonForm(this)">
 				<span style="color:red;"><?= $LANG['WARNING_REMAP'] ?></span>
 				<div style="margin-top:5px;margin-bottom:5px;">
-					<?= $LANG['TARGET_TAXON'] ?>:
+					<label for="remapvalue"><?= $LANG['TARGET_TAXON'] ?></label>:
 					<input id="remapvalue" name="remapvalue" type="text" value="" style="width:550px;" required />
 					<input id="remaptid" name="remaptid" type="hidden" value="" />
 				</div>

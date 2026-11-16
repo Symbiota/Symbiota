@@ -1,6 +1,6 @@
 <?php
-include_once('../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/ProfileManager.php');
+include_once(__DIR__ . '/../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/ProfileManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
@@ -150,7 +150,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 								<legend><b><?= $LANG['EDIT_U_PROFILE'] ?></b></legend>
 								<table style="width:100%; border-spacing: 1px;">
 									<tr>
-										<td><b><?= $LANG['FIRST_NAME'] ?>:</b></td>
+										<td><label for="firstname"><b><?= $LANG['FIRST_NAME'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="firstname" name="firstname" size="40" value="<?= $person->getFirstName();?>" required />
@@ -158,7 +158,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['LAST_NAME'] ?>:</b></td>
+										<td><label for="lastname"><b><?= $LANG['LAST_NAME'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="lastname" name="lastname" size="40" value="<?= $person->getLastName();?>" required />
@@ -166,7 +166,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['EMAIL'] ?>:</b></td>
+										<td><label for="email"><b><?= $LANG['EMAIL'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="email" name="email" type="email" size="40" value="<?= $person->getEmail();?>" required />
@@ -183,31 +183,31 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['ORCID'] ?>:</b></td>
+										<td><label for="guid"><b><?= $LANG['ORCID'] ?>:</b></label></td>
 										<td>
 											<div>
-												<input name="guid" type="text" size="40" value="<?= $person->getGUID();?>" />
+												<input id="guid" name="guid" type="text" size="40" value="<?= $person->getGUID();?>" />
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['TITLE'] ?>:</b></td>
+										<td><label for="title"><b><?= $LANG['TITLE'] ?>:</b></label></td>
 										<td>
 											<div>
-												<input name="title"  size="40" value="<?= $person->getTitle();?>">
+												<input id="title" name="title" size="40" value="<?= $person->getTitle();?>">
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['INSTITUTION'] ?>:</b></td>
+										<td><label for="institution"><b><?= $LANG['INSTITUTION'] ?>:</b></label></td>
 										<td>
 											<div>
-												<input name="institution"  size="40" value="<?= $person->getInstitution();?>">
+												<input id="institution" name="institution" size="40" value="<?= $person->getInstitution();?>">
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['CITY'] ?>:</b></td>
+										<td><label for="city"><b><?= $LANG['CITY'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="city" name="city" size="40" value="<?= $person->getCity();?>">
@@ -215,7 +215,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['STATE'] ?>:</b></td>
+										<td><label for="state"><b><?= $LANG['STATE'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="state" name="state" size="40" value="<?= $person->getState();?>">
@@ -223,15 +223,15 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['ZIP_CODE'] ?>:</b></td>
+										<td><label for="zip"><b><?= $LANG['ZIP_CODE'] ?>:</b></label></td>
 										<td>
 											<div>
-												<input name="zip" size="40" value="<?= $person->getZip();?>">
+												<input id="zip" name="zip" size="40" value="<?= $person->getZip();?>">
 											</div>
 										</td>
 									</tr>
 									<tr>
-										<td><b><?= $LANG['COUNTRY'] ?>:</b></td>
+										<td><label for="country"><b><?= $LANG['COUNTRY'] ?>:</b></label></td>
 										<td>
 											<div>
 												<input id="country" name="country" size="40" value="<?= $person->getCountry();?>">
@@ -267,7 +267,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 										?>
 										<tr>
 											<td>
-												<b><?= $LANG['CURRENT_PWORD'] ?>:</b>
+												<label for="oldpwd"><b><?= $LANG['CURRENT_PWORD'] ?>:</b></label>
 											</td>
 											<td>
 												<input id="oldpwd" name="oldpwd" type="password" required>
@@ -278,7 +278,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 									?>
 									<tr>
 										<td>
-											<b><?= $LANG['NEW_PWORD'] ?>:</b>
+											<label for="newpwd"><b><?= $LANG['NEW_PWORD'] ?>:</b></label>
 										</td>
 										<td>
 											<input id="newpwd" name="newpwd" type="password" minlength="10" required>
@@ -286,7 +286,7 @@ if(isset($SYMB_UID) && $SYMB_UID){
 									</tr>
 									<tr>
 										<td>
-											<b><?= $LANG['PWORD_AGAIN'] ?>:</b>
+											<label for="newpwd2"><b><?= $LANG['PWORD_AGAIN'] ?>:</b></label>
 										</td>
 										<td>
 											<input id="newpwd2" name="newpwd2" type="password" minlength="10" required>
@@ -306,11 +306,11 @@ if(isset($SYMB_UID) && $SYMB_UID){
 						<fieldset style='padding:15px;width:550px;'>
 							<legend><b><?= $LANG['CHANGE_USERNAME'] ?></b></legend>
 							<form name="modifyloginform" action="viewprofile.php" method="post" onsubmit="return verifyModifyLoginForm(this);">
-								<div><b><?= $LANG['NEW_USERNAME'] ?>:</b> <input name="newlogin" type="text" required /></div>
+								<div><label for="newlogin"><b><?= $LANG['NEW_USERNAME'] ?>:</b></label> <input id="newlogin" name="newlogin" type="text" /></div>
 								<?php
 								if($isSelf){
 									?>
-									<div><b><?= $LANG['CURRENT_PWORD'] ?>:</b> <input name="newloginpwd" id="newloginpwd" type="password" required /></div>
+									<div><label for="newloginpwd"><b><?= $LANG['CURRENT_PWORD'] ?>:</b></label> <input id="newloginpwd" name="newloginpwd" type="password" /></div>
 									<?php
 								}
 								?>
@@ -353,24 +353,24 @@ if(isset($SYMB_UID) && $SYMB_UID){
 								</div>
 								<form name="addtaxonomyform" action="viewprofile.php" method="post" onsubmit="return verifyTaxonomyForm(this)">
 									<div style="margin:3px;">
-										<b><?= $LANG['TAXON'] ?></b><br/>
+										<label for="taxoninput"><b><?= $LANG['TAXON'] ?></b></label><br/>
 										<input id="taxoninput" name="taxon" type="text" value="" style="width:90%;" required />
 										<input id="tidinput" name="tid" type="hidden" value="" >
 									</div>
 									<div style="margin:3px;">
-										<b><?= $LANG['SCOPE_OF_REL'] ?></b><br/>
+										<label for="editorstatus"><b><?= $LANG['SCOPE_OF_REL'] ?></b></label><br/>
 										<select name="editorstatus" required>
 											<option value="RegionOfInterest"><?= $LANG['REGION'] ?></option>
 											<!-- <option value="OccurrenceEditor">Occurrence Editor</option> -->
 										</select>
 									</div>
 									<div style="margin:3px;">
-										<b><?= $LANG['SCOPE_LIMITS'] ?></b><br/>
-										<input name="geographicscope" type="text" value="" style="width:90%;"/>
+										<label for="geographicscope"><b><?= $LANG['SCOPE_LIMITS'] ?></b></label><br/>
+										<input id="geographicscope" name="geographicscope" type="text" value="" style="width:90%;"/>
 									</div>
 									<div style="margin:3px;">
-										<b><?= $LANG['NOTES'] ?></b><br/>
-										<input name="notes" type="text" value="" style="width:90%;" />
+										<label for="notes"><b><?= $LANG['NOTES'] ?></b></label><br/>
+										<input id="notes" name="notes" type="text" value="" style="width:90%;" />
 									</div>
 									<div style="margin:20px 10px;">
 										<button name="action" type="submit" value="addTaxonomicRelationship"><?= $LANG['ADD_TAX'] ?></button>

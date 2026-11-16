@@ -1,7 +1,7 @@
 <?php
-include_once('../../../config/symbini.php');
-include_once($SERVER_ROOT . '/classes/RpcTaxonomy.php');
-include_once($SERVER_ROOT . '/classes/MapSupport.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
+include_once($SERVER_ROOT.'/classes/APITaxonomy.php');
+include_once($SERVER_ROOT.'/classes/MapSupport.php');
 
 header('Content-Type: application/json');
 

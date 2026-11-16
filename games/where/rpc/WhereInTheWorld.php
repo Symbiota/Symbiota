@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once('../classes/GamesWhereManager.php');
 include_once('../classes/SearchArea.php');
 header("Content-Type: text/html; charset=".$CHARSET);

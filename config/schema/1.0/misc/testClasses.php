@@ -21,7 +21,7 @@
  */
 
 // Prepare environment:
-include_once("config/symbini.php");
+include_once(__DIR__ . "/../../../symbini.php");
 $failure = false;
 
 // List of classes that contain a checkSchema() method, along with their files.

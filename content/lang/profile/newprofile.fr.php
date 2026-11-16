@@ -55,4 +55,5 @@ $LANG['CREATE_LOGIN'] = 'Créer une Compte';
 $LANG['ACCESSIBILITY_PREF'] = 'Préférences d\'accessibilité';
 $LANG['ACCESSIBILITY_PREF_DESC'] = 'Cochez pour indiquer une préférence pour les styles optimisés pour l\'accessibilité';
 $LANG['PROFILE_CREATION_DISABLED'] = 'La création d\'utilisateurs publics a été désactivée sur ce portail.';
+$LANG['PASSWORD_WARNING'] = 'Ne créez pas de comptes utilisateurs partagés/de groupe.<br><br>Pour des raisons de sécurité, chaque personne doit disposer d\'un identifiant et d\'un mot de passe uniques.<br><br>Créez un mot de passe unique pour ce portail.<br><br>Ne réutilisez pas un mot de passe utilisé sur un autre site web, pour votre messagerie électronique, etc.'
 ?>

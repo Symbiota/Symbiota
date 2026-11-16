@@ -100,4 +100,10 @@ $LANG['DATASETS'] = 'Datasets';
 $LANG['ALLPUBDAT'] = 'All Publicly Viewable Datasets';
 $LANG['DATMANPAG'] = 'Dataset Management Page';
 $LANG['DATA_AUTHORIZED_TO_EDIT'] = 'datasets you are authorized to edit';
+$LANG['MANAGE_TAXON_THUMBNAILS'] = 'Manage Taxon Profile Map Thumbnails';
+$LANG['TAXINTER'] = 'Taxonomic Interest User Permissions ';
+$LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
+$LANG['BATCH_UPDATE_STATS'] = 'Update Portal-wide Collection Statistics';
+$LANG['POLICIES'] = 'Policies';
+
 ?>

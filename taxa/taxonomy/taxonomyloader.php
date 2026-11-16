@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
@@ -133,7 +133,7 @@ if($isEditor){
 					<div style="display: flex; flex-direction: column;">
 						<div class="gridlike-form-row" style="gap:0;">
 							<div class="left-column">
-								<label for="sciname"><?= $LANG['TAXON_NAME']; ?>:</label>
+								<label for="quickparser"><?= $LANG['TAXON_NAME']; ?>:</label>
 							</div>
 							<input class='search-bar-long' style="margin-bottom: 0;" type="text" id="quickparser" name="quickparser" value="" onchange="parseName(this.form)"/>
 							<div class="left-breathing-room-rel">

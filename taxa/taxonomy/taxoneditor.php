@@ -1,5 +1,5 @@
 <?php
-include_once('../../config/symbini.php');
+include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/TaxonomyEditorManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
@@ -262,7 +262,7 @@ if ($isEditor) {
 					<form id="taxoneditform" name="taxoneditform" action="taxoneditor.php" method="post" onsubmit="return validateTaxonEditForm(this, originalForm)">
 						<input type="hidden" id="sciname" name="sciname" class="search-bar-long" value="" />
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['RANK_NAME'] ?>: </div>
+							<div class="editLabel"><label for="rankid"><?= $LANG['RANK_NAME'] ?>:</label> </div>
 							<div class="editfield">
 								<?= ($taxonEditorObj->getRankName() ? Sanitize::outString($taxonEditorObj->getRankName()) : $LANG['NON_RANKED_NODE']) ?>
 							</div>
@@ -363,7 +363,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div id="author-div" class="editDiv">
-							<div class="editLabel"><?= $LANG['AUTHOR'] ?>: </div>
+							<div class="editLabel"><label for="author"><?= $LANG['AUTHOR'] ?></label>: </div>
 							<div class="editfield">
 								<?= Sanitize::outString($taxonEditorObj->getAuthor()) ?>
 							</div>
@@ -378,16 +378,21 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['NOTES'] ?>: </div>
+							<div class="editLabel"><label for="notes_1"><?= $LANG['NOTES'] ?></label>: </div>
 							<div class="editfield">
 								<?= $taxonEditorObj->getNotes() ?>
 							</div>
 							<div class="editfield" style="display:none;width:90%;">
-								<input type="text" id="notes" name="notes" style="width:100%;" value="<?= Sanitize::outString($taxonEditorObj->getNotes()) ?>" />
+								<input type="text" id="notes_1" name="notes_1" style="width:100%;" value="<?= Sanitize::outString($taxonEditorObj->getNotes()) ?>" />
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['SOURCE'] ?>: </div>
+							<div class="editLabel"><label for="source"><?= $LANG['SOURCE'] ?></label>: </div>
+								<input type="text" id="notes_1" name="notes_1" style="width:100%;" value="<?php echo $taxonEditorObj->getNotes(); ?>" />
+							</div>
+						</div>
+						<div class="editDiv">
+							<div class="editLabel"><label for="source"><?php echo $LANG['SOURCE']; ?>:</label> </div>
 							<div class="editfield">
 								<?php
 								$safeSource = $taxonEditorObj->getSource() ?? '';
@@ -400,7 +405,7 @@ if ($isEditor) {
 							</div>
 						</div>
 						<div class="editDiv">
-							<div class="editLabel"><?= $LANG['LOC_SECURITY'] ?>: </div>
+							<div class="editLabel"><label for="securitystatus"><?= $LANG['LOC_SECURITY'] ?></label>: </div>
 							<div class="editfield">
 								<?php
 								switch ($taxonEditorObj->getSecurityStatus()) {
@@ -492,7 +497,7 @@ if ($isEditor) {
 								?>
 								<form name="taxstatusform" action="taxoneditor.php" method="post" onsubmit="return validateTaxStatusForm(this)">
 									<div class="editDiv">
-										<div class="editLabel"><?= $LANG['PARENT_TAXON'] ?>: </div>
+										<div class="editLabel"><label for="parentstr"><?= $LANG['PARENT_TAXON'] ?></label>: </div>
 										<div class="tsedit">
 											<?= '<a href="taxoneditor.php?tid=' . $taxonEditorObj->getParentTid() . '">' . $taxonEditorObj->getParentHtmlFull() . '</a>' ?>
 										</div>
@@ -664,17 +669,17 @@ if ($isEditor) {
 										<fieldset style="width:90%px;">
 											<legend><b><?= $LANG['CHANGE_NOT_ACCEPTED'] ?></b></legend>
 											<div style="margin:5px;">
-												<?= $LANG['ACCEPTED_NAME'] ?>:
+												<label for="ctnafacceptedstr"><?= $LANG['ACCEPTED_NAME'] ?></label>:
 												<input id="ctnafacceptedstr" name="acceptedstr" type="text" style="width:550px;" required />
 												<input id="ctnaftidaccepted" name="tidaccepted" type="hidden" value="" />
 											</div>
 											<div style="margin:5px;">
-												<?= $LANG['REASON'] ?>:
+												<label for="unacceptabilityreason"><?= $LANG['REASON'] ?></label>:
 												<input name="unacceptabilityreason" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
-												<?= $LANG['NOTES'] ?>:
-												<input name="notes" type="text" style="width:90%;" />
+												<label for="notes_2"><?= $LANG['NOTES'] ?></label>:
+												<input id="notes_2" name="notes_2" type="text" style="width:90%;" />
 											</div>
 											<div style="margin:5px;">
 												<input name="tid" type="hidden" value="<?= $taxonEditorObj->getTid() ?>" />

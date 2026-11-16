@@ -262,29 +262,29 @@ function listGeoUnits($arr) {
 					<fieldset id="new-fieldset">
 						<legend> <?= $LANG['ADD_GEO_UNIT'] ?> </legend>
 						<div class="field-div">
-							<label> <?= $LANG['GEO_UNIT_NAME'] ?></label>:
-							<span><input type="text" name="geoTerm" style="width:200px;" required /></span>
+							<label for="add_geoTerm"><?= $LANG['GEO_UNIT_NAME'] ?></label>:
+							<span><input type="text" id="add_geoTerm" name="geoTerm" style="width:200px;" required /></span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['ABBR'] ?></label>:
-							<span><input type="text" name="abbreviation" style="width:50px;" /></span>
+							<label for="add_abbreviation"><?= $LANG['ABBR'] ?></label>:
+							<span><input type="text" id="add_abbreviation" name="abbreviation" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['ISO2'] ?></label>:
-							<span><input type="text" name="iso2" style="width:50px;" /></span>
+							<label for="add_iso2"><?= $LANG['ISO2'] ?></label>:
+							<span><input type="text" id="add_iso2" name="iso2" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['ISO3'] ?></label>:
-							<span><input type="text" name="iso3" style="width:50px;" /></span>
+							<label for="add_iso3"><?= $LANG['ISO3'] ?></label>:
+							<span><input type="text" id="add_iso3" name="iso3" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['NUM_CODE'] ?></label>:
-							<span><input type="number" min="0" name="numCode" style="width:50px;" /></span>
+							<label for="add_numCode"><?= $LANG['NUM_CODE'] ?></label>:
+							<span><input type="number" min="0" id="add_numCode" name="numCode" style="width:50px;" /></span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['GEO_RANK'] ?></label>:
+							<label for="add_geoLevel"><?= $LANG['GEO_RANK'] ?></label>:
 							<span>
-								<select required name="geoLevel">
+								<select required id="add_geoLevel" name="geoLevel">
 									<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 									<option value="">----------------------</option>
 									<?php
@@ -306,15 +306,15 @@ function listGeoUnits($arr) {
 							</span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['NOTES'] ?></label>:
+							<label for="add_notes"><?= $LANG['NOTES'] ?></label>:
 							<span>
-								<textarea maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"></textarea>
+								<textarea maxlength="250" id="add_notes" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"></textarea>
 							</span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['PARENT_TERM'] ?></label>:
+							<label for="add_parentID"><?= $LANG['PARENT_TERM'] ?></label>:
 							<span>
-								<select name="parentID">
+								<select id="add_parentID" name="parentID">
 									<option value=""> <?= $LANG['SELECT_PARENT'] ?> </option>
 									<option value="">----------------------</option>
 									<option value=""> <?= $LANG['IS_ROOT_TERM'] ?> </option>
@@ -328,9 +328,9 @@ function listGeoUnits($arr) {
 							</span>
 						</div>
 						<div class="field-div">
-							<label> <?= $LANG['ACCEPTED_TERM'] ?></label>:
+							<label for="add_acceptedID"><?= $LANG['ACCEPTED_TERM'] ?></label>:
 							<span>
-								<select name="acceptedID">
+								<select id="add_acceptedID" name="acceptedID">
 									<option value=""> <?= $LANG['SELECT_ACCEPTED'] ?> </option>
 									<option value="">----------------------</option>
 									<option value=""> <?= $LANG['IS_ACCEPTED'] ?> </option>
@@ -344,7 +344,7 @@ function listGeoUnits($arr) {
 							</span>
 						</div>
 						<div class="field-div">
-							<label><?=$LANG['POLYGON']?></label>:
+							<label for="addfootprintwkt"><?=$LANG['POLYGON']?></label>:
 							<a onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'addfootprintwkt', map_mode_strict: true})">
 								<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
 							</a>
@@ -371,35 +371,35 @@ function listGeoUnits($arr) {
 							</div>
 							<?php endif ?>
 							<div class="field-div">
-								<label> <?= $LANG['GEO_UNIT_NAME'] ?></label>:
+								<label for="edit_geoTerm"><?= $LANG['GEO_UNIT_NAME'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['geoTerm']; ?></span>
-								<span class="editFormElem" style="display: none"><input type="text" name="geoTerm" value="<?php echo $geoUnit['geoTerm'] ?>" style="width:200px;" required /></span>
+								<span class="editFormElem" style="display: none"><input type="text" id="edit_geoTerm" name="geoTerm" value="<?php echo $geoUnit['geoTerm'] ?>" style="width:200px;" required /></span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['ABBR'] ?></label>:
+								<label for="edit_abbreviation"><?= $LANG['ABBR'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['abbreviation']; ?></span>
-								<span class="editFormElem"><input type="text" name="abbreviation" value="<?= $geoUnit['abbreviation'] ?>" style="width:50px;" /></span>
+								<span class="editFormElem"><input type="text" id="edit_abbreviation" name="abbreviation" value="<?= $geoUnit['abbreviation'] ?>" style="width:50px;" /></span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['ISO2'] ?></label>:
+								<label for="edit_iso2"><?= $LANG['ISO2'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['iso2']; ?></span>
-								<span class="editFormElem"><input type="text" name="iso2" value="<?= $geoUnit['iso2'] ?>" style="width:50px;" /></span>
+								<span class="editFormElem"><input type="text" id="edit_iso2" name="iso2" value="<?= $geoUnit['iso2'] ?>" style="width:50px;" /></span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['ISO3'] ?></label>:
+								<label for="edit_iso3"><?= $LANG['ISO3'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['iso3']; ?></span>
-								<span class="editFormElem"><input type="text" name="iso3" value="<?= $geoUnit['iso3'] ?>" style="width:50px;" /></span>
+								<span class="editFormElem"><input type="text" id="edit_iso3" name="iso3" value="<?= $geoUnit['iso3'] ?>" style="width:50px;" /></span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['NUM_CODE'] ?></label>:
+								<label for="edit_numCode"><?= $LANG['NUM_CODE'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['numCode']; ?></span>
-								<span class="editFormElem"><input type="number" min="0" name="numCode" value="<?= $geoUnit['numCode'] ?>" style="width:50px;" /></span>
+								<span class="editFormElem"><input type="number" min="0" id="edit_numCode" name="numCode" value="<?= $geoUnit['numCode'] ?>" style="width:50px;" /></span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['GEO_RANK'] ?></label>:
+								<label for="edit_geoLevel"><?= $LANG['GEO_RANK'] ?></label>:
 								<span class="editTerm"><?= ($geoUnit['geoLevel']?$rankArr[$geoUnit['geoLevel']].' ('.$geoUnit['geoLevel'].')':''); ?></span>
 								<span class="editFormElem">
-									<select required name="geoLevel">
+									<select required id="edit_geoLevel" name="geoLevel">
 										<option value=""> <?= $LANG['SELECT_RANK'] ?> </option>
 										<option value="">----------------------</option>
 										<?php
@@ -413,10 +413,10 @@ function listGeoUnits($arr) {
 								</span>
 							</div>
 							<div class="field-div">
-								<label> <?= $LANG['NOTES'] ?></label>:
+								<label for="edit_notes"><?= $LANG['NOTES'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['notes']; ?></span>
 								<span class="editFormElem">
-									<textarea maxlength="250" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"><?= $geoUnit['notes']?></textarea>
+									<textarea maxlength="250" id="edit_notes" name="notes" style="margin-top: 0.5rem; width:98%;height:45px;"><?= $geoUnit['notes']?></textarea>
 								</span>
 							</div>
 							<?php
@@ -426,10 +426,10 @@ function listGeoUnits($arr) {
 									if($geoUnit['parentTerm']) $parentStr = '<a href="index.php?geoThesID=' . $geoUnit['parentID'] . '">' . $geoUnit['parentTerm'] . '</a>';
 									?>
 									<div class="field-div">
-										<label> <?= $LANG['PARENT_TERM'] ?></label>:
+										<label for="edit_parentID"><?= $LANG['PARENT_TERM'] ?></label>:
 										<span class="editTerm"><?= $parentStr; ?></span>
 										<span class="editFormElem">
-											<select name="parentID">
+											<select id="edit_parentID" name="parentID">
 												<option value=""> <?= $LANG['IS_ROOT_TERM'] ?> </option>
 												<?php
 												foreach($parentList as $id => $term){
@@ -446,10 +446,10 @@ function listGeoUnits($arr) {
 								$acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
 								?>
 								<div class="field-div">
-									<label> <?= $LANG['ACCEPTED_TERM'] ?></label>:
+									<label for="edit_acceptedID"> <?= $LANG['ACCEPTED_TERM'] ?></label>:
 									<span class="editTerm"><?php echo $acceptedStr; ?></span>
 									<span class="editFormElem">
-										<select name="acceptedID">
+										<select id="edit_acceptedID" name="acceptedID">
 											<option value=""> <?= $LANG['IS_ACCEPTED'] ?> </option>
 											<option value="">----------------------</option>
 											<?php
@@ -478,7 +478,7 @@ function listGeoUnits($arr) {
 									<span class="editTerm"><?= $synonymStr ?></span>
 								</div>
 								<div class="field-div">
-									<label><?= $LANG['POLYGON']?></label>:
+									<label for="footprintwkt"><?= $LANG['POLYGON']?></label>:
 									<span class="editTerm">
 										<?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
 									</span>
@@ -487,7 +487,7 @@ function listGeoUnits($arr) {
 										<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
 									</a>
 									<div class="field-div">
-									<label><?= $LANG['SEARCHABLE'] ?></label>:
+									<label for="isSearchable"><?= $LANG['SEARCHABLE'] ?></label>:
 									<span class="editTerm">
 										<?= !empty($geoUnit['isSearchable']) ? $LANG['YES_POLYGON'] : $LANG['NO_POLYGON'] ?>
 									</span>

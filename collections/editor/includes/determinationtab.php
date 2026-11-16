@@ -1,5 +1,5 @@
 <?php
-include_once('../../../config/symbini.php');
+include_once(__DIR__ . '/../../../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceEditorDeterminations.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
@@ -58,8 +58,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 				<div id="idrankeditdiv" style="display:none;margin:15px;">
 					<form name="editidrankingform" action="occurrenceeditor.php" method="post">
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b>
-							<select name="confidenceranking">
+							<label for="confidenceranking_1"><b><?php echo $LANG['CONFIDENCE_IN_DET']; ?>:</b></label>
+							<select id="confidenceranking_1" name="confidenceranking">
 								<?php
 								$currentRanking = 5;
 								if($idRanking) $currentRanking = $idRanking['ranking'];
@@ -78,8 +78,8 @@ $specImgArr = $occManager->getImageMap();  // find out if there are images in or
 							</select>
 						</div>
 						<div style='margin:3px;'>
-							<b><?php echo $LANG['NOTES']; ?>:</b>
-							<input name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
+							<label for="dettab_notes"><b><?php echo $LANG['NOTES']; ?>:</b></label>
+							<input id="dettab_notes" name="notes" type="text" value="<?php echo ($idRanking?$idRanking['notes']:''); ?>" style="width:90%;" />
 						</div>
 						<div style='margin:15px;'>
 							<input type="hidden" name="occid" value="<?php echo $occId; ?>" />

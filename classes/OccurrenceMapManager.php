@@ -188,7 +188,7 @@ class OccurrenceMapManager extends OccurrenceManager {
 						//Set Footprint for map to load
 						$this->setSearchTerm('footprintGeoJson', $this->voucherManager->getClFootprint());
 						if(isset($this->searchTermArr['cltype']) && $this->searchTermArr['cltype'] == 'all') {
-							$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." '))) ";
+							$sqlWhere .= "AND (ST_Within(p.lngLatPoint,ST_GeomFromGeoJSON('". $this->voucherManager->getClFootprint()." ', 1, 0))) ";
 						}
 					}
 				}
