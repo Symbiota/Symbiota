@@ -56,7 +56,7 @@ class RpcTaxonomy extends RpcBase{
 				if($this->fullOutput || $this->limitToAccepted){
 					$sql = 'SELECT t.tid, t.sciname, CONCAT_WS(" ", t.unitind1, t.unitname1, t.unitind2, t.unitname2) AS unitName, t.unitInd3, t.unitName3,
 						t.cultivarEpithet, t.tradeName, t.author, t.kingdomName, t.securityStatus, ts.family, ts.tidAccepted
-						FROM taxa t INNER JOIN taxStatus ts ON t.tid = ts.tid
+						FROM taxa t INNER JOIN taxstatus ts ON t.tid = ts.tid
 						WHERE ts.taxAuthID = ? AND t.sciname LIKE ? ';
 					$paramArr[] = $this->taxAuthID;
 					$typeStr = 'i';
