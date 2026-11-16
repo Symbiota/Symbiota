@@ -4,6 +4,8 @@
  Language: Spanish
  ------------------
  */
+include_once('../sharedterms.es.php');
+
 $LANG['SPCHECKREL'] = 'Relaciones de Listados de Especies';
 $LANG['VOUCHEROFFOLLOWING'] = 'Espécimen es voucher de los siguientes listados de especies';
 $LANG['DELVOUCHER'] = 'Eliminar voucher enlazado';
@@ -19,9 +21,9 @@ $LANG['VIEWABLEEDITORS'] = 'Visible únicamente para los editores del listado';
 $LANG['ADDVOUCHER'] = 'Añadir Voucher';
 $LANG['UNABLETOADD'] = 'No es posible usar este registro de espécimen como voucher porque el nombre científico no pudo ser verificado en el tesauro taxonómico (¿mal escrito?)';
 $LANG['DATASETLINKAGES'] = 'Conjuntos de Datos Enlazados';
+$LANG['ADD_TO_DATASET'] = 'Añadir una ocurrencia a un conjunto de datos existente';
 $LANG['MEMBEROF'] = 'Miembro de los siguientes conjuntos de datos';
 $LANG['OCCURRENCENOTLINKED'] = 'La occurrencia no está enlazada a ningún conjunto de datos';
-$LANG['CREATENEWREL'] = 'Crear una nueva Relación de Conjunto de Datos';
 $LANG['SELECTEXISTING'] = 'Seleccionar un Conjunto de Datos Existente';
 $LANG['CREATENEWDATASET'] = 'Crear un Nuevo Conjunto de Datos';
 $LANG['LINKTO'] = 'Enlazar a Conjunto de Datos';

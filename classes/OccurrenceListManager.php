@@ -1,6 +1,6 @@
 <?php
-include_once("OccurrenceManager.php");
-include_once("OccurrenceAccessStats.php");
+include_once('OccurrenceManager.php');
+include_once('OccurrenceAccessStats.php');
 
 class OccurrenceListManager extends OccurrenceManager{
 
@@ -185,21 +185,6 @@ class OccurrenceListManager extends OccurrenceManager{
 	}
 
 	//Misc support functions
-	public function getDatasetArr(){
-		$retArr = array();
-		$symbUid = $GLOBALS['SYMB_UID'];
-		if($symbUid){
-			$sql = 'SELECT DISTINCT datasetid, IFNULL(datasetName, name) as datasetName FROM omoccurdatasets WHERE uid = '.$symbUid.' OR datasetid IN(SELECT tablepk FROM userroles WHERE uid = '.$symbUid.' AND role IN("DatasetAdmin","DatasetEditor"))';
-			//echo "<div>Count sql: ".$sql."</div>";
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$retArr[$r->datasetid] = $r->datasetName;
-			}
-			$rs->free();
-		}
-		return $retArr;
-	}
-
 	public function getCloseTaxaMatch($name){
 		$retArr = array();
 		$searchName = trim($name);

@@ -1,0 +1,56 @@
+
+.dialog-form {
+	width: 500px;
+	max-width: 90%;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	padding: 0;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.dialog-form::backdrop {
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-header,
+.dialog-body,
+.dialog-footer {
+	padding: 15px;
+}
+
+.dialog-header {
+	border-bottom: 1px solid #ddd;
+}
+
+.dialog-header h3 {
+	margin: 0;
+	font-size: 18px;
+}
+
+.dialog-body label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.dialog-body input {
+	width: 100%;
+	box-sizing: border-box;
+	resize: vertical;
+}
+
+.dialog-body textarea {
+	box-sizing: border-box;
+}
+
+.dialog-footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	border-top: 1px solid #ddd;
+}
+
+.dialog-error {
+	color: #b00020;
+	margin-top: 10px;
+}

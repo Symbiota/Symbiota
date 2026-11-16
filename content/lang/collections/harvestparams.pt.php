@@ -2,11 +2,9 @@
 /*
 ------------------
 Language: Português (Portuguese)
-Translated by: Google Translate
-Date Translated: 2024-02-16
+Translated by: Google Translate (2024-02-16)
 ------------------
 */
-
 include_once('sharedterms.pt.php');
 
 $LANG['PAGE_TITLE'] = 'Parâmetros de Pesquisa da Coleção';
@@ -56,6 +54,7 @@ $LANG['TITLE_TEXT_4'] = 'Data final do intervalo; deixe em branco se estiver pro
 $LANG['SPECIMEN_HEADER'] = 'Critérios da Amostra';
 $LANG['CATALOG_NUMBER'] = 'Número de Catálogo';
 $LANG['INCLUDE_OTHER_CATNUM'] = 'Incluir outros números de catálogo e GUIDs';
+$LANG['DATASET'] = 'Conjunto de dados personalizado';
 $LANG['TYPE'] = 'Limite para Digitar Amostras';
 $LANG['HAS_IMAGE'] = 'Limite de Espécimes com Imagens';
 $LANG['HAS_GENETIC'] = 'Limite de Espécimes com Dados Genéticos';
@@ -64,7 +63,7 @@ $LANG['INCLUDE_CULTIVATED'] = 'Incluir Ocorrências Cultivadas/Cativas';
 $LANG['TRAIT_HEADER'] = 'Critérios de Característica';
 $LANG['TRAIT_DESCRIPTION'] = 'Selecionar múltiplas características retornará todos os registros com <b>pelo menos uma</b> dessas características';
 $LANG['TYPE_TAXON'] = 'Nome do Táxon';
-$LANG['SELECT_TAXON_TYPE'] = 'Selecionar tipo de táxon';
+$LANG['SELECT_TAXON_TYPE'] = 'Tipo de táxon';
 $LANG['DIRECTION'] = 'Direção';
 $LANG['DISTANCE_UNIT'] = 'Unidade de distância';
 ?>

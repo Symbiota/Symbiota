@@ -6,6 +6,7 @@ const translations = {
   BUTTON_SUBMIT: "Submit New Name",
   BUTTON_CHECKING: "Checking for errors...",
   BUTTON_DISABLED: "Button Disabled",
+  TAXON: "Taxon",
   PARENT_TAXON: "Parent taxon",
   FIELD_TOO_LONG: "Field text is too long. Character limit for this field is",
   PARENT_TAXON_REQUIRED: "Parent identifier is not set! Make sure to select parent taxon from the list",
@@ -21,9 +22,11 @@ const translations = {
   SPECIMEN: "Specimen",
   OBSERVATION: "Observation",
   IDENTIFIER_DELETE: "This will permanently delete the selected identifier and immediately resave this catalog record. Do you want to proceed?",
+
   // paleo search
   INTERVAL_MISSING: "Both Early Interval and Late Interval need to have a value selected, even if the values are the same.",
   INTERVALS_WRONG_ORDER: "The Early Interval must be geologically older than the Late Interval.",
+
   DOWNLOAD_IN_PROGRESS: "Download in progress...",
   OCCURENCE_EDITOR_COLLISION_WARNING: "Another editor query session has been detected. This could result in off-target results in your current query. Please close all tabs but one and conduct your query anew.",
   SELECT_FROM_LIST: "Selecting taxon name from list is required",
