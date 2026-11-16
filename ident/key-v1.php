@@ -96,7 +96,7 @@ if($chars){
 	}
 	else{
 		echo '<div class="navpath">';
-		echo '<a href="../index.php">' . htmlspecialchars($LANG['HOME'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> &gt;&gt; ';
+		echo '<a href="../index.php">' . $LANG['HOME'] . '</a> &gt;&gt; ';
 		if($dynClid){
 			if($dataManager->getClType() == 'Specimen Checklist'){
 				echo '<a href="' . htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '/collections/list.php?tabindex=0">';

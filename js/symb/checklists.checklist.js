@@ -1,42 +1,10 @@
   $(document).ready(function() {
-    //Filter autocomplete
-    $("#taxonfilter").autocomplete({ 
-      source: function( request, response ) {
-        $.getJSON( "rpc/searchsuggest.php", { term: request.term, clid: clid, deep: 1 }, response );
-      }
-    },
-    { minLength: 3 });
-
-    //Species add form
-    $("#speciestoadd").autocomplete({
-      source: function( request, response ) {
-        $.getJSON( "rpc/speciessuggest.php", { term: request.term }, response );
-      }
-    },{ 
-      minLength: 4,
-      autoFocus: true,
-      select: function( event, ui ) {
-        if(ui.item){
-          $( "#speciestoadd" ).val(ui.item.value);
-          $( "#tid" ).val(ui.item.id);
-        }
-      },
-      change: function( event, ui ) {
-        if(ui.item === null) {
-          $( "#tid" ).val("");
-          if($( "#speciestoadd" ).val() != ""){
-            alert(lang_SELECT_TAXON);
-            $("#speciestoadd").focus();
-          }
-        }
-      }
-    });
     
     if(document.cookie.indexOf("editspp") > -1){
       $(".editspp").show();
       document.getElementById("editsppon").style.display = "inline";
     }
-    if(taxaCount == 0) $(".editspp").show();
+
   });
 
   function toggleVoucherDiv(tid) {
@@ -95,22 +63,6 @@
       document.getElementById("showvouchersdiv").style.display = "block";
       document.getElementById("showauthorsdiv").style.display = "block";
     }
-  }
-
-  function validateAddSpecies(f) {
-    //var sciName = f.speciestoadd.value;
-    //var tid = f.tid.value;
-    if(f.speciestoadd.value !== "" && f.tid.value !== ""){
-      f.submit();
-    }
-    else if (f.speciestoadd.value == "") {
-      alert(lang_NAME_BLANK);
-    } 
-    else {
-      alert(lang_SELECT_TAXON);
-    }
-    f.speciestoadd.focus();
-    return false;
   }
 
   function changeOptionFormAction(action, target) {

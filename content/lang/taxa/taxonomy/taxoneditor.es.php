@@ -5,16 +5,19 @@ Language: Español
 ------------------
 */
 
+include_once($SERVER_ROOT . '/content/lang/taxa/shared.' . $LANG_TAG . '.php');
+
 $LANG['FOLLOWING_WARNINGS'] = 'Las siguientes advertencias ocurrieron';
+$LANG['ERROR_PARENT_TID_NULL'] = 'Error al añadir el enlace aceptado: Identificador de elemento padre nulo (NULL)';
+$LANG['ERROR_ADD_LINK'] = 'Error al añadir el enlace aceptado';
 $LANG['SUCCESS_REMAPPING'] = '¡Taxón remapeado exitosamente!';
 $LANG['SUCCESS_DELETING'] = '¡Taxón eliminado exitosamente!';
-$LANG['TAX_EDITOR'] = 'Editor de Taxón';
-$LANG['HOME'] = 'Inicio';
 $LANG['TAX_TREE_VIEW'] = 'Explorador de Árbol Taxonómico';
 $LANG['TAXONOMY_EDITOR'] = 'Editor de Taxonomía';
 $LANG['SUCCESS'] = 'ÉXITO';
 $LANG['GO_TAX_DISPLAY'] = 'Ir a ventana de taxonomía';
 $LANG['ADD_NEW_TAXON'] = 'Añadir Nuevo Taxón';
+$LANG['VIEW_TP_EDITOR'] = 'Ver editor del perfil del taxón';
 $LANG['EDITOR'] = 'Editor';
 $LANG['TAX_STATUS'] = 'Estado Taxonómico';
 $LANG['HIERARCHY'] = 'Jerarquía';
@@ -56,13 +59,13 @@ $LANG['REMOVE_OTHER_LINKS'] = 'Remover Otros Enlaces Aceptados';
 $LANG['ADD_LINK'] = 'Añadir Enlace';
 $LANG['CHANGE_TO_ACCEPTED'] = 'Cambiar a Aceptado';
 $LANG['SWITCH_ACCEPTANCE'] = 'Cambiar Aceptación con el Nombre Aceptado Acutalmente';
-$LANG['NO_SYN_LINKED_TAXON'] = 'No hay sinónimos vinculados a este taxón';
 $LANG['CHANGE_STATUS_ACCEPTED'] = 'Cambiar Estado a Aceptado';
 $LANG['SYNONYMS'] = 'Sinónimos';
 $LANG['REASON'] = 'Razón';
 $LANG['SYN_LINK_EDITOR'] = 'Editor de Enlaces a Sinónimos';
 $LANG['UNACCEPT_REASON'] = 'Razón de No Ser Aceptado';
 $LANG['SORT_SEQ'] = 'Ordenar Secuencia';
+$LANG['NO_SYN_LINKED_TAXON'] = 'No hay sinónimos vinculados a este taxón';
 $LANG['CHANGE_NOT_ACCEPTED'] = 'Cambiar a No Aceptado';
 $LANG['ACCEPTED_NAME'] = 'Nombre Aceptado';
 $LANG['CHANGE_STAT_NOT_ACCEPT'] = 'Cambiar Estado a No Aceptado';

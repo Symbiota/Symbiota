@@ -19,7 +19,7 @@ $rsManager = new OccurrenceProtectedSpecies($isEditor?'write':'readonly');
 
 if($isEditor){
 	if($action == 'addspecies'){
-		$rsManager->addSpecies($_POST['tidtoadd']);
+		$rsManager->addSpecies($_POST['tidinterpreted']);
 	}
 	elseif($action == 'deletespecies'){
 		$rsManager->deleteSpecies($_REQUEST['tidtodel']);
@@ -84,18 +84,30 @@ $rsArr = $rsManager->getProtectedSpeciesList();
 				return false;
 			}
 
-			$.ajax({
-				type: "POST",
-				url: "rpc/gettid.php",
-				dataType: "json",
-				data: { sciname: sciName }
-			}).done(function( data ) {
-				f.tidtoadd.value = data;
+			fetch("<?= $CLIENT_ROOT ?>/rpc/gettaxon.php", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"
+				},
+				body: new URLSearchParams({
+					sciname: sciName
+				})
+			})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error(`HTTP error: ${response.status}`);
+				}
+				return response.json();
+			})
+			.then(data => {
+				f.tidinterpreted.value = Object.keys(data)[0];
 				f.submit();
-			}).fail(function(jqXHR){
+			})
+			.catch(error => {
 				alert("<?= $LANG['SCINAME_NOT_EXIST'] ?>");
 			});
 		}
+
 	</script>
 	<style>
 		.icon-img{ width:1.5em; border:0px; }
@@ -166,7 +178,7 @@ include($SERVER_ROOT.'/includes/header.php');
 							<div style="margin:3px;">
 								<label for="speciestoadd"><?= $LANG['SCIENTIFIC_NAME'] ?>:</label>
 								<input type="text" id="speciestoadd" name="speciestoadd" style="width:300px" />
-								<input type="hidden" id="tidtoadd" name="tidtoadd" value="" />
+								<input type="hidden" id="tidtoadd" name="tidinterpreted" value="" />
 							</div>
 							<div style="margin:3px;">
 								<input type="hidden" name="submitaction" value="addspecies" />

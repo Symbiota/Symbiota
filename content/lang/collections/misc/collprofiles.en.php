@@ -14,6 +14,7 @@ $LANG['HOMEPAGE'] = 'Homepage';
 $LANG['MORE_INFO'] = 'More Information';
 $LANG['COLLECTION_SEARCH'] = 'Collection Search Page';
 $LANG['UPDATE_STATISTICS'] = 'Updating statistics related to this collection...';
+$LANG['BATCH_UPDATE_STATS'] = 'Update Portal-wide Collection Statistics';
 $LANG['DEACTIVATED'] = 'Deactivated';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certain management options are only available for Live Managed Datasets. Contact portal administrator if collection needs to be reclassified.';
 $LANG['TOGGLE_MAN'] = 'Toggle Manager\'s Control Panel';

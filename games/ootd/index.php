@@ -29,17 +29,17 @@ foreach($imageArr as $k => $imgValue){
 $genusAnswer = strtok($scinameAnswer, " ");
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $ootdTitle; ?></title>
-	<link href="<?php echo $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
+	<title><?= $ootdTitle; ?></title>
+	<link href="<?= $CSS_BASE_PATH; ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
-		var clientRoot = "<?php echo $CLIENT_ROOT; ?>";
 		var giveUp = false;
 		var imgIndex = 0;
 
@@ -59,8 +59,29 @@ $genusAnswer = strtok($scinameAnswer, " ");
 				});
 			}
 
-			initiateTaxonSuggest("family_answer", 140, 0);
-			initiateTaxonSuggest("sciname_answer", 180, 221);
+			const taxaInput = document.querySelector("#sciname_answer");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = clientRoot;
+					taxaSuggest.config.rankMinimum = 180;
+					taxaSuggest.config.rankMaximum = 220;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("sciname_answer");
+				});
+			}
+
+			const familyInput = document.querySelector("#family_answer");
+			if(familyInput){
+				familyInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = clientRoot;
+					taxaSuggest.config.rankMinimum = 140;
+					taxaSuggest.config.rankMaximum = 140;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("family_answer");
+				});
+			}
 		});
 
 		function verifyAnswerForm(f){
@@ -84,11 +105,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 
 		function openTaxonProfile(){
 			giveUp = true;
-			window.open('../../taxa/index.php?tid=<?php echo $gameInfo['tid']; ?>','plantwindow','width=1200,height=650');
+			window.open('../../taxa/index.php?tid=<?= $gameInfo['tid']; ?>','plantwindow','width=1200,height=650');
 		}
 
 		function chgImg(direction){
-			var imgArr = <?php echo json_encode($imageArr); ?>;
+			var imgArr = <?= json_encode($imageArr); ?>;
 			var imgLength = imgArr.length - 1;
 			if(document.images){
 				imgIndex = imgIndex + direction;
@@ -98,7 +119,6 @@ $genusAnswer = strtok($scinameAnswer, " ");
 			}
 		}
 	</script>
-	<script src="../../js/symb/api.taxonomy.taxasuggest.js" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -109,7 +129,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 		<!-- This is inner text! -->
 		<div style="width:80%;margin-left:auto;margin-right:auto;">
 			<div style="text-align:center;margin-bottom:20px;">
-				<h1 class="page-heading"><?php echo $ootdTitle; ?></h1>
+				<h1 class="page-heading"><?= $ootdTitle; ?></h1>
 			</div>
 			<?php
 			if(!$submitAction){
@@ -118,20 +138,20 @@ $genusAnswer = strtok($scinameAnswer, " ");
 					<div class = "dailypicture" align = "center">
 						<div>
 							<div style="vertical-align:middle;">
-								<a href="#" onclick="chgImg(1); return false;"><img src="<?php echo $imageArr[0]; ?>" name="slideshow" id="slideshow" style="width:500px;" ></a><br />
+								<a href="#" onclick="chgImg(1); return false;"><img src="<?= $imageArr[0]; ?>" name="slideshow" id="slideshow" style="width:500px;" ></a><br />
 							</div><br />
 							<a href="#" onclick="chgImg(-1); return false;">Previous</a> &nbsp;|&nbsp;
 							<a href="#" onclick="chgImg(1); return false;">Next</a>
 						</div>
 					</div>
 					<div style="margin-left:auto;margin-right:auto;font-size:18px;text-align:center;margin-top:20px;margin-bottom:20px;" >
-						<b>Name that <?php echo $ootdType; ?>!</b>
+						<b>Name that <?= $ootdType; ?>!</b>
 						<a id="gameinfo" href="#" onclick="return false" title="How to Play?">
 							<img src="../../images/qmark.png" style="width:2em;"/>
 						</a>
 						<div id="gameinfodialog" title="How to Play">
-							Look at the picture, and see if you can figure out what the <?php echo $ootdType; ?> is. If you get completely stumped, you can
-							click the "I give up" button. A new <?php echo $ootdType; ?> is updated daily, so make sure you check back every day to test your knowledge!
+							Look at the picture, and see if you can figure out what the <?= $ootdType; ?> is. If you get completely stumped, you can
+							click the "I give up" button. A new <?= $ootdType; ?> is updated daily, so make sure you check back every day to test your knowledge!
 						</div>
 					</div>
 					<div>
@@ -154,10 +174,10 @@ $genusAnswer = strtok($scinameAnswer, " ");
 									</div>
 								</div>
 								<div style="clear:both">
-									<input name="oodid" type="hidden" value="<?php echo $oodID; ?>" />
-									<input name="cl" type="hidden" value="<?php echo $clidStr; ?>" />
-									<input name="title" type="hidden" value="<?php echo $ootdTitle; ?>" />
-									<input name="type" type="hidden" value="<?php echo $ootdType; ?>" />
+									<input name="oodid" type="hidden" value="<?= $oodID; ?>" />
+									<input name="cl" type="hidden" value="<?= $clidStr; ?>" />
+									<input name="title" type="hidden" value="<?= $ootdTitle; ?>" />
+									<input name="type" type="hidden" value="<?= $ootdType; ?>" />
 								</div>
 							</div>
 						</form>
@@ -172,13 +192,13 @@ $genusAnswer = strtok($scinameAnswer, " ");
 						<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 							<div style="margin-top:25px;font-size:18px;" >
 								It was <br /><br />
-								<b><?php echo $gameInfo['family']; ?></b><br />
-								<i><?php echo $gameInfo['sciname']; ?></i>
+								<b><?= $gameInfo['family']; ?></b><br />
+								<i><?= $gameInfo['sciname']; ?></i>
 							</div>
 							<div style="margin-top:40px;font-size:16px;" >
-								<a href = "#" onClick="openTaxonProfile()" >-Click here to learn more about this <?php echo $ootdType; ?>-</a>
+								<a href = "#" onClick="openTaxonProfile()" >-Click here to learn more about this <?= $ootdType; ?>-</a>
 								<div>Thank you for playing!</div>
-								<div>Check back tomorrow for a new <?php echo $ootdType; ?>!</div>
+								<div>Check back tomorrow for a new <?= $ootdType; ?>!</div>
 							</div>
 						</div>
 					</div>
@@ -208,11 +228,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 								</div>
 							</div>
 							<div style="margin-left:auto;margin-right:auto;" >
-								<div style="font-size:18px;" ><b><?php echo $gameInfo['family']; ?></b><br />
-									<i><?php echo $gameInfo['sciname']; ?></i>
+								<div style="font-size:18px;" ><b><?= $gameInfo['family']; ?></b><br />
+									<i><?= $gameInfo['sciname']; ?></i>
 								</div>
 								<div style="margin-top:30px;font-size:16px;" >
-									<a href = "#" onClick="openTaxonProfile()" >Click here to learn more about this <?php echo $ootdType; ?></a>
+									<a href = "#" onClick="openTaxonProfile()" >Click here to learn more about this <?= $ootdType; ?></a>
 								</div>
 							</div>
 						</div>
@@ -223,7 +243,7 @@ $genusAnswer = strtok($scinameAnswer, " ");
 						<div id="incorrect_sciname">
 							<div style="width:670px;margin-top:30px;margin-left:auto;margin-right:auto;clear:both;text-align:center;" >
 								<div style="font-size:15px;" >
-									<b>Sorry, <i><?php echo ucfirst($scinameAnswer); ?></i> is not correct</b>
+									<b>Sorry, <i><?= ucfirst($scinameAnswer); ?></i> is not correct</b>
 								</div>
 								<div style="font-size:15px;margin-top:10px" >
 									<?php
@@ -235,11 +255,11 @@ $genusAnswer = strtok($scinameAnswer, " ");
 								</div>
 								<div style="margin-top:40px;font-size:16px;" >
 									<div>
-										<a href = "index.php?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Click here to try again!</a>
+										<a href = "index.php?oodid=<?= htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>">Click here to try again!</a>
 									</div>
 									<div>-- OR --</div>
 									<div>
-										<a href = "index.php?submitaction=giveup?oodid=<?php echo htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?php echo htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> was-</a>
+										<a href = "index.php?submitaction=giveup?oodid=<?= htmlspecialchars($oodID, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) .'&cl=' . htmlspecialchars($clidStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&title=' . htmlspecialchars($ootdTitle, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&type=' . htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>" onClick="openTaxonProfile()" >-Click here reveal what the <?= htmlspecialchars($ootdType, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?> was-</a>
 									</div>
 								</div>
 							</div>

@@ -113,18 +113,60 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 	<title><?php echo $DEFAULT_TITLE. ' ' . $LANG['CHECKLIST'] . ': ' . $clManager->getClName(); ?></title>
 	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.css" type="text/css" rel="stylesheet">
 	<?php
-	include_once($SERVER_ROOT.'/includes/head.php');
-	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
+	include_once($SERVER_ROOT . '/includes/head.php');
+	include_once($SERVER_ROOT . '/includes/googleanalytics.php');
 	?>
 	<link href="<?= $CSS_BASE_PATH ?>/symbiota/checklists/checklist.css" type="text/css" rel="stylesheet" />
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/checklists.checklist.js?ver=1b" type="text/javascript"></script>
 	<script type="text/javascript">
 		toggleSppEditControls();
 		<?php
-		if($clid) echo 'var clid = '.$clid.';'."\n";
-		echo 'var taxaCount = '.count($taxaArray).';'."\n";
+		if(!$taxaArray) echo '$(".editspp").show();';
 		?>
+
+		$(document).ready(function() {
+
+			const taxonAdd = document.querySelector("#speciestoadd");
+			if(taxonAdd){
+				taxonAdd.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("speciestoadd", function(result){
+						if(result.valid) {
+							$( "#tid" ).val(result.item.id);
+						}
+						else{
+							$( "#tid" ).val("");
+							if(this.value != undefined && this.value != ""){
+								alert("<?= $LANG['SELECT_TAXON'] ?>");
+							}
+						}
+					});
+				});
+			}
+
+			$("#taxonfilter").autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "rpc/searchsuggest.php", { term: request.term, clid: <?= $clid ?>, deep: 1 }, response );
+				}
+			},
+			{ minLength: 3 });
+
+		});
+
+
+		function validateAddSpecies(f){
+			if(f.speciestoadd.value != "" && f.tid.value == ""){
+				alert("<?= $LANG['SELECT_TAXON'] ?>");
+				return false;
+			}
+			return true;
+		}
+
 		function changeImageSource(elem){
 			let f = document.optionform;
 			if(elem.id == "vi_voucher") f.voucherimages.value = "1";
@@ -132,11 +174,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 			f.submit();
 		}
 
-		var lang_NAME_BLANK = '<?= $LANG['NAME_BLANK'] ?>';
-		var lang_SELECT_TAXON = '<?= $LANG['SELECT_TAXON'] ?>';
 	</script>
-	<script type="text/javascript" src="../js/symb/checklists.checklist.js"></script>
-
 	<style>
 		<?php
 		if($printMode){
@@ -760,7 +798,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 					<?php
 					if($clid && $isEditor){
 						?>
-						<div class="editspp" style="width:250px;display:none;">
+						<div class="editspp" style="width:325px;display:none;">
 							<form id='addspeciesform' action='checklist.php' method='post' name='addspeciesform' onsubmit="return validateAddSpecies(this);">
 								<fieldset class="fieldset-like-box">
 									<legend><b><?php echo $LANG['NEWSPECIES']; ?></b></legend>
@@ -772,7 +810,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 									<!--
 									<div>
 										<?php echo $LANG['MORPHOSPECIES']; ?>:<br/>
-										<input type="text" name="morphospecies" style="width:122px;" title="" />
+										<input type="text" name="morphospecies" style="width:100%;" title="" />
 									</div>
 									-->
 									<div>
@@ -813,8 +851,7 @@ $taxonFilter = htmlspecialchars($taxonFilter, ENT_COMPAT | ENT_HTML401 | ENT_SUB
 										<input type="hidden" name="searchcommon" value="<?php echo $searchCommon; ?>" />
 										<input type="hidden" name="showalphataxa" value="<?= ($showAlphaTaxa ? 1 : 0) ?>" >
 										<input type="hidden" name="showsubgenera" value="<?= ($showSubgenera ? 1 : 0) ?>" >
-										<input type="hidden" name="formsubmit" value="AddSpecies" />
-										<button name="submitbtn" type="submit"><?php echo $LANG['ADD_SPECIES']; ?></button>
+										<button type="submit" name="formsubmit" value="AddSpecies"><?php echo $LANG['ADD_SPECIES']; ?></button>
 										<hr />
 									</div>
 									<div style="text-align:center;">

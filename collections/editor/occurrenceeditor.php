@@ -60,8 +60,11 @@ $readOnly = '';
 
 $isEditor = 0;
 $LOCALITY_AUTO_LOOKUP = 1;
+if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP) $LOCALITY_AUTO_LOOKUP = 0;
 $CATNUM_DUPE_CHECK = true;
+if(defined('CATNUMDUPECHECK') && !CATNUMDUPECHECK) $CATNUM_DUPE_CHECK = false;
 $OTHER_CATNUM_DUPE_CHECK = true;
+if(defined('OTHERCATNUMDUPECHECK') && !OTHERCATNUMDUPECHECK) $OTHER_CATNUM_DUPE_CHECK = false;
 if($SYMB_UID){
 	//Set variables
 	if($occId && $collId) {
@@ -118,9 +121,6 @@ if($SYMB_UID){
 			include('includes/config/crowdSourceVar.php');
 		}
 	}
-	if(defined('LOCALITYAUTOLOOKUP') && !LOCALITYAUTOLOOKUP) $LOCALITY_AUTO_LOOKUP = LOCALITYAUTOLOOKUP;
-	if(defined('CATNUMDUPECHECK') && !CATNUMDUPECHECK) $CATNUM_DUPE_CHECK = false;
-	if(defined('OTHERCATNUMDUPECHECK') && !OTHERCATNUMDUPECHECK) $OTHER_CATNUM_DUPE_CHECK = false;
 
 	//0 = not editor, 1 = admin, 2 = editor, 3 = taxon editor, 4 = crowdsource editor or collection allows public edits
 	//If not editor, edits will be submitted to omoccuredits table but not applied to omoccurrences
@@ -531,7 +531,7 @@ else{
     }
     else{
 		?>
-		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorfulldisplay.css?ver=1" type="text/css" rel="stylesheet" id="editorCssLink" >
+		<link href="<?= $CSS_BASE_PATH ?>/symbiota/collections/editor/editorfulldisplay.css?v=2" type="text/css" rel="stylesheet" id="editorCssLink" >
 		<?php
 		if(isset($CSSARR)){
 			foreach($CSSARR as $cssVal){
@@ -547,16 +547,20 @@ else{
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	include_once($SERVER_ROOT.'/includes/javascript_lang_tags.php');
 	?>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?php echo $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/mapAidUtils.js" type="text/javascript"></script>
 	<script type="text/javascript">
+		const TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+		const TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+		const CLIENT_ROOT = "<?= $CLIENT_ROOT ?>";
+
 		let collId = "<?php echo (isset($collMap['collid'])?$collMap['collid']:(is_numeric($collId)?$collId:0)); ?>";
 		let csMode = "<?php echo $crowdSourceMode; ?>";
 		let tabTarget = <?php echo (is_numeric($tabTarget)?$tabTarget:'0'); ?>;
 		let imgArr = [];
 		let imgLgArr = [];
-		let localityAutoLookup = <?php echo $LOCALITY_AUTO_LOOKUP; ?>;
+		var localityAutoLookup = <?= $LOCALITY_AUTO_LOOKUP ?>;
 		let fullFormErrorMessage = '';
 
 		<?php
@@ -586,15 +590,17 @@ else{
             });
         }
 	</script>
-	<script src="../../js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
-	<script src="../../js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
-	<script src="../../js/symb/localitySuggest.js" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.main.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
-	<script src="../../js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
-	<script src="../../js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
-	<script defer src="../../js/symb/collections.editor.query.js?ver=7" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.autocomplete.js?v=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.coordinateValidation.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/wktpolygontools.js?ver=2c" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.georef.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/localitySuggest.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.main.js?v=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.tools.js?ver=1" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.imgtools.js?ver=4" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery.imagetool-1.7.js?ver=140310" type="text/javascript"></script>
+	<script defer src="<?= $CLIENT_ROOT ?>/js/symb/collections.editor.query.js?ver=7" type="text/javascript"></script>
 </head>
 <body>
 	<div role="main" id="innertext">
@@ -759,7 +765,7 @@ else{
 								?>
 							</ul>
 							<div id="occdiv">
-								<form id="fullform" name="fullform" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
+								<form id="fullform" name="fullform" class="det-form" action="occurrenceeditor.php" method="post" onsubmit="return verifyFullForm(this);">
 									<fieldset>
 										<legend><?= $LANG['COLLECTOR_INFO'] ?></legend>
 										<?php

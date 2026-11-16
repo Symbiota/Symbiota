@@ -6,13 +6,12 @@ Translated by: Google Translate (2024/01/31)
 ------------------
 */
 $LANG['OCC_ATTRIBUTE_BATCH_EDIT'] = 'Editor por Lotes de Atributos de Ocurrencia';
+$LANG['SELECT_FROM_LIST'] = 'Debe seleccionar un taxón de la lista';
 $LANG['HOME'] = 'Inicio';
 $LANG['COLLECTION_MANAGEMENT'] = 'Gestión de colecciones';
 $LANG['FILTER'] = 'Filtro';
 $LANG['SELECT_TRAIT_REQ'] = 'Seleccionar rasgo (obligatorio)';
 $LANG['ALL_COUNTRIES_STATES'] = 'Todos los condados y todos los estados';
-$LANG['VERIFY_TAXONOMY'] = 'verificando taxonomía...';
-$LANG['TAXON_NOT_VALID'] = 'taxón no válido...';
 $LANG['REVIEWER'] = 'Revisor';
 $LANG['ATTRIBUTE_REVIEWER'] = 'Revisor de atributos';
 $LANG['ATTRIBUTE_EDITOR'] = 'Editor de atributos';
