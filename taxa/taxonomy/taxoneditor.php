@@ -117,7 +117,7 @@ if ($isEditor) {
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggest.config.rankMaximum = 0;
-					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.config.limitToAccepted = 1;
 					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
 					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("aefacceptedstr", function(result) {
@@ -140,7 +140,7 @@ if ($isEditor) {
 					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
 					taxaSuggest.config.taxAuthID = document.taxauthidform.taxauthid.value;
 					taxaSuggest.config.rankMaximum = 0;
-					taxaSuggest.config.limitToAccepted = true;
+					taxaSuggest.config.limitToAccepted = 1;
 					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
 					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
 					taxaSuggest.initiate("ctnafacceptedstr", function(result) {

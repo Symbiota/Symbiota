@@ -1,15 +1,3 @@
-function openAssocSppAid(){
-	var assocWindow = open("assocsppaid.php","assocaid","resizable=0,width=550,height=150,left=20,top=20");
-	if(assocWindow != null){
-		if (assocWindow.opener == null) assocWindow.opener = self;
-		fieldChanged("associatedtaxa");
-		assocWindow.focus();
-	}
-	else{
-		alert("Unable to open associated species tool, which is likely due to your browser blocking popups. Please adjust your browser settings to allow popups from this website.");
-	}
-}
-
 function geoCloneTool(){
 	var f = document.fullform;
 	if(f.locality.value){

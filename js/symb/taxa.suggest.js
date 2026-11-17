@@ -8,9 +8,9 @@ taxaSuggest.config = {
     multipleTermSupport: false,
 
     taxonSearchType: 2,
-    limitToAccepted: false,
-    fullOutput: false,
-    extendQueryMatch: false,
+    limitToAccepted: 0,
+    fullOutput: 0,
+    extendQueryMatch: 0,
     taxAuthID: 1,
     rankMinimum: '',
     rankMaximum: ''

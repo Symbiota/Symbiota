@@ -7,7 +7,7 @@ $(document).ready(function () {
 			taxaInput.addEventListener("focus", function(event) {
 				const f = event.currentTarget.form;
 				taxaSuggest.config.clientRoot = CLIENT_ROOT;
-				taxaSuggest.config.fullOutput = true;
+				taxaSuggest.config.fullOutput = 1;
 				taxaSuggest.config.includeAuthor = TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR;
 				taxaSuggest.config.includeKingdom = TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM;
 				taxaSuggest.initiate(taxaInput, function(result) {
@@ -54,6 +54,7 @@ $(document).ready(function () {
 			const f = event.currentTarget.form;
 			taxaSuggest.config.clientRoot = CLIENT_ROOT;
 			taxaSuggest.config.multipleTermSupport = true;
+			taxaSuggest.config.extendQueryMatch = 1;
 			taxaSuggest.initiate(assocTaxaInput);
 		});		
 	}

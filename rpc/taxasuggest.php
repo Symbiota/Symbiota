@@ -16,6 +16,7 @@ $rankMin = (array_key_exists('rankMin', $_REQUEST) ? Sanitize::int($_REQUEST['ra
 $rankMax = (array_key_exists('rankMax', $_REQUEST) ? Sanitize::int($_REQUEST['rankMax']) : '');
 $limitToAccepted = empty($_REQUEST['limitToAccepted']) ? 0 : 1;
 $fullOutput = empty($_REQUEST['fullOutput']) ? 0 : 1;
+$extendQueryMatch = empty($_REQUEST['extendQueryMatch']) ? 0 : 1;
 $taxAuthID = (array_key_exists('taxAuthID', $_REQUEST) ? Sanitize::int($_REQUEST['taxAuthID']) : 1);
 
 $retArr = array();
@@ -26,6 +27,7 @@ if($term){
 	$rpcManager->setRankMax($rankMax);
 	$rpcManager->setLimitToAccepted($limitToAccepted);
 	$rpcManager->setFullOutput($fullOutput);
+	$rpcManager->setExtendQueryMatch($extendQueryMatch);
 	$rpcManager->setTaxAuthId($taxAuthID);
 
 	$retArr = $rpcManager->getTaxaSuggest($term);

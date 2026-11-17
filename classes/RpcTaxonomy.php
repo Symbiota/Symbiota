@@ -67,15 +67,19 @@ class RpcTaxonomy extends RpcBase{
 				if($this->extendQueryMatch){
 					// Enable scientific name entry shortcuts: 2-3 letter codes separated by spaces, e.g. "pse men"
 					// Split the search string by spaces if there are any.
-					$strArr = explode(' ', $term);
+					$strArr = explode(' ', $queryString);
 					if(count($strArr) > 1){
-						$sql .= 'OR (unitname1 LIKE "' . $strArr[0] . '%" AND unitname2 LIKE "' . $strArr[1] . '%" ';
+						$sql .= 'OR (unitname1 LIKE ? AND unitname2 LIKE ? ';
+						$typeStr .= 'ss';
+						$paramArr[] = $strArr[0] . '%';
+						$paramArr[] = $strArr[1] . '%';
 						if(!empty($strArr[2])){
-							$sql .= 'AND unitname3 LIKE "' . $strArr[2] . '%" ';
+							$sql .= 'AND unitname3 LIKE ? ';
+							$typeStr .= 's';
+							$paramArr[] = $strArr[2] . '%';
 						}
 						$sql .= ') ';
 					}
-
 				}
 			}
 			if($this->taxonSearchType == 3){
@@ -109,6 +113,7 @@ class RpcTaxonomy extends RpcBase{
 					}
 				}
 			}
+			$sql .= 'LIMIT 30 ';
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($typeStr, ...$paramArr);
 				$stmt->execute();
@@ -143,6 +148,9 @@ class RpcTaxonomy extends RpcBase{
 				$rs->free();
 				$stmt->close();
 			}
+			usort($retArr, function($a, $b) {
+				return strcasecmp($a['sciname'], $b['sciname']);
+			});
 		}
 		return $retArr;
 	}

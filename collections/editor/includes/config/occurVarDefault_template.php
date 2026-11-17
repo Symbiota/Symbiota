@@ -21,8 +21,6 @@
 //0 = off, permanently deactivated, 1 = activated by default (Default), 2 = deactivated by default
 //define('LOCALITYAUTOLOOKUP',1);
 
-//$ACTIVATEASSOCTAXAAID = false;
-
 //FieldLabel text: uncomment variables and value to modify field labels
 //define('CATALOGNUMBERLABEL','');
 //define('OTHERCATALOGNUMBERSLABEL','');
