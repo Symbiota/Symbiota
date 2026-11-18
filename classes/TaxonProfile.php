@@ -624,22 +624,23 @@ class TaxonProfile extends Manager {
 	private function setLinkArr(){
 		if($this->linkArr === false && $this->tid){
 			$this->linkArr = array();
-			$sql = '(SELECT tlid, url, icon, title, notes, sortsequence
-				FROM taxalinks l
-				WHERE (l.tid = ' . $this->tid . ')
-				UNION
-				SELECT l.tlid, l.url, l.icon, l.title, l.notes, l.sortsequence
-				FROM taxalinks l INNER JOIN taxaenumtree e ON l.tid = e.parenttid
-				WHERE (e.tid = ' . $this->tid . '))
-				ORDER BY sortsequence, title';
-			$rs = $this->conn->query($sql);
-			while($r = $rs->fetch_object()){
-				$this->linkArr[$r->tlid]['title'] = $r->title;
-				$this->linkArr[$r->tlid]['url'] = str_replace('--SCINAME--',rawurlencode($this->sciName),$r->url);
-				$this->linkArr[$r->tlid]['icon'] = $r->icon;
-				$this->linkArr[$r->tlid]['notes'] = $r->notes;
+			$sql = 'SELECT DISTINCT l.tlid, l.url, l.icon, l.title, l.notes, l.sortsequence
+				FROM taxalinks l LEFT JOIN taxaenumtree e ON l.tid = e.parenttid
+				WHERE l.tid = ? OR (e.taxauthid = 1 AND e.tid = ?)
+				ORDER BY l.sortsequence, l.title';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('ii', $this->tid, $this->tid);
+				$stmt->execute();
+				$rs = $stmt->get_result();
+				while($r = $rs->fetch_object()){
+					$this->linkArr[$r->tlid]['title'] = $r->title;
+					$this->linkArr[$r->tlid]['url'] = str_replace('--SCINAME--',rawurlencode($this->sciName),$r->url);
+					$this->linkArr[$r->tlid]['icon'] = $r->icon;
+					$this->linkArr[$r->tlid]['notes'] = $r->notes;
+				}
+				$rs->free();
+				$stmt->close();
 			}
-			$rs->free();
 		}
 	}
 
