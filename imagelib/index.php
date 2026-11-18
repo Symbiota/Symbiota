@@ -1,6 +1,7 @@
 <?php
 include_once(__DIR__ . '/../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/ImageLibraryBrowser.php');
+include_once($SERVER_ROOT . '/classes/ImageLibraryBrowser.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 
 Language::load('imagelib/index');
@@ -14,14 +15,35 @@ $imgManager = new ImageLibraryBrowser();
 $imgManager->setSearchTerm($taxon);
 ?>
 <!DOCTYPE html>
-<html lang="<?php echo $LANG_TAG ?>">
+<html lang="<?= $LANG_TAG ?>">
 <head>
-	<title><?php echo $DEFAULT_TITLE.' '.$LANG['IMG_LIBRARY']; ?></title>
+	<title><?= $DEFAULT_TITLE . ' ' . $LANG['IMG_LIBRARY'] ?></title>
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	include_once($SERVER_ROOT.'/includes/googleanalytics.php');
 	?>
-	<script src="../js/symb/imagelib.search.js?ver=201902" type="text/javascript"></script>
+	<link href="<?= $CSS_BASE_PATH ?>/jquery-ui.min.css" type="text/css" rel="stylesheet">
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/imagelib.search.js?v=1" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			//Auto-complete for taxon search field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxa");
+				});
+			}
+
+		});
+	</script>
 	<style>
 		.sciname-search {
 			float: left;
@@ -36,27 +58,26 @@ $imgManager->setSearchTerm($taxon);
 </head>
 <body>
 	<?php
-	$displayLeftMenu = (isset($imagelib_indexMenu)?$imagelib_indexMenu:false);
 	include($SERVER_ROOT.'/includes/header.php');
 	?>
 	<div class="navpath">
-		<a href="<?php echo htmlspecialchars($CLIENT_ROOT, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?>/index.php"><?php echo $LANG['HOME']; ?></a> &gt;&gt;
-		<b><?php echo $LANG['IMG_LIBRARY']; ?></b>
+		<a href="<?= $CLIENT_ROOT ?>/index.php"><?= $LANG['HOME'] ?></a> &gt;&gt;
+		<b><?= $LANG['IMG_LIBRARY'] ?></b>
 	</div>
 	<!-- This is inner text! -->
 	<div role="main" id="innertext">
-		<h1 class="page-heading"><?php echo $LANG['TAXA_W_IMGS']; ?></h1>
-		<div style="margin:0px 0px 5px 20px;"><?php echo $LANG['TAXA_IMG_EXPLAIN']; ?>
+		<h1 class="page-heading"><?= $LANG['TAXA_W_IMGS'] ?></h1>
+		<div style="margin:0px 0px 5px 20px;"><?= $LANG['TAXA_IMG_EXPLAIN'] ?>
 		</div>
 		<div class="sciname-search">
 			<div>
-				<a href='index.php?target=family'><?php echo htmlspecialchars($LANG['BROWSE_FAMILY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+				<a href='index.php?target=family'><?= $LANG['BROWSE_FAMILY'] ?></a>
 			</div>
 			<div style='margin-top:10px;'>
-				<a href='index.php?target=genus'><?php echo htmlspecialchars($LANG['BROWSE_GENUS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+				<a href='index.php?target=genus'><?= $LANG['BROWSE_GENUS'] ?></a>
 			</div>
 			<div style='margin-top:10px;'>
-				<?php echo $LANG['BROWSE_SPECIES']; ?>
+				<?= $LANG['BROWSE_SPECIES'] ?>
 			</div>
 			<div style='margin:2px 0px 0px 10px;'>
 				<div><a href='index.php?taxon=A'>A</a>|<a href='index.php?taxon=B'>B</a>|<a href='index.php?taxon=C'>C</a>|<a href='index.php?taxon=D'>D</a>|<a href='index.php?taxon=E'>E</a>|<a href='index.php?taxon=F'>F</a>|<a href='index.php?taxon=G'>G</a>|<a href='index.php?taxon=H'>H</a></div>
@@ -70,20 +91,20 @@ $imgManager->setSearchTerm($taxon);
 					<fieldset class="fieldset-like-box">
 						<legend style="font-weight:bold;"><?= $LANG['SCINAME_SEARCH'] ?></legend>
 						<label for="taxon">Taxon: </label>
-						<input type="text" name="taxon" value="<?= $imgManager->cleanOutStr($taxon) ?>" title="<?= $LANG['ENTER_TAXON_NAME'] ?>" placeholder="<?= $LANG['ENTER_TAXON_NAME'] ?>" >
+						<input type="text" id="taxon" name="taxon" value="<?= $imgManager->cleanOutStr($taxon) ?>" title="<?= $LANG['ENTER_TAXON_NAME'] ?>" placeholder="<?= $LANG['ENTER_TAXON_NAME'] ?>" >
 						<button name="submit" value="Search" type="submit"><?= $LANG['SEARCH'] ?></button>
 					</fieldset>
 				</form>
 			</div>
 			<div style="font-weight:bold;margin:15px 10px 0px 20px;">
 				<div>
-					<a href="../includes/usagepolicy.php#images"><?php echo htmlspecialchars($LANG['IMG_CP_POLICY'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+					<a href="../includes/usagepolicy.php#images"><?= $LANG['IMG_CP_POLICY'] ?></a>
 				</div>
 				<div>
-					<a href="contributors.php"><?php echo htmlspecialchars($LANG['IMG_CONTRIBUTORS'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+					<a href="contributors.php"><?= $LANG['IMG_CONTRIBUTORS'] ?></a>
 				</div>
 				<div>
-					<a href="search.php"><?php echo htmlspecialchars($LANG['IMG_SEARCH'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE); ?></a>
+					<a href="search.php"><?= $LANG['IMG_SEARCH'] ?></a>
 				</div>
 			</div>
 		</div>
@@ -95,22 +116,24 @@ $imgManager->setSearchTerm($taxon);
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_GENUS'].'</h2>';
 					foreach($taxaList as $value){
-						echo "<div style='margin-left:30px;'><a href='index.php?taxon=" . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "'>" . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . "</a></div>";
+						echo '<div style="margin-left:30px;"><a href="index.php?taxon=' . Sanitize::outString($value) . '">' . Sanitize::outString($value) . '</a></div>';
 					}
 				}
 				else{
-					echo '<h2>'.$LANG['NO_TAXA_RETURNED'].'</h2>';
+					echo '<h2>' . $LANG['NO_TAXA_RETURNED'] . '</h2>';
 				}
 			}
 			elseif($target == 'species' || $taxon){
 				$taxaList = $imgManager->getSpeciesList();
 				if($taxaList){
-					echo '<h2>'.$LANG['SELECT_SPECIES'].'</h2>';
-					foreach($taxaList as $key => $value){
-						echo '<div style="margin-left:30px;font-style:italic;">';
-						echo '<a href="#" onclick="openTaxonPopup(' . htmlspecialchars($key, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ');return false;">' . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a> ';
-						echo '<a href="search.php?taxa=' . htmlspecialchars($key, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '&usethes=1&taxontype=2&submitaction=search" target="_blank"> <img src="../images/image.png" style="width:1.5em;" /></a> ';
-						echo '</div>';
+					echo '<h2>' . $LANG['SELECT_SPECIES'] . '</h2>';
+					foreach($taxaList as $tid => $taxonName){
+						?>
+						<div style="margin-left:30px;font-style:italic;">
+							<a href="#" onclick="openTaxonPopup(<?= $tid ?>);return false;"><?= Sanitize::outString($taxonName) ?></a>
+							<a href="search.php?taxa=<?= $tid ?>&usethes=1&taxontype=2&submitaction=search" target="_blank"><img src="../images/image.png" style="width:1.5em;" /></a>
+						</div>
+						<?php
 					}
 				}
 				else{
@@ -122,14 +145,14 @@ $imgManager->setSearchTerm($taxon);
 				if($taxaList){
 					echo '<h2>'.$LANG['SELECT_FAMILY'].'.</h2>';
 					foreach($taxaList as $value){
-						echo '<div style="margin-left:30px;"><a href="index.php?target=genus&taxon=' . htmlspecialchars($value, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '">' . htmlspecialchars(strtoupper($value), ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a></div>';
+						echo '<div style="margin-left:30px;"><a href="index.php?target=genus&taxon=' . Sanitize::outString($value) . '">' . Sanitize::outString(strtoupper($value)) . '</a></div>';
 					}
 				}
 				else{
-					echo '<h2>'.$LANG['NO_TAXA_RETURNED'].'</h2>';
+					echo '<h2>' . $LANG['NO_TAXA_RETURNED'] . '</h2>';
 				}
 			}
-	?>
+		?>
 	</div>
 	<?php
 	include($SERVER_ROOT.'/includes/footer.php');
