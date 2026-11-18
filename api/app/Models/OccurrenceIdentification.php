@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class OccurrenceIdentification extends Model{
 
 	protected $table = 'omoccurdeterminations';
-	protected $primaryKey = 'occid';
+	protected $primaryKey = 'detid';
 	public $timestamps = false;
 
 	protected $fillable = [];
