@@ -250,7 +250,7 @@ $creatorArray = Media::getCreatorArray(false);
 							<td style="vertical-align: middle">
 								<?php
 									$audioUrl = $origUrl;
-									if(array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
+									if(substr($audioUrl, 0, 4) != 'http' && array_key_exists('MEDIA_DOMAIN', $GLOBALS)){
 										$audioUrl = $GLOBALS['MEDIA_DOMAIN'] . $audioUrl;
 									}
 								?>
