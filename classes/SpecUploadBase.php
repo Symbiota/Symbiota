@@ -1870,7 +1870,6 @@ class SpecUploadBase extends SpecUpload{
 
 		$this->outputMsg('<li style="margin-left:10px;">Populating recordID UUIDs for all records... </li>');
 		$guidManager = new GuidManager();
-		$guidManager->setSilent(1);
 		$guidManager->populateGuids($this->collId);
 
 		if($this->imageTransferCount){

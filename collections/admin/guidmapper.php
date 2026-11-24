@@ -1,7 +1,8 @@
 <?php
 include_once('../../config/symbini.php');
-include_once($SERVER_ROOT.'/classes/GuidManager.php');
+include_once($SERVER_ROOT . '/classes/GuidManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('collections/admin/guidmapper');
 
@@ -10,7 +11,7 @@ ini_set('max_execution_time', 3600);
 
 if(!$SYMB_UID) header('Location: ../../profile/index.php?refurl=../collections/admin/guidmapper.php?'.htmlspecialchars($_SERVER['QUERY_STRING'], ENT_QUOTES));
 
-$collid = array_key_exists('collid', $_REQUEST) ? filter_var($_REQUEST['collid'], FILTER_SANITIZE_NUMBER_INT) : 0;
+$collid = array_key_exists('collid', $_REQUEST) ? Sanitize::int($_REQUEST['collid']) : 0;
 $action = array_key_exists('formsubmit', $_POST) ? $_POST['formsubmit'] : '';
 
 $isEditor = 0;
@@ -20,6 +21,7 @@ if($IS_ADMIN || array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid,
 
 $guidManager = new GuidManager();
 $guidManager->setCollid($collid);
+$guidManager->setVerboseMode(2);
 ?>
 <!DOCTYPE html>
 <html lang="<?= $LANG_TAG ?>">
@@ -59,8 +61,7 @@ $guidManager->setCollid($collid);
     </script>
 </head>
 <body>
-	<?php
-$displayLeftMenu = (isset($admin_guidmapperMenu)?$admin_guidmapperMenu:"true");
+<?php
 include($SERVER_ROOT.'/includes/header.php');
 ?>
 <div class="navpath">
@@ -93,12 +94,12 @@ include($SERVER_ROOT.'/includes/header.php');
 		?>
 		<div style="font-weight:bold;"><?= $LANG['REC_WO_GUIDS']; ?></div>
 		<div style="margin:10px;">
-			<div><?= '<b>' . $LANG['OCCS'] . ': </b>' . $occCnt; ?></div>
+			<div><?= '<b>' . $LANG['OCCS'] . ': </b>' . number_format($occCnt) ?></div>
 			<?php
 			$extArr = $guidManager->getExtensionCounts();
 			foreach($extArr as $extName => $extCnt){
 				?>
-				<div><?= '<b>' . $LANG[strtoupper($extName)] . ': </b>' . $extCnt; ?></div>
+				<div><?= '<b>' . $LANG[strtoupper($extName)] . ': </b>' . number_format($extCnt) ?></div>
 				<?php
 			}
 			?>

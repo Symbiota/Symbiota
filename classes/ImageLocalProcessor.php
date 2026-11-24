@@ -1638,7 +1638,6 @@ class ImageLocalProcessor {
 
 			$this->logOrEcho('Populating recordID UUIDs for all records...');
 			$guidManager = new GuidManager($this->conn);
-			$guidManager->setSilent(1);
 			$guidManager->populateGuids();
 			$guidManager->__destruct();
 			$this->logOrEcho('Stats update completed');

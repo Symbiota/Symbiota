@@ -359,7 +359,6 @@ class ImageProcessor {
 
 				$this->logOrEcho('Generating recordID GUID for all new records...');
 				$guidManager = new GuidManager();
-				$guidManager->setSilent(1);
 				$guidManager->populateGuids($this->collid);
 			}
 			unlink($fullPath);
@@ -577,7 +576,6 @@ class ImageProcessor {
 
 		$this->logOrEcho('Populating recordID UUIDs for all records...',2);
 		$guidManager = new GuidManager($this->conn);
-		$guidManager->setSilent(1);
 		$guidManager->populateGuids();
 		$guidManager->__destruct();
 	}
