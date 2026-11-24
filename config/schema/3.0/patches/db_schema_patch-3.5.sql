@@ -120,4 +120,12 @@ CREATE DEFINER=`root`@`localhost` TRIGGER `omoccurrences_update`
 
 DELIMITER ;
 
+# Fix issue that was creating a duplicate entry for dropdown list of relationship types (default list)
 
+UPDATE ctcontrolvocabterm
+SET inverserelationship = "analyticalStandardOf"
+WHERE inverserelationship = "analyticalStandardof";
+
+UPDATE omoccurassociations
+SET relationship = "analyticalStandardOf"
+WHERE relationship = "analyticalStandardof";
