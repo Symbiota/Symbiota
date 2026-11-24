@@ -1,7 +1,6 @@
 <?php
-Language::load(['profile/adminmenu']);
-
 if($IS_ADMIN){
+	Language::load(['profile/adminmenu']);
 	?>
 	<ul>
 		<li>
