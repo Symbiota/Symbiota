@@ -6,6 +6,11 @@ Language: Français (French)
 */
 
 $LANG['DETAILS'] = 'Détails du Profil';
+$LANG['SELECT_FROM_LIST'] = "Vous devez sélectionner un taxon dans la liste";
+$LANG['PWD_NO_SPACE'] = "Le mot de passe ne peut pas commencer ni se terminer par un espace, mais il peut en contenir à l'intérieur";
+$LANG['PWD_TOO_SHORT'] = 'Le mot de passe doit comporter au moins 10 caractères';
+$LANG['PWD_DONT_MATCH'] = 'Les mots de passe ne correspondent pas';
+$LANG['PWD_UNALLOWED_CHRS'] = 'Le nom de connexion ne doit contenir que les caractères 0-9A-Za-z_.!@ (les espaces ne sont pas autorisés)';
 $LANG['EDIT_PROFILE'] = 'Modifier Profil';
 $LANG['CHANGE_PASSWORD'] = 'Changer Mot de Passe';
 $LANG['CHANGE_LOGIN'] = 'Modifier Informations de Connexion';

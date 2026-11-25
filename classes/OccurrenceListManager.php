@@ -28,8 +28,6 @@ class OccurrenceListManager extends OccurrenceManager{
 
 		if(!$this->recordCount || $this->reset) $this->setRecordCnt($sqlWhere);
 
-		$sqlWhere .= $this->getGeoJsonBoundingBoxWhere();
-
 		$sql = "";
 		if (array_key_exists("earlyInterval",$this->searchTermArr) || array_key_exists("lateInterval",$this->searchTermArr)) {
 			$sql .= "WITH searchRange AS (SELECT COALESCE((SELECT myaStart FROM omoccurpaleogts WHERE gtsterm = '"  . ($this->searchTermArr["earlyInterval"] ?? '') . "'), 5000) AS searchStart,";
@@ -42,7 +40,7 @@ class OccurrenceListManager extends OccurrenceManager{
 		if (!empty($GLOBALS['ACTIVATE_PALEO']) && $sqlWhere)
 			$sql .= ', paleo.formation, paleo.earlyInterval, paleo.lateInterval ';
 		$sql .= 'FROM omoccurrences o INNER JOIN omcollections c ON o.collid = c.collid ';
-		$sql .= $this->getTableJoins($sqlWhere).$sqlWhere;
+		$sql .= $this->getTableJoins($sqlWhere, true) . $sqlWhere;
 		//Don't allow someone to query all occurrences if there are no conditions
 		if(!$sqlWhere) $sql .= 'WHERE o.occid IS NULL ';
 		if($this->sortArr){

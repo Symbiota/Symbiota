@@ -7,6 +7,7 @@ class SchemaManager extends Manager{
 	private $database;
 	private $port;
 	private $username;
+	private $dbpassword;
 	private $versionHistory = array();
 	private $currentVersion;
 	private $targetSchema;
@@ -16,8 +17,9 @@ class SchemaManager extends Manager{
 	private $amendmentPath;
 	private $amendmentFH = false;
 
-	public function __construct(){
+	public function __construct($cli = false){
 		//parent::__construct();
+		$this->cliOutput = $cli;
 	}
 
 	public function __destruct(){
@@ -126,6 +128,7 @@ class SchemaManager extends Manager{
 									$this->logOrEcho('Success!', 1);
 								}
 								else{
+									$this->logOrEcho($this->conn->error, 2);
 									$this->logOrEcho($sql, 1);
 								}
 							}
@@ -192,8 +195,10 @@ class SchemaManager extends Manager{
 						//Reset for next statement
 						unset($this->warningArr);
 						$this->warningArr = array();
-						flush();
-						ob_flush();
+						if (!$this->cliOutput){
+							flush();
+							ob_flush();
+						}
 					}
 					$this->logOrEcho('Finished: schema applied');
 					$logUrl = str_replace($GLOBALS['SERVER_ROOT'], $GLOBALS['CLIENT_ROOT'], $this->logPath);
@@ -439,13 +444,12 @@ class SchemaManager extends Manager{
 
 	//Misc support functions
 	private function setDatabaseConnection(){
-		if(!$this->host || !$this->username || !$this->database || !$this->port || !isset($_POST['password']) || !$_POST['password']){
+		if(!$this->host || !$this->username || !$this->database || !$this->port || !$this->dbpassword){
 			$this->logOrEcho('One or more connection variables not set');
 			return false;
 		}
-		$password = $_POST['password'];
 		try{
-			$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
+			$this->conn = new mysqli($this->host, $this->username, $this->dbpassword, $this->database, $this->port);
 			if($this->conn->connect_error){
 				$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
 				return false;
@@ -455,15 +459,52 @@ class SchemaManager extends Manager{
 			$this->logOrEcho('Connection error: ' . $this->conn->connect_error);
 			return false;
 		}
+		if(!$this->checkPermissions()){
+			$this->logOrEcho('Error: Login has insignificant permissions - missing: ' . implode(', ', $this->warningArr));
+			$this->conn = null;
+			return false;
+		}
 		return true;
+	}
+
+	private function checkPermissions(){
+		$status = 0;
+		$requiredPerms = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'EXECUTE', 'ALTER', 'CREATE', 'DROP', 'EVENT', 'TRIGGER');
+		$sql = 'SHOW GRANTS FOR CURRENT_USER';
+		if($rs = $this->conn->query($sql)){
+			while($r = $rs->fetch_assoc()){
+				$perm = current($r);
+				if(strpos($perm, 'ON *.* TO') || strpos($perm, 'ON `' . $this->database . '`.* TO')){
+					if(strpos($perm, 'GRANT ALL PRIVILEGES') !== false){
+						unset($requiredPerms);
+						$requiredPerms = false;
+					}
+					else{
+						foreach($requiredPerms as $k => $permTest){
+							if(strpos($perm, $permTest)){
+								unset($requiredPerms[$k]);
+							}
+						}
+					}
+					if($requiredPerms){
+						$this->warningArr = $requiredPerms;
+					}
+					else{
+						$status = true;
+						break;
+					}
+				}
+			}
+			$rs->free();
+		}
+		return $status;
 	}
 
 	//Misc data retrival functions
 	public function getVersionHistory(){
 		$this->conn = MySQLiConnectionFactory::getCon('readonly');
-		if(!$this->conn && isset($_POST['password']) && $_POST['password']){
-			$password = $_POST['password'];
-			$this->conn = new mysqli($this->host, $this->username, $password, $this->database, $this->port);
+		if(!$this->conn){
+			$this->conn = new mysqli($this->host, $this->username, $this->dbpassword, $this->database, $this->port);
 		}
 		if(!$this->conn){
 			$this->errorMessage = 'ERROR_NO_CONNECTION';
@@ -501,6 +542,10 @@ class SchemaManager extends Manager{
 
 	public function setUsername($u){
 		$this->username = $u;
+	}
+
+	public function setDBPassword($p){
+		$this->dbpassword = $p;
 	}
 
 	public function getCurrentVersion(){

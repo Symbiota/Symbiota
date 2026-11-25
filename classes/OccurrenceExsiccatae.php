@@ -1,18 +1,16 @@
 <?php
-include_once($SERVER_ROOT . '/config/dbconnection.php');
+include_once($SERVER_ROOT . '/classes/Manager.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
-class OccurrenceExsiccatae {
-
-	private $conn;
+class OccurrenceExsiccatae extends Manager{
 
 	function __construct($type = 'readonly') {
-		$this->conn = MySQLiConnectionFactory::getCon($type);
+		parent::__construct(null, $type);
 	}
 
 	function __destruct(){
- 		if(!($this->conn === false)) $this->conn->close();
+		parent::__destruct();
 	}
 
 	public function getTitleObj($ometid){
@@ -63,7 +61,7 @@ class OccurrenceExsiccatae {
 			$sql .= 'FROM omexsiccatititles et ';
 		}
 		if($searchTerm){
-			$searchTerm = Sanitize::inString($searchTerm);
+			$searchTerm = $this->cleanInStr($searchTerm);
 			$sqlWhere .= ($sqlWhere?'AND ':'WHERE ').'et.title LIKE "%'.$searchTerm.'%" OR et.abbreviation LIKE "%'.$searchTerm.'%" OR et.editor LIKE "%'.$searchTerm.'%" ';
 		}
 		$sql .= $sqlWhere.'ORDER BY '.($sortBy?"IFNULL(et.abbreviation,et.title)":"et.title").', et.startdate';
@@ -221,7 +219,7 @@ class OccurrenceExsiccatae {
 			}
 		}
 		if($searchTerm){
-			$searchTerm = Sanitize::inString($searchTerm);
+			$searchTerm = $this->cleanInStr($searchTerm);
 			$sqlWhere .= 'AND (et.title LIKE "%'.$searchTerm.'%" OR et.abbreviation LIKE "%'.$searchTerm.'%" OR et.editor LIKE "%'.$searchTerm.'%") ';
 		}
 		$sql = 'SELECT '.implode(',',$fieldArr).' FROM omexsiccatititles et '.$sqlInsert;
@@ -251,15 +249,15 @@ class OccurrenceExsiccatae {
 	public function addTitle($pArr,$editedBy){
 		$statusStr = '';
 		$sql = 'INSERT INTO omexsiccatititles(title, abbreviation, editor, exsrange, startdate, enddate, source, sourceIdentifier, notes,lasteditedby) '.
-			'VALUES("'.Sanitize::inString($pArr['title']).'",'.
-			($pArr['abbreviation']?'"'.Sanitize::inString($pArr['abbreviation']).'"':'NULL').','.
-			($pArr['editor']?'"'.Sanitize::inString($pArr['editor']).'"':'NULL').','.
-			($pArr['exsrange']?'"'.Sanitize::inString($pArr['exsrange']).'"':'NULL').','.
-			($pArr['startdate']?'"'.Sanitize::inString($pArr['startdate']).'"':'NULL').','.
-			($pArr['enddate']?'"'.Sanitize::inString($pArr['enddate']).'"':'NULL').','.
-			($pArr['source']?'"'.Sanitize::inString($pArr['source']).'"':'NULL').','.
-			($pArr['sourceidentifier']?'"'.Sanitize::inString($pArr['sourceidentifier']).'"':'NULL').','.
-			($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').',"'.
+			'VALUES("'.$this->cleanInStr($pArr['title']).'",'.
+			($pArr['abbreviation']?'"'.$this->cleanInStr($pArr['abbreviation']).'"':'NULL').','.
+			($pArr['editor']?'"'.$this->cleanInStr($pArr['editor']).'"':'NULL').','.
+			($pArr['exsrange']?'"'.$this->cleanInStr($pArr['exsrange']).'"':'NULL').','.
+			($pArr['startdate']?'"'.$this->cleanInStr($pArr['startdate']).'"':'NULL').','.
+			($pArr['enddate']?'"'.$this->cleanInStr($pArr['enddate']).'"':'NULL').','.
+			($pArr['source']?'"'.$this->cleanInStr($pArr['source']).'"':'NULL').','.
+			($pArr['sourceidentifier']?'"'.$this->cleanInStr($pArr['sourceidentifier']).'"':'NULL').','.
+			($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').',"'.
 			$editedBy.'")';
 		//echo $sql;
 		if(!$this->conn->query($sql)){
@@ -271,15 +269,15 @@ class OccurrenceExsiccatae {
 	public function editTitle($pArr,$editedBy){
 		$statusStr = '';
 		$sql = 'UPDATE omexsiccatititles '.
-			'SET title = "'.Sanitize::inString($pArr['title']).'"'.
-			', abbreviation = '.($pArr['abbreviation']?'"'.Sanitize::inString($pArr['abbreviation']).'"':'NULL').
-			', editor = '.($pArr['editor']?'"'.Sanitize::inString($pArr['editor']).'"':'NULL').
-			', exsrange = '.($pArr['exsrange']?'"'.Sanitize::inString($pArr['exsrange']).'"':'NULL').
-			', startdate = '.($pArr['startdate']?'"'.Sanitize::inString($pArr['startdate']).'"':'NULL').
-			', enddate = '.($pArr['enddate']?'"'.Sanitize::inString($pArr['enddate']).'"':'NULL').
-			', source = '.($pArr['source']?'"'.Sanitize::inString($pArr['source']).'"':'NULL').
-			', sourceIdentifier = '.($pArr['sourceidentifier']?'"'.Sanitize::inString($pArr['sourceidentifier']).'"':'NULL').
-			', notes = '.($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').' '.
+			'SET title = "'.$this->cleanInStr($pArr['title']).'"'.
+			', abbreviation = '.($pArr['abbreviation']?'"'.$this->cleanInStr($pArr['abbreviation']).'"':'NULL').
+			', editor = '.($pArr['editor']?'"'.$this->cleanInStr($pArr['editor']).'"':'NULL').
+			', exsrange = '.($pArr['exsrange']?'"'.$this->cleanInStr($pArr['exsrange']).'"':'NULL').
+			', startdate = '.($pArr['startdate']?'"'.$this->cleanInStr($pArr['startdate']).'"':'NULL').
+			', enddate = '.($pArr['enddate']?'"'.$this->cleanInStr($pArr['enddate']).'"':'NULL').
+			', source = '.($pArr['source']?'"'.$this->cleanInStr($pArr['source']).'"':'NULL').
+			', sourceIdentifier = '.($pArr['sourceidentifier']?'"'.$this->cleanInStr($pArr['sourceidentifier']).'"':'NULL').
+			', notes = '.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').' '.
 			', lasteditedby = "'.$editedBy.'" '.
 			'WHERE (ometid = '.$pArr['ometid'].')';
 		//echo $sql;
@@ -338,7 +336,7 @@ class OccurrenceExsiccatae {
 		$statusStr = '';
 		if(is_numeric($pArr['ometid'])){
 			$sql = 'INSERT INTO omexsiccatinumbers(ometid,exsnumber,notes) '.
-				'VALUES('.$pArr['ometid'].',"'.Sanitize::inString($pArr['exsnumber']).'",'.($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').')';
+				'VALUES('.$pArr['ometid'].',"'.$this->cleanInStr($pArr['exsnumber']).'",'.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR adding exsiccati number: '.$this->conn->error;
 			}
@@ -350,8 +348,8 @@ class OccurrenceExsiccatae {
 		$statusStr = '';
 		if(is_numeric($pArr['omenid'])){
 			$sql = 'UPDATE omexsiccatinumbers '.
-				'SET exsnumber = "'.Sanitize::inString($pArr['exsnumber']).'",'.
-				'notes = '.($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').' '.
+				'SET exsnumber = "'.$this->cleanInStr($pArr['exsnumber']).'",'.
+				'notes = '.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').' '.
 				'WHERE (omenid = '.$pArr['omenid'].')';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR editing exsiccati number: '.$this->conn->error;
@@ -413,7 +411,7 @@ class OccurrenceExsiccatae {
 			if($collId == 'occid' && $identifier && is_numeric($identifier)){
 				//occid being supplied within identifier field (catalog number field)
 				$sql = 'INSERT INTO omexsiccatiocclink(omenid,occid,ranking,notes) '.
-					'VALUES ('.$pArr['omenid'].','.$identifier.','.$ranking.','.($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').')';
+					'VALUES ('.$pArr['omenid'].','.$identifier.','.$ranking.','.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
 				if(!$this->conn->query($sql)){
 					$retStr = 'ERROR linking occurrence to exsiccati number, SQL: '.$sql;
 				}
@@ -434,7 +432,7 @@ class OccurrenceExsiccatae {
 				$cnt = 0;
 				while($r = $rs->fetch_object()){
 					$sql = 'INSERT INTO omexsiccatiocclink(omenid,occid,ranking,notes) '.
-						'VALUES('.$pArr['omenid'].', '.$r->occid.', '.$ranking.','.($pArr['notes']?'"'.Sanitize::inString($pArr['notes']).'"':'NULL').')';
+						'VALUES('.$pArr['omenid'].', '.$r->occid.', '.$ranking.','.($pArr['notes']?'"'.$this->cleanInStr($pArr['notes']).'"':'NULL').')';
 					if($this->conn->query($sql)){
 						$cnt++;
 					}
@@ -462,7 +460,7 @@ class OccurrenceExsiccatae {
 		$statusStr = '';
 		if(is_numeric($pArr['omenid']) && is_numeric($pArr['occid']) && is_numeric($pArr['ranking'])){
 			$sql = 'UPDATE omexsiccatiocclink '.
-				'SET ranking = '.$pArr['ranking'].', notes = "'.Sanitize::inString($pArr['notes']).'" '.
+				'SET ranking = '.$pArr['ranking'].', notes = "'.$this->cleanInStr($pArr['notes']).'" '.
 				'WHERE (omenid = '.$pArr['omenid'].') AND (occid = '.$pArr['occid'].')';
 			if(!$this->conn->query($sql)){
 				$statusStr = 'ERROR editing occurrence link: '.$this->conn->error;
@@ -487,14 +485,14 @@ class OccurrenceExsiccatae {
 		if(is_numeric($omenid) && is_numeric($targetOmetid) && $targetExsNumber){
 			//Lookup omenid
 			$targetOmenid = 0;
-			$sql = 'SELECT omenid FROM omexsiccatinumbers WHERE ometid = '.$targetOmetid.' AND exsnumber = "'.Sanitize::inString($targetExsNumber).'"';
+			$sql = 'SELECT omenid FROM omexsiccatinumbers WHERE ometid = '.$targetOmetid.' AND exsnumber = "'.$this->cleanInStr($targetExsNumber).'"';
 			$rs = $this->conn->query($sql);
 			if($r = $rs->fetch_object()){
 				$targetOmenid = $r->omenid;
 			}
 			else{
 				//Create new omexsiccatinumber record and the transfer
-				$sql1 = 'INSERT INTO omexsiccatinumbers(ometid, exsnumber) VALUES('.$targetOmetid.',"'.Sanitize::inString($targetExsNumber).'") ';
+				$sql1 = 'INSERT INTO omexsiccatinumbers(ometid, exsnumber) VALUES('.$targetOmetid.',"'.$this->cleanInStr($targetExsNumber).'") ';
 				if($this->conn->query($sql1)){
 					$targetOmenid = $this->conn->insert_id;
 				}
@@ -525,7 +523,7 @@ class OccurrenceExsiccatae {
 			$datasetId = '';
 			if(array_key_exists('dataset',$postArr) && $postArr['dataset']){
 				//Create new dataset to link all new records
-				$datasetName = Sanitize::inString($postArr['dataset']);
+				$datasetName = $this->cleanInStr($postArr['dataset']);
 				$sqlDs = 'INSERT INTO omoccurdatasets(datasetName, name, uid) VALUES("' . $datasetName . '","' . $datasetName . '",' . $GLOBALS['SYMB_UID'] . ') ';
 				if($this->conn->query($sqlDs)){
 					$datasetId = $this->conn->insert_id;
@@ -542,7 +540,7 @@ class OccurrenceExsiccatae {
 				'SELECT '.implode(',',$targetFieldArr).',';
 			foreach($occidArr as $occid){
 				if(is_numeric($occid)){
-					$catNum = Sanitize::inString($postArr['cat-'.$occid]);
+					$catNum = $this->cleanInStr($postArr['cat-'.$occid]);
 					$sql1 = $sqlBase.$targetCollid.', "'.$catNum.'", "'.date('Y-m-d H:i:s').'" AS dateEntered FROM omoccurrences WHERE occid = '.$occid;
 					if($this->conn->query($sql1)){
 						$transferCnt++;
@@ -644,7 +642,7 @@ class OccurrenceExsiccatae {
 	//AJAX function used in exsiccati suggest associated with editor
 	public function getExsiccatiSuggest($term){
 		$retArr = Array();
-		$queryString = Sanitize::inString($term);
+		$queryString = $this->cleanInStr($term);
 		$sql = 'SELECT DISTINCT ometid, title, abbreviation, exsrange FROM omexsiccatititles '.
 			'WHERE title LIKE "%'.$queryString.'%" OR abbreviation LIKE "%'.$queryString.'%" ORDER BY title';
 		$rs = $this->conn->query($sql);
@@ -660,7 +658,7 @@ class OccurrenceExsiccatae {
 
 	public function getExsAbbrevSuggest($term){
 		$retArr = Array();
-		$queryString = Sanitize::inString($term);
+		$queryString = $this->cleanInStr($term);
 		$sql = 'SELECT DISTINCT ometid, abbreviation, exsrange FROM omexsiccatititles WHERE abbreviation LIKE "%'.$queryString.'%" ORDER BY title';
 		$rs = $this->conn->query($sql);
 		$cnt = 0;

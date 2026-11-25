@@ -25,6 +25,7 @@ class DwcArchiverCore extends Manager{
 	protected $conditionArr = array();
 	private $applyConditionLimit = false;
 	private $observerUid = 0;				//If set, this is a backup event of personally managed specimens
+	private $remotePubDetails = null;
 
 	private $targetPath;
 	protected $serverDomain;
@@ -36,7 +37,7 @@ class DwcArchiverCore extends Manager{
 	private $delimiter = ',';
 	private $fileExt = '.csv';
 	private $occurrenceFieldArr = array();
-	private $extensionFieldMap = array();
+	protected $extensionFieldMap = array();
 	private $isPublicDownload = false;
 	private $publicationGuid;
 	private $requestPortalGuid;
@@ -858,19 +859,6 @@ class DwcArchiverCore extends Manager{
 			}
 		}
 		return true;
-	}
-
-	private function clearStagingTable(){
-		$status = false;
-		if($this->exportID){
-			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
-			if($stmt = $this->conn->prepare($sql)){
-				$stmt->bind_param('i', $this->exportID);
-				if($stmt->execute()) $status = true;
-				$stmt->close();
-			}
-		}
-		return $status;
 	}
 
 	//Generate DwC support files
@@ -1735,17 +1723,22 @@ class DwcArchiverCore extends Manager{
 		$uid = $GLOBALS['SYMB_UID'];
 		$tagName = 'UID-' . $uid;
 		if(!$uid){
-			$uid = null;
-			$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			if(preg_match('/uid:\s(\d+)/', $this->remotePubDetails, $m)){
+				$uid = $m[1];
+			}
+			else{
+				$uid = null;
+				$tagName = $_SERVER['REMOTE_ADDR'] . '-' . time();
+			}
 		}
 		$tagName .= '-' . time();
 		$queryTerms = $this->conditionSql;
 		$fileUrl = $this->dwcaOutputUrl;
 		$domainName = $this->serverDomain;
 		$ipAddress = $_SERVER['REMOTE_ADDR'];
-		$sql = 'INSERT INTO omexport(uid, category, tagName, queryTerms, fileUrl, portalDomain, expiration, ipAddress) VALUES(?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), ?)';
+		$sql = 'INSERT INTO omexport(uid, category, tagName, queryTerms, fileUrl, portalDomain, expiration, ipAddress, notes) VALUES(?, ?, ?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), ?, ?)';
 		if($stmt = $this->conn->prepare($sql)){
-			$stmt->bind_param('issssss', $uid, $this->schemaType, $tagName, $queryTerms, $fileUrl, $domainName, $ipAddress);
+			$stmt->bind_param('isssssss', $uid, $this->schemaType, $tagName, $queryTerms, $fileUrl, $domainName, $ipAddress, $this->remotePubDetails);
 			try{
 				if($stmt->execute()){
 					if($stmt->affected_rows || !$stmt->error){
@@ -1766,6 +1759,7 @@ class DwcArchiverCore extends Manager{
 
 	private function insertExportOccurrenceRecords(){
 		$status = false;
+		$this->updateExportStatus('inProcess');
 		$sql = 'INSERT IGNORE INTO omexportoccurrences(omExportID, occid, collid, taxonID, family, scientificNameAuthorship, occurrenceRemarks, recordSecurity) ';
 		if (strpos($this->conditionSql,"early.myaStart"))
 			$sql .= $this->paleoWithSql;
@@ -1860,6 +1854,35 @@ class DwcArchiverCore extends Manager{
 				elseif($stmt->error){
 					$this->errorMessage = $stmt->error;
 				}
+				$stmt->close();
+			}
+		}
+		return $status;
+	}
+
+	private function clearStagingTable(){
+		$status = false;
+		if($this->exportID){
+			$sql = 'DELETE FROM omexportoccurrences WHERE omExportID = ? OR initialTimestamp < DATE_SUB(NOW(), INTERVAL 3 HOUR)';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->exportID);
+				if($stmt->execute()) $status = true;
+				$stmt->close();
+			}
+			$this->updateExportStatus('completed');
+		}
+		return $status;
+	}
+
+	private function updateExportStatus($statusValue){
+		$status = false;
+		$allowedValues = array('queued', 'inProcess', 'completed', 'failed');
+		if(!in_array($statusValue, $allowedValues)) return false;
+		if($this->exportID){
+			$sql = 'UPDATE omexport SET status = ? WHERE omExportID = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('si', $statusValue, $this->exportID);
+				if($stmt->execute()) $status = true;
 				$stmt->close();
 			}
 		}
@@ -1980,6 +2003,7 @@ class DwcArchiverCore extends Manager{
 			$this->logOrEcho('Creating ResourceRelationship extension file (' . date('h:i:s A') . ')...', 1);
 			$associationHandler = new DwcArchiverResourceRelationship($this->conn);
 			$associationHandler->setSchemaType($this->schemaType);
+			$associationHandler->setServerPath($this->serverDomain . $GLOBALS['CLIENT_ROOT']);
 			$associationHandler->initiateProcess($targetFile);
 			$recordCnt = $associationHandler->writeOutData($this->exportID);
 			if($recordCnt){
@@ -2172,33 +2196,41 @@ class DwcArchiverCore extends Manager{
 
 	public function hasAssociations($collid = false){
 		$bool = false;
-		$sql = 'SELECT occid FROM omoccurassociations LIMIT 1';
-		if(is_numeric($collid)){
-			$sql = "(SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ?) UNION (SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ?) LIMIT 1;";
+		$sqlArr = array();
+		if($collid){
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurassociations a ON o.occid = a.occidAssociate WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omexsiccatiocclink e ON o.occid = e.occid WHERE o.collid = ? LIMIT 1';
+			$sqlArr[] = 'SELECT o.occid FROM omoccurrences o INNER JOIN omoccurduplicatelink d ON o.occid = d.occid WHERE o.collid = ? LIMIT 1';
 		}
-		$stmt = $this->conn->stmt_init();
-		if (!$stmt->prepare($sql)) {
-			throw new Exception("SQL Error: " . $stmt->error);
+		else{
+			$sqlArr[] = 'SELECT occid FROM omoccurassociations LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omexsiccatiocclink LIMIT 1';
+			$sqlArr[] = 'SELECT occid FROM omoccurduplicatelink LIMIT 1';
 		}
-		if (is_numeric($collid)) {
-			$stmt->bind_param('ii',$collid,$collid);
+		while($sql = array_shift($sqlArr)){
+			if($stmt = $this->conn->prepare($sql)){
+				if($collid) $stmt->bind_param('i', $collid);
+				$stmt->execute();
+				$stmt->store_result();
+				if($stmt->num_rows){
+					$bool = true;
+					break;
+				}
+				$stmt->close();
+			}
 		}
-		$stmt->execute();
-		$result = $stmt->get_result();
-		if ($result && $result->num_rows > 0) {
-			$bool = true;
-		}
-		$result->free();
-		$stmt->close();
-
 		return $bool;
 	}
 
-	public function isAuthorized(){
+	public function isAuthorized($source){
+		$this->remotePubDetails = 'source: ' . $source;
+
 		if($_SERVER['SERVER_NAME'] == 'localhost'){
 			//Is a dev environment
 			//Note: Under Apache 2, UseCanonicalName = On and ServerName must be set.
 			//Otherwise, this value reflects the hostname supplied by the client, which can be spoofed. It is not safe to rely on this value in security-dependent contexts.
+			$this->remotePubDetails .= ', SERVER_NAME: localhost';
 			return true;
 		}
 
@@ -2211,27 +2243,30 @@ class DwcArchiverCore extends Manager{
 		//error_log('Access to dwcapubhandler - refererIpPrefix: ' . $refererIpPrefix . '; serverIP: ' . $_SERVER['SERVER_ADDR']);
 		if(!empty($_SERVER['SERVER_ADDR']) && $refererIpPrefix){
 			if(strpos($_SERVER['SERVER_ADDR'], $refererIpPrefix) === 0){
+				$this->remotePubDetails .= ', status: within network';
 				return true;
 			}
 		}
 
 		//Check if referer is registered within portal index
-		if(empty($_SERVER['HTTP_REFERER'])){
-			error_log('Unauthorized access to dwcapubhandler: NULL HTTP_REFERER');
-			return false;
-		}
-		$refererUrl = $_SERVER['HTTP_REFERER'];
-		$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
-		$portalIndex = $this->getPortalIndex();
-		foreach($portalIndex as $indexDomain){
-			$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
-			if($refererDomain == $indexDomain) return true;
+		if(!empty($_SERVER['HTTP_REFERER'])){
+			$refererUrl = $_SERVER['HTTP_REFERER'];
+			$refererDomain = str_replace('www.', '', parse_url($refererUrl, PHP_URL_HOST));
+			$portalIndex = $this->getPortalIndex();
+			foreach($portalIndex as $indexDomain){
+				$indexDomain = str_replace('www.', '', parse_url($indexDomain, PHP_URL_HOST));
+				if($refererDomain == $indexDomain){
+					$this->remotePubDetails .= ', referer: ' . $refererUrl;
+					return true;
+				}
+			}
 		}
 
 		//Check to see if user is logged in or user token is included
 		if($GLOBALS['SYMB_UID']) return true;
 		if(!empty($_REQUEST['token'])){
-			if($this->validateUserToken($_REQUEST['token'])){
+			if($uid = $this->validateUserToken($_REQUEST['token'])){
+				$this->remotePubDetails .= ', uid: ' . $uid;
 				return true;
 			}
 			else{
@@ -2260,17 +2295,16 @@ class DwcArchiverCore extends Manager{
 	}
 
 	private function validateUserToken($userToken){
-		$authorized = false;
-		$userToken = $_REQUEST['token'];
-		$sql = 'SELECT tokenID FROM useraccesstokens WHERE token = ?';
+		$uid = 0;
+		$sql = 'SELECT uid FROM useraccesstokens WHERE token = ?';
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param('s', $userToken);
-			$stmt->execute;
-			$stmt->store_result();
-			if($stmt->num_rows) $authorized = true;
+			$stmt->execute();
+			$stmt->bind_result($uid);
+			$stmt->fetch();
 			$stmt->close();
 		}
-		return $authorized;
+		return $uid;
 	}
 
 	//setters and getters
@@ -2416,6 +2450,11 @@ class DwcArchiverCore extends Manager{
 
 	public function getDwcaOutputUrl(){
 		return $this->dwcaOutputUrl;
+	}
+
+	public function getTargetPath(){
+		if(!$this->targetPath) $this->setTargetPath();
+		return $this->targetPath;
 	}
 
 	//Output cleaning functions

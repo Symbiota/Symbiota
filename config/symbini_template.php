@@ -32,10 +32,20 @@ $CSS_BASE_PATH = $CLIENT_ROOT . '/css';
 $PUBLIC_MEDIA_UPLOAD_ROOT = '/content/imglib';
 
 //the root for the collection image directory
-$MEDIA_DOMAIN = '';				//Domain path to images, if different from portal
-$MEDIA_ROOT_URL = '';			//URL path to images
+$MEDIA_DOMAIN = '';				//Domain path to images, if different from portal. Ex. 'https://media01.symbiota.org/media/'
+$MEDIA_ROOT_URL = '';			//URL path to images (This value is prepended to local image path when storing new media record)
 $MEDIA_ROOT_PATH = '';			//Writable path to images, especially needed for downloading images
 
+$STORAGE_DRIVER = 'local'; // Can be either 'local' or 's3'. s3 option requires 'Aws\S3\S3Client' composer lib installed
+
+// Variables for s3 storage
+$S3_MEDIA_BUCKET_NAME = ''; // Note if you are migrating to s3 from local then the bucket name should be the first part in your path.
+$S3_REGION = '';
+$S3_PUBLIC_ENDPOINT = ''; // Endpoint for showing assets to public. This could differ from the s3 endpoint depending on how things are setup.
+$S3_ENDPOINT = ''; // Endpoint to the s3 instance. This is seperated from the public access end point as it may be an internal ip or apart of container network.
+$S3_ACCESS_KEY_ID = ''; // S3 Credential ID
+$S3_SECRET_ACCESS_KEY = ''; // S3 Credential Password
+$S3_MEDIA_PATH = ''; // This can be blank. If you are supporting multiple portals with one s3 instance Recommendation is to split them into seperate buckets instead of at the path level in order to isolate the systems.
 
 //Pixel width of web images
 $IMG_WEB_WIDTH = 1400;
@@ -94,6 +104,8 @@ $ACTIVATE_PALEO = 0; 				//Activates Paleo management (e.g. Geological Context f
 $IGSN_ACTIVATION = 0;
 $WIKIPEDIA_TAXON_TAB = 1;			//Activates wikipedia tab on taxon profile page (wikiMedia API)
 $OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT = 0;	//0 = Login required for downloading occurrence data (default), 1 = occurrence data download allowed without being logged in
+$TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR = 1;
+$TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM = 1;
 
 $SEARCHABLE_CHARACTERS = '';			//List of characters that can be searched from the public search, separated by commas, e.g. '1,6'
 
@@ -125,6 +137,24 @@ $DATE_DEFAULT_TIMEZONE = NULL; // This should be set if server default timezone 
 
 $PRIVATE_VIEWING_ONLY = false; // Setting to true sets all content to be password protected besides below pages
 $PRIVATE_VIEWING_OVERRIDES = ['/index.php', '/misc/contacts.php','/misc/aboutproject.php', '/profile/newprofile.php', '/profile/index.php'];  //These pages will always be accessible to public viewing.  Add to as needed.
+$ENABLE_GLOBAL_CAPTCHA = false; // require all requests to have a session with a set CAPTCHA verification.
+$CAPTCHA_VIEWING_OVERRIDES = [
+  '/index.php',
+  '/api*',
+  '/includes/usagepolicy.php',
+  '/sitemap.php',
+  '/checklists*',
+  '/games*',
+  '/ident*',
+  '/collections/datasets*',
+  '/collections/exsiccati*',
+  '/collections/individual*',
+  '/collections/misc*',
+  '/content/dwca*',
+  '/projects*',
+  '/taxa*',
+  '/webservices/dwc/dwcapubhandler.php'
+];  //These pages will always be accessible without CAPTCHA verification
 
 // Creates Togglable Overlay for GeoJSON file
 // Only Support with Leaflet Map

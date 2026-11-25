@@ -26,7 +26,7 @@ $LANG['PREV_REC'] = 'Enregistrement précédent';
 $LANG['NEXT_REC'] = 'Enregistrement suivant';
 $LANG['LAST_REC'] = 'Dernier enregistrement';
 $LANG['NEW_REC'] = 'Nouvel enregistrement';
-$LANG['OCCEDITOR'] = 'Éditeur d\'occurrences';
+$LANG['OCCEDITOR'] = "Éditeur d'occurrences";
 $LANG['SEARCH_FILTER'] = 'Activer/Désactiver Formulaire de Recherche';
 $LANG['EDITOR'] = 'Éditeur';
 $LANG['CENTRAL_CROWD'] = 'Crowdsourcing Central';
@@ -76,6 +76,8 @@ $LANG['LOC_AND_TAX_SECURITY'] = 'Localité & Sécurité Taxonomique';
 $LANG['FULL_SECURITY'] = 'Sécurité Totale';
 $LANG['SECURITY_SETTINGS'] = 'Paramètres de Sécurité';
 $LANG['SECURITY_NOT_APPLIED'] = 'Security not applied';
+$LANG['LOCALITY_SECURITY_APPLIED'] = 'Sécurité locale appliquée';
+$LANG['FULL_SECURITY_APPLIED'] = 'Sécurité complète appliquée';
 $LANG['SECURITY_APPLIED'] = 'Security applied';
 $LANG['LOCK_SEC_SETTING'] = 'Verrouiller Paramètre de Sécurité';
 $LANG['EXPLAIN_SEC_STATUS'] = 'La saisie de n\'importe quel texte verrouillera l\'état de sécurité activé ou désactivé; laisser vide pour accepter l\'état de sécurité par défaut';
@@ -200,5 +202,7 @@ $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERREUR - Archivage des informations sur l
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERREUR – Création d\'une archive';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERREUR – Échec de la suppression de l\'occurrence source';
 $LANG['OPENS_NEW_TAB'] = ' (s\'ouvre dans un nouvel onglet)';
+$LANG['DELETE_VALUE'] = 'Supprimer la paire valeur d\'identifiant et nom de balise';
+$LANG['ADD_VALUE'] = 'Ajouter une paire valeur d\'identifiant et nom de balise';
 
 ?>

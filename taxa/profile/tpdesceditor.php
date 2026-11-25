@@ -45,8 +45,8 @@ if($isEditor){
 			<fieldset>
 				<legend><?= $LANG['NEW_DESC_BLOCK'] ?></legend>
 				<div>
-					<?= $LANG['LANGUAGE'] ?>:
-					<select name="langid">
+					<label for="langid"><?= $LANG['LANGUAGE'] ?>:</label>
+					<select id=langid" name="langid">
 						<option value=""><?= $LANG['SEL_LANGUAGE'] ?></option>
 						<?php
 						foreach($langArr as $langID => $langName){
@@ -56,19 +56,19 @@ if($isEditor){
 					</select>
 				</div>
 				<div>
-					<?= $LANG['CAPTION'] ?>: <input id='caption' name='caption' style='width:300px;' type='text' />
+					<label for="caption"><?= $LANG['CAPTION'] ?>:</label> <input id='caption' name='caption' style='width:300px;' type='text' />
 				</div>
 				<div>
-					<?= $LANG['SOURCE'] ?>: <input id='source' name='source' style='width:450px;' type='text' />
+					<label for="source"><?= $LANG['SOURCE'] ?>:</label> <input id='source' name='source' style='width:450px;' type='text' />
 				</div>
 				<div>
-					<?= $LANG['SOURCE_URL'] ?>: <input id='sourceurl' name='sourceurl' style='width:450px;' type='text' />
+					<label for="sourceurl"><?= $LANG['SOURCE_URL'] ?>:</label> <input id='sourceurl' name='sourceurl' style='width:450px;' type='text' />
 				</div>
 				<div>
-					<?= $LANG['NOTES'] ?>: <input id='notes' name='notes' style='width:450px;' type='text' />
+					<label for="notes"><?= $LANG['NOTES'] ?>:</label> <input id='notes' name='notes' style='width:450px;' type='text' />
 				</div>
 				<div>
-					<?= $LANG['SORT_SEQUENCE'] ?>: <input name='displaylevel' style='width:40px;' type='text' />
+					<label for="displaylevel"><?= $LANG['SORT_SEQUENCE'] ?>:</label> <input id="displaylevel" name='displaylevel' style='width:40px;' type='text' />
 				</div>
 				<div>
 					<button name='action' style='margin-top:5px;' type='submit' value='Add Description Block' ><?= $LANG['ADD_DESC_BLOCK'] ?></buton>
@@ -111,8 +111,8 @@ if($isEditor){
 								<legend><?= $LANG['DESC_BLOCK_EDITS'] ?></legend>
 								<form id='updatedescrblock' name='updatedescrblock' action="tpeditor.php" method="post">
 									<div>
-									<?= $LANG['LANGUAGE'] ?>:
-										<select name="langid">
+									<label for="langid-<?php echo $tdbid;?>"><?= $LANG['LANGUAGE'] ?>:</label>
+										<select id="langid-<?php echo $tdbid;?>" name="langid">
 											<option value=""><?= $LANG['SEL_LANGUAGE'] ?></option>
 											<?php
 											foreach($langArr as $langID => $langName){
@@ -122,24 +122,24 @@ if($isEditor){
 										</select>
 									</div>
 									<div>
-										<?= $LANG['CAPTION'] ?>:
-										<input id='caption' name='caption' style='width:450px;' type='text' value='<?php echo $dArr["caption"];?>' />
+										<label for="caption-<?php echo $tdbid;?>"><?= $LANG['CAPTION'] ?>:</label>
+										<input id='caption-<?php echo $tdbid;?>' name='caption' style='width:450px;' type='text' value='<?php echo $dArr["caption"];?>' />
 									</div>
 									<div>
-										<?= $LANG['SOURCE'] ?>:
-										<input id='source' name='source' style='width:450px;' type='text' value='<?php echo $dArr["source"];?>' />
+										<label for="source-<?php echo $tdbid;?>"><?= $LANG['SOURCE'] ?>:</label>
+										<input id='source-<?php echo $tdbid;?>' name='source' style='width:450px;' type='text' value='<?php echo $dArr["source"];?>' />
 									</div>
 									<div>
-										<?= $LANG['SOURCE_URL'] ?>:
-										<input id='sourceurl' name='sourceurl' style='width:500px;' type='text' value='<?php echo $dArr["sourceurl"];?>' />
+										<label for="sourceurl-<?php echo $tdbid;?>"><?= $LANG['SOURCE_URL'] ?>:</label>
+										<input id='sourceurl-<?php echo $tdbid;?>' name='sourceurl' style='width:500px;' type='text' value='<?php echo $dArr["sourceurl"];?>' />
 									</div>
 									<div>
-										<?= $LANG['NOTES'] ?>:
-										<input name='notes' style='width:450px;' type='text' value='<?php echo $dArr["notes"];?>' />
+										<label for="notes-<?php echo $tdbid;?>"><?= $LANG['NOTES'] ?>:</label>
+										<input id='notes-<?php echo $tdbid;?>' name='notes' style='width:450px;' type='text' value='<?php echo $dArr["notes"];?>' />
 									</div>
 									<div>
-										<?= $LANG['DISPLAY_LEVEL'] ?>:
-										<input name='displaylevel' style='width:40px;' type='text' value='<?php echo $dArr['displaylevel'];?>' />
+										<label for="displaylevel-<?php echo $tdbid;?>"><?= $LANG['DISPLAY_LEVEL'] ?>:</label>
+										<input id='displaylevel-<?php echo $tdbid;?>' name='displaylevel' style='width:40px;' type='text' value='<?php echo $dArr['displaylevel'];?>' />
 									</div>
 									<div style="margin:10px;">
 										<input name="tdProfileID" type="hidden" value="<?php echo $dArr['tdProfileID'];?>" />
@@ -171,15 +171,15 @@ if($isEditor){
 										<fieldset style='margin:5px 0px 0px 15px;'>
 											<legend><?= $LANG['NEW_DESC_STATMENT'] ?></legend>
 											<div style='margin:3px;'>
-												<?= $LANG['HEADING'] ?>: <input name='heading' style='margin-top:5px;' type='text' />&nbsp;&nbsp;&nbsp;&nbsp;
+												<label for="add_heading-<?php echo $tdbid;?>"><?= $LANG['HEADING'] ?>:</label> <input id='add_heading-<?php echo $tdbid;?>' name='heading' style='margin-top:5px;' type='text' />&nbsp;&nbsp;&nbsp;&nbsp;
 												<input name='displayheader' type='checkbox' value='1' CHECKED /> Display Heading
 											</div>
 											<div style='margin:3px;'>
 												<textarea name='statement'></textarea>
 											</div>
 											<div style='margin:3px;'>
-												<?= $LANG['SORT_SEQUENCE'] ?>:
-												<input name='sortsequence' style='margin-top:5px;width:40px;' type='text' value='' />
+												<label for="add_sortsequence-<?php echo $tdbid;?>"><?= $LANG['SORT_SEQUENCE'] ?>:</label>
+												<input id='add_sortsequence-<?php echo $tdbid;?>' name='sortsequence' style='margin-top:5px;width:40px;' type='text' value='' />
 											</div>
 											<div style="margin:10px;">
 												<input type='hidden' name='tid' value='<?php echo $descEditor->getTid();?>' />
@@ -206,15 +206,15 @@ if($isEditor){
 											<div style='margin:5px 0px 5px 20px;border:2px solid cyan;padding:5px;'>
 												<form id='updatedescr' name='updatedescr' action="tpeditor.php" method="post">
 													<div>
-														<b><?= $LANG['HEADING'] ?>:</b> <input name='heading' style='margin:3px;' type='text' value='<?php echo $stmtArr["heading"];?>' />
+														<label for="heading-<?php echo $tdsid;?>"><b><?= $LANG['HEADING'] ?>:</b></label> <input id="heading-<?php echo $tdsid;?>" name='heading' style='margin:3px;' type='text' value='<?php echo $stmtArr["heading"];?>' />
 														<input name='displayheader' type='checkbox' value='1' <?php echo ($stmtArr["displayheader"]?"CHECKED":"");?> /> <?= $LANG['DISPLAY_HEADER'] ?>
 													</div>
 													<div>
 														<textarea name='statement'  style="width:99%;height:200px;margin:3px;"><?php echo $stmtArr["statement"];?></textarea>
 													</div>
 													<div>
-														<b><?= $LANG['SORT_SEQUENCE'] ?>:</b>
-														<input name='sortsequence' style='width:40px;' type='text' value='<?php echo $stmtArr["sortsequence"];?>' />
+														<label for="sortsequence-<?php echo $tdsid;?>"><b><?= $LANG['SORT_SEQUENCE'] ?>:</b></label>
+														<input id="sortsequence-<?php echo $tdsid;?>" name='sortsequence' style='width:40px;' type='text' value='<?php echo $stmtArr["sortsequence"];?>' />
 													</div>
 													<div style="margin:10px;">
 														<input name="tdsid" type="hidden" value="<?php echo $tdsid;?>" />

@@ -26,7 +26,7 @@ $LANG['GLOBAL_BOUNDS'] = 'Limites mondiales';
 
 $LANG['PREVIEW_MAP'] = 'Aperçu de la carte';
 $LANG['TYPE_TAXON'] = 'Nom du taxon';
-$LANG['SEPARATE_MULTIPLE'] = 'Separate multiple terms w/ commas';
+$LANG['SEPARATE_MULTIPLE'] = 'Separate multiple terms with commas';
 
 $LANG['TID'] = 'Tid';
 $LANG['TAXON'] = 'Taxón';

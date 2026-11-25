@@ -17,7 +17,6 @@ $LANG['SEL_BACKUP'] = 'Select Backup File to Restore';
 $LANG['RESTORE_DETS'] = 'Restore Determination History';
 $LANG['RESTORE_MEDIA_LINKS'] = 'Restore Media/Image Links';
 $LANG['ANALYZE'] = 'Analyze File';
-$LANG['MANUAL'] = 'Manual File Upload Option';
 $LANG['WARNINGS'] = 'Warnings exist';
 $LANG['LIVE_DANGEROUSLY'] = 'If you think the warnings are in error, contact your portal administrator';
 $LANG['FATAL_ERROR'] = 'FATAL ERROR';

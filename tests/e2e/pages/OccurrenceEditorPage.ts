@@ -41,11 +41,12 @@ export abstract class OccurrenceEditorPage {
 	abstract gotoNew(collId: number): Promise<void>;
 	abstract gotoRecord(collId: number, occId: number): Promise<void>;
 	abstract gotoImageSubmit(collId: number): Promise<void>;
+	abstract gotoObservationImageSubmit(collId: number): Promise<void>;
 	abstract gotoSkeletalSubmit(collId: number): Promise<void>;
 	abstract gotoTab(newTab: OccurrenceEditorTab): Promise<void>;
 	abstract getSkeletalOccid(): Promise<number>;
 	abstract getSkeletalImageOccid(): Promise<number>;
-
+	abstract getObservationImageOccid(): Promise<number>;
 
 	abstract swapToMediaEnterUrl(): Promise<void>;
 
@@ -66,6 +67,10 @@ export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
 
 	async gotoImageSubmit(collId: number) {
 		await this.page.goto(`/collections/editor/imageoccursubmit.php?collid=${collId}`);
+	}
+
+	async gotoObservationImageSubmit(collId: number) {
+		await this.page.goto(`/collections/editor/observationsubmit.php?collid=${collId}`);
 	}
 
 	async gotoSkeletalSubmit(collId: number) {
@@ -90,6 +95,25 @@ export class SymbOccurrenceEditorPage extends OccurrenceEditorPage {
 	async getSkeletalImageOccid() {
 		const newRecordLink = this.page.locator('a[href*="occurrenceeditor.php"]');
 		return parseInt(await newRecordLink.innerText());
+	}
+
+	async getObservationImageOccid() {
+		await expect(this.page.getByText('Occurrence Details Viewer')).toBeVisible();
+		const newRecordLink = this.page.locator('a[href*="individual/index.php"]');
+		const href = await newRecordLink.getAttribute('href');
+		const search_parts = href?.split('?')?.[0]?.split('&');
+
+		let id = 0;
+		if(search_parts) {
+			search_parts.forEach(element => {
+				const param_parts = element.split('=');
+				if(param_parts && param_parts.length > 1 && param_parts[0] === 'occid') {
+					id = parseInt(param_parts[1]);
+				}
+			});
+		}
+
+		return id;
 	}
 
 	async swapToMediaEnterUrl() {

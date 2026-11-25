@@ -106,12 +106,18 @@ if($isEditor){
 		$person = $pHandler->getPerson();
 		$tabIndex = 2;
 	}
-	elseif($action == 'Add Taxonomic Relationship'){
-		$statusStr = $pHandler->addUserTaxonomy($_POST['taxon'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes']);
-		$person = $pHandler->getPerson();
-		$tabIndex = 2;
+	elseif($action == 'addTaxonomicRelationship'){
+		if($pHandler->addUserTaxonomy($_POST['tid'], $_POST['editorstatus'], $_POST['geographicscope'], $_POST['notes'])){
+			$statusStr = $LANG['SUCCESS_ADDING_TAXON_INTEREST'];
+			$person = $pHandler->getPerson();
+			$tabIndex = 2;
+		}
+		else{
+			$statusStr = $LANG['ERROR_ADDING_TAXON_INTEREST'] . ': ' . $pHandler->getErrorMessage();
+		}
 	}
 
+	if($tabIndex == 2 && $IS_ADMIN) $tabIndex = 3;
 	if(!$person) $person = $pHandler->getPerson();
 }
 ?>
@@ -123,12 +129,20 @@ if($isEditor){
 	<?php
 	include_once($SERVER_ROOT.'/includes/head.php');
 	?>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/jquery-ui.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
-		var tabIndex = <?= $tabIndex; ?>;
+
+		$(document).ready(function() {
+			$('#tabs').tabs({
+				active: <?= $tabIndex ?>,
+				beforeLoad: function( event, ui ) {
+					$(ui.panel).html("<p>Loading...</p>");
+				}
+			});
+		});
+
 	</script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
-	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script type="text/javascript" src="../js/symb/profile.viewprofile.js?ver=2"></script>
 	<script type="text/javascript" src="../js/symb/shared.js"></script>
 	<style>
 		fieldset{ padding:15px;margin:15px; }
@@ -164,18 +178,20 @@ if($isEditor){
 					}
 					if($IS_ADMIN){
 						?>
-						<li><a href="adminmenu.php"><?= $LANG['ADMIN'] ?></a></li>
+						<li><a href="#admin-menu"><?= $LANG['ADMIN'] ?></a></li>
 						<?php
 					}
 					?>
 					<li><a href="userprofile.php?userid=<?= $userId; ?>"><?= $LANG['USER_PROFILE'] ?></a></li>
-					<?php
-					if($person->getIsTaxonomyEditor()) {
-						echo '<li><a href="specimenstoid.php?userid=' . $userId . '&action=' . Sanitize::outString($action) . '">' . $LANG['IDS_NEEDED'] . '</a></li>';
-						echo '<li><a href="imagesforid.php">' . $LANG['IMAGES_ID'] . '</a></li>';
-					}
-					?>
 				</ul>
+				<div id="admin-menu">
+					<section class="fieldset-like">
+					<h2><span class="subheader"><?= $LANG['ADMIN_MENU']; ?></span></h2>
+					<?php
+					include('adminmenu.php');
+					?>
+					</section>
+				</div>
 			</div>
 			<?php
 		}

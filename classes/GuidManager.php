@@ -4,8 +4,10 @@ include_once($SERVER_ROOT . '/classes/utilities/UuidFactory.php');
 
 class GuidManager {
 
-	private $silent = 0;
+	private $silent = false;
 	private $conn;
+	private $collid = 0;
+	private $extensionArr = array();
 	private $destructConn = true;
 
 	public function __construct($con = null){
@@ -17,6 +19,14 @@ class GuidManager {
 		else{
 			$this->conn = MySQLiConnectionFactory::getCon("write");
 		}
+		$this->extensionArr = array();
+		$this->extensionArr['determination']['table'] = 'omoccurdeterminations';
+		$this->extensionArr['determination']['pk'] = 'detid';
+		$this->extensionArr['media']['table'] = 'media';
+		$this->extensionArr['media']['pk'] = 'mediaID';
+		$this->extensionArr['association']['table'] = 'omoccurassociations';
+		$this->extensionArr['association']['pk'] = 'assocID';
+
 	}
 
 	public function __destruct(){
@@ -26,7 +36,7 @@ class GuidManager {
 		}
 	}
 
-	public function populateGuids($collId = 0){
+	public function populateGuids(){
 		set_time_limit(1000);
 
 		$this->echoStr("Starting batch GUID processing (".date('Y-m-d h:i:s A').")\n");
@@ -52,7 +62,7 @@ class GuidManager {
 		//Populate occurrence GUIDs
 		$this->echoStr("Populating occurrence GUIDs\n");
 		$sql = 'SELECT occid FROM omoccurrences WHERE recordID IS NULL ';
-		if($collId) $sql .= 'AND collid = '.$collId;
+		if($this->collid) $sql .= 'AND collid = '.$this->collid;
 		$rs = $this->conn->query($sql);
 		$recCnt = 0;
 		if($rs->num_rows){
@@ -69,52 +79,39 @@ class GuidManager {
 		}
 		$this->echoStr("Finished: $recCnt occurrence records processed\n");
 
-		//Populate determination GUIDs
-		$this->echoStr("Populating determination GUIDs\n");
-		$sql = 'SELECT d.detid FROM omoccurdeterminations d ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON d.occid = o.occid ';
-		$sql .= 'WHERE d.recordID IS NULL ';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
-		$rs = $this->conn->query($sql);
-		$recCnt = 0;
-		if($rs->num_rows){
-			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
-				$insSql = 'UPDATE omoccurdeterminations SET recordID = "'.$guid.'" WHERE (recordID IS NULL) AND (detid = '.$r->detid.')';
-				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: det guids '.$this->conn->error);
-				}
-				$recCnt++;
-				if($recCnt%1000 === 0) $this->echoStr($recCnt.' records processed');
-			}
-			$rs->free();
-		}
-		$this->echoStr("Finished: $recCnt determination records processed\n");
-
-		//Populate image GUIDs
-		$this->echoStr("Populating image GUIDs\n");
-		$sql = 'SELECT m.mediaID FROM media m ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
-		$sql .= 'WHERE m.recordID IS NULL ';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
-		$rs = $this->conn->query($sql);
-		$recCnt = 0;
-		if($rs->num_rows){
-			while($r = $rs->fetch_object()){
-				$guid = UuidFactory::getUuidV4();
-				$insSql = 'UPDATE media SET recordID = "'.$guid.'" WHERE (recordID IS NULL) AND (mediaID = ' . $r->mediaID .')';
-				if(!$this->conn->query($insSql)){
-					$this->echoStr('ERROR: image guids; '.$this->conn->error);
-				}
-				$recCnt++;
-				if($recCnt%1000 === 0) $this->echoStr($recCnt.' records processed');
-			}
-			$rs->free();
-		}
-		$this->echoStr("Finished: $recCnt image records processed\n");
+		$this->populateExtensionGuids($this->collid);
 
 		$this->echoStr("GUID batch processing complete (".date('Y-m-d h:i:s A').")\n");
 	}
+
+	private function populateExtensionGuids(){
+		foreach($this->extensionArr as $name => $unitArr){
+			$this->echoStr('Populating ' . $name . ' GUIDs');
+			$sql = 'SELECT e.' . $unitArr['pk'] . ' as pk FROM ' . $unitArr['table'] . ' e WHERE e.recordID IS NULL';
+			if($this->collid){
+				$sql = 'SELECT e.' . $unitArr['pk'] . ' as pk FROM ' . $unitArr['table'] . ' e INNER JOIN omoccurrences o ON e.occid = o.occid WHERE e.recordID IS NULL AND o.collid = ?';
+			}
+			if($stmt = $this->conn->prepare($sql)){
+				if($this->collid) $stmt->bind_param('i', $this->collid);
+				$stmt->execute();
+				$stmt->store_result();
+				$stmt->bind_result($pk);
+				$recCnt = 0;
+				while($stmt->fetch()){
+					$guid = UuidFactory::getUuidV4();
+					$insSql = 'UPDATE ' . $unitArr['table'] . ' SET recordID = "' . $guid . '" WHERE (recordID IS NULL) AND (' . $unitArr['pk'] . ' = ' . $pk . ')';
+					if(!$this->conn->query($insSql)){
+						$this->echoStr('ERROR assigning ' . $name . ' guids: ' . $this->conn->error);
+					}
+					$recCnt++;
+					if($recCnt%1000 === 0) $this->echoStr($recCnt.' records processed');
+				}
+				$stmt->close();
+			}
+			$this->echoStr('Finished: ' . $recCnt . ' ' . $name . ' records processed');
+		}
+	}
+
 
 	public function getCollectionCount(){
 		$retCnt = 0;
@@ -127,10 +124,10 @@ class GuidManager {
 		return $retCnt;
 	}
 
-	public function getOccurrenceCount($collId = 0){
+	public function getOccurrenceCount(){
 		$retCnt = 0;
 		$sql = 'SELECT COUNT(occid) as reccnt FROM omoccurrences WHERE recordID IS NULL ';
-		if($collId) $sql .= 'AND collid = '.$collId;
+		if($this->collid) $sql .= 'AND collid = ' . $this->collid;
 		$rs = $this->conn->query($sql);
 		while($r = $rs->fetch_object()){
 			$retCnt = $r->reccnt;
@@ -139,53 +136,57 @@ class GuidManager {
 		return $retCnt;
 	}
 
-	public function getDeterminationCount($collId = 0){
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(d.detid) as reccnt FROM omoccurdeterminations d ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON d.occid = o.occid ';
-		$sql .= 'WHERE d.recordID IS NULL ';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retCnt = $r->reccnt;
+	public function getExtensionCounts(){
+		$retArr = array();
+		foreach($this->extensionArr as $name => $unitArr){
+			$sql = 'SELECT COUNT(e.' . $unitArr['pk'] . ') as reccnt FROM ' . $unitArr['table'] . ' e WHERE e.recordID IS NULL';
+			if($this->collid){
+				$sql = 'SELECT COUNT(e.' . $unitArr['pk'] . ') as reccnt FROM ' . $unitArr['table'] . ' e INNER JOIN omoccurrences o ON e.occid = o.occid WHERE e.recordID IS NULL AND o.collid = ?';
+			}
+			if($stmt = $this->conn->prepare($sql)){
+				$cnt = 0;
+				if($this->collid) $stmt->bind_param('i', $this->collid);
+				$stmt->execute();
+				$stmt->bind_result($cnt);
+				if($stmt->fetch()){
+					$retArr[$name] = $cnt;
+				}
+				$stmt->close();
+			}
 		}
-		$rs->free();
-		return $retCnt;
+		return $retArr;
 	}
 
-	public function getImageCount($collId = 0){
-		$retCnt = 0;
-		$sql = 'SELECT COUNT(m.mediaID) as reccnt FROM media m ';
-		if($collId) $sql .= 'INNER JOIN omoccurrences o ON m.occid = o.occid ';
-		$sql .= 'WHERE m.recordID IS NULL and m.mediaType = "image"';
-		if($collId) $sql .= 'AND o.collid = '.$collId;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retCnt = $r->reccnt;
-		}
-		$rs->free();
-		return $retCnt;
-	}
-
-	public function getCollectionName($collId){
+	//Data functions
+	public function getCollectionName(){
 		$retStr = '';
-		$sql = 'SELECT CONCAT(collectionname," (",CONCAT_WS("-",institutioncode,collectioncode),")") as collname FROM omcollections WHERE collid = '.$collId;
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retStr = $r->collname;
+		if($this->collid){
+			$sql = 'SELECT CONCAT(collectionname," (",CONCAT_WS("-",institutioncode,collectioncode),")") as collname FROM omcollections WHERE collid = ?';
+			if($stmt = $this->conn->prepare($sql)){
+				$stmt->bind_param('i', $this->collid);
+				$stmt->execute();
+				$stmt->bind_result($retStr);
+				$stmt->fetch();
+				$stmt->close();
+			}
 		}
-		$rs->free();
 		return $retStr;
 	}
 
-	public function setSilent($c){
-		$this->silent = $c;
+	//setters and getters
+	public function setCollid($c){
+		if(is_numeric($c)) $this->collid = $c;
+	}
+
+	public function setSilent($bool){
+		if($bool) $this->silent = true;
 	}
 
 	public function getSilent(){
 		return $this->silent;
 	}
 
+	//misc functions
 	private function echoStr($str){
 		if(!$this->silent){
 			echo '<li>'.$str.'</li>';

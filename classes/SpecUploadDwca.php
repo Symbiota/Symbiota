@@ -25,9 +25,6 @@ class SpecUploadDwca extends SpecUploadBase{
 
 	public function uploadFile(){
 		$retPath = '';
-		if(array_key_exists('ulfnoverride',$_POST) && $_POST['ulfnoverride'] && !$this->path){
-			$this->path = $_POST['ulfnoverride'];
-		}
 		if($this->path){
 			if($this->uploadType == $this->IPTUPLOAD){
 				$this->path = preg_replace('/&v=[\d\.]+/', '', $this->path);

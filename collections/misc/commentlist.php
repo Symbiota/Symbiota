@@ -216,7 +216,7 @@ if($isEditor){
 						echo '<div style="margin:15px;">';
 						echo '<div style="margin-bottom:10px;"><a href="../individual/index.php?occid=' . $cArr['occid'] . '" target="_blank" rel="noopener"><b>' . strip_tags($cArr['occurstr']) . '</b></a></div>';
 						echo '<div>';
-						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:gray;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
+						echo '<b>'.$userArr[$cArr['uid']].'</b> <span style="color:#525252;">'.$LANG['POSTED_ON'].' '.$cArr['ts'].'</span>';
 						if($cArr['rs'] == 2 || $cArr['rs'] === '0'){
 							echo '<span style="margin-left:20px;"><b>'.$LANG['STATUS'].':</b> </span><span style="color:red;" title="'.$LANG['VIEW_BY_ADMIN'].')">'.$LANG['NOT_PUBLIC'].'</span>';
 						}

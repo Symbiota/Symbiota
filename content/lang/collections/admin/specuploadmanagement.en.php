@@ -56,4 +56,5 @@ $LANG['DEL_PROFILE'] = 'Delete this Profile';
 $LANG['DEL_PR'] = 'Delete Profile';
 $LANG['ERROR_AUTH'] = 'ERROR: you are not authorized to upload to this collection';
 $LANG['IMG_EDIT'] = 'Edit Image';
+$LANG['INIT_UPLOAD'] = 'Initialize Upload...';
 ?>

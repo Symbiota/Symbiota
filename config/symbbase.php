@@ -57,18 +57,57 @@ $USERNAME = (array_key_exists('un',$PARAMS_ARR)?$PARAMS_ARR['un']:0);
 $SYMB_UID = (array_key_exists('uid',$PARAMS_ARR)?$PARAMS_ARR['uid']:0);
 $IS_ADMIN = (array_key_exists('SuperAdmin',$USER_RIGHTS)?1:0);
 
+function matchPath(array $pathhaystack, string $path): bool {
+
+    foreach ($pathhaystack as $possiblematch) {
+        // Treat paths containing glob characters as patterns.
+        if (strpbrk($possiblematch, '*?[') !== false) {
+            if (fnmatch($possiblematch, $path)) {
+                return true;
+            }
+        } elseif ($possiblematch === $path) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 $PORTAL_PRIVATE = $PRIVATE_VIEWING_ONLY ?? false;
 if (!$SYMB_UID && $PORTAL_PRIVATE){
 	$PRIVATE_VIEWING_OVERRIDES = $PRIVATE_VIEWING_OVERRIDES ?? [];
-	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/newprofile.php', '/profile/index.php']];
+	$public_pages = [...$PRIVATE_VIEWING_OVERRIDES, ...['/profile/*']];
 	if(!empty($CLIENT_ROOT)){
 		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
 	}
 	else $requested_url = $_SERVER['PHP_SELF'];
-	if (!in_array($requested_url, $public_pages)){
+	if (!matchPath($public_pages, $requested_url)){
 		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? urlencode( '?' . $_SERVER['QUERY_STRING']) : '');
 		header('Location: ' . $CLIENT_ROOT . '/profile/index.php?refurl=' . $referringUrl);
+		exit;
+	}
+}
+
+//Global CAPTCHA verification
+$GLOBAL_CAPTCHA = $ENABLE_GLOBAL_CAPTCHA ?? false;
+if (!$SYMB_UID && $GLOBAL_CAPTCHA){
+	$CAPTCHA_VIEWING_OVERRIDES = $CAPTCHA_VIEWING_OVERRIDES ?? [];
+	$captchafree_pages = [...$CAPTCHA_VIEWING_OVERRIDES, ...['/profile/*','/security/human.php', '/rpc/captcha.php/*', '/rpc/captcha/*']];
+	if(!empty($CLIENT_ROOT)){
+		$requested_url = explode($CLIENT_ROOT, $_SERVER['PHP_SELF'])[1];
+	}
+	else $requested_url = $_SERVER['PHP_SELF'];
+	if (matchPath($captchafree_pages, $requested_url)){
+		// This page is permitted.  Do nothing and continue
+	}
+	else if (empty($_SESSION['captchaverified'])) {
+		// Redirect user to CAPTCHA validation
+		//http_response_code(403);
+		//exit('CAPTCHA verification required.');
+		$referringUrl =  $_SERVER['PHP_SELF'] . (!empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '');
+		$_SESSION['captcha_return_url'] = $referringUrl;
+		header('Location: ' . $CLIENT_ROOT . '/profile/index.php');
+		exit;
 	}
 }
 

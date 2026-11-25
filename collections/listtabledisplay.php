@@ -2,6 +2,7 @@
 include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceListManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('collections/listtabledisplay');
 
@@ -52,9 +53,7 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 	</style>
 </head>
 <body style="margin-left: 0px; margin-right: 0px;background-color:white;">
-	<div id="all_collections_parent_container" data-config='<?= json_encode([
-		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
-	]) ?>'></div>
+	<div id="all_collections_parent_container" data-config='<?= json_encode(['CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI'])]) ?>'></div>
 	<div id="service-container" data-search-var="<?= $searchVar; ?>"></div>
 	<div>
 		<div style="width:65rem;">
@@ -253,10 +252,10 @@ $searchVar .= '&comingFrom=' . $comingFrom;
 								<td><?= $occArr['collector']; ?></td>
 								<td><?= (array_key_exists('collnum',$occArr) ? $occArr['collnum'] : ''); ?></td>
 								<td><?= (array_key_exists('date',$occArr) ? $occArr['date'] : ''); ?></td>
-								<td><?= $occArr['eventtime']; ?></td>
-								<td><?= $occArr['country']; ?></td>
-								<td><?= $occArr['state']; ?></td>
-								<td><?= $occArr['county']; ?></td>
+								<td><?= (array_key_exists('eventtime',$occArr) ? $occArr['eventtime'] : ''); ?></td>
+								<td><?= (array_key_exists('country',$occArr) ? $occArr['country'] : ''); ?></td>
+								<td><?= (array_key_exists('state',$occArr) ? $occArr['state'] : ''); ?></td>
+								<td><?= (array_key_exists('county',$occArr) ? $occArr['county'] : ''); ?></td>
 								<td>
 								<?php
 								$locStr = preg_replace('/<div.*?>.*?<\/div>/', '', $occArr['locality']);

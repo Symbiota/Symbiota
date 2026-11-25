@@ -18,6 +18,8 @@ $LANG['TOKENS_ERROR'] = 'ERROR clearing access tokens';
 $LANG['DELETE_FAILED'] = 'Profile deletion failed!';
 $LANG['DATA_CONFLICT'] = 'User ID required within other tables (e.g. foreign key constraint).';
 $LANG['CONTACT_ADMIN'] = 'Please contact the system administrator';
+$LANG['SUCCESS_ADDING_TAXON_INTEREST'] = 'SUCCESS adding taxonomic relationship';
+$LANG['ERROR_ADDING_TAXON_INTEREST'] = 'ERROR adding taxonomic relationship';
 $LANG['HOME'] = 'Home';
 $LANG['MY_PROFILE'] = 'My Profile';
 $LANG['VIEW_PROFILE'] = 'View User Profile';
@@ -27,16 +29,6 @@ $LANG['OCC_MGMNT'] = 'Occurrence Management';
 $LANG['USER_PROFILE'] = 'User Profile';
 $LANG['IDS_NEEDED'] = 'IDs Needed';
 $LANG['IMAGES_ID'] = 'Images for ID';
+$LANG['ADMIN_MENU'] = 'Administrative Functions (Super Admins only)';
 
-//Admin menu
-$LANG['ADMIN_MENU'] = 'Super Administrator Menu';
-$LANG['USER_PERMISSIONS'] = 'User Permissions';
-$LANG['CREATE_NEW_COLLECTION'] = 'Create a New Collection or Observation Profile';
-$LANG['GEO_THESAURUS'] = 'Geographic Thesaurus';
-$LANG['THUMBNAIL_BUILDER'] = 'Thumbnail Builder Tool';
-$LANG['GUID_MAPPER'] = 'GUID Mapper';
-$LANG['SALIX'] = 'SALIX WordStat Manager';
-$LANG['GLOSSARY'] = 'Glossary';
-$LANG['MANAGE_TAXON_MAP_THUMBNAIL'] = 'Manage Taxon Profile Map Thumbnails';
-$LANG['OTHER_CAT_TRANSFER'] = 'Other Catalog Number Transfer Tool';
 ?>

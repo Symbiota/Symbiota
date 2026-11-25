@@ -19,7 +19,6 @@ $LANG['SEL_BACKUP'] = 'Sélectionnez le fichier de sauvegarde à restaurer';
 $LANG['RESTORE_DETS'] = "Restaurer l'historique des déterminations";
 $LANG['RESTORE_MEDIA_LINKS'] = 'Restaurer Liens Multimédias/Images';
 $LANG['ANALYZE'] = 'Analyser Fichier';
-$LANG['MANUAL'] = 'Option de Téléchargement Manuel du Fichier';
 $LANG['WARNINGS'] = 'Des avertissements existent';
 $LANG['LIVE_DANGEROUSLY'] = "Si vous pensez que les avertissements sont erronés, contactez l'administrateur de votre portail";
 $LANG['FATAL_ERROR'] = 'ERREUR FATALE';

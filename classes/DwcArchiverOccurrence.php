@@ -105,8 +105,8 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['eventDate'] = 'o.eventDate';
 		$this->occurDefArr['terms']['eventDate2'] = 'https://symbiota.org/terms/eventDate2';
 		$this->occurDefArr['fields']['eventDate2'] = 'o.eventDate2';
-		$this->occurDefArr['terms']['eventtime'] = 'http://rs.tdwg.org/dwc/terms/eventTime';
-		$this->occurDefArr['fields']['eventtime'] = 'o.eventtime';
+		$this->occurDefArr['terms']['eventTime'] = 'http://rs.tdwg.org/dwc/terms/eventTime';
+		$this->occurDefArr['fields']['eventTime'] = 'o.eventTime';
 		$this->occurDefArr['terms']['year'] = 'http://rs.tdwg.org/dwc/terms/year';
 		$this->occurDefArr['fields']['year'] = 'o.year';
 		$this->occurDefArr['terms']['month'] = 'http://rs.tdwg.org/dwc/terms/month';
@@ -123,7 +123,7 @@ class DwcArchiverOccurrence extends Manager{
 		$this->occurDefArr['fields']['occurrenceRemarks'] = 'x.occurrenceRemarks';
 		$this->occurDefArr['terms']['habitat'] = 'http://rs.tdwg.org/dwc/terms/habitat';
 		$this->occurDefArr['fields']['habitat'] = 'o.habitat';
-		$this->occurDefArr['terms']['substrate'] = 'https://symbiota.org/terms/substrate';
+		$this->occurDefArr['terms']['substrate'] = 'http://rs.tdwg.org/dwc/terms/substrate';
 		$this->occurDefArr['fields']['substrate'] = 'o.substrate';
 		$this->occurDefArr['terms']['verbatimAttributes'] = 'https://symbiota.org/terms/verbatimAttributes';
 		$this->occurDefArr['fields']['verbatimAttributes'] = 'o.verbatimAttributes';
@@ -327,7 +327,7 @@ class DwcArchiverOccurrence extends Manager{
 		//Trim out fields depending on schema settings
 		$trimArr = array();
 		if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
-			$trimArr = array('recordedByID','associatedCollectors','substrate','verbatimAttributes','cultivationStatus','securityReason','genericcolumn1','genericcolumn2',
+			$trimArr = array('recordedByID','associatedCollectors','verbatimAttributes','cultivationStatus','securityReason','genericcolumn1','genericcolumn2',
 				'observerUid','processingStatus','duplicateQuantity','labelProject','dateEntered','dateLastModified','sourcePrimaryKey-dbpk');
 			if($this->includePaleo){
 				$trimArr = array_merge($trimArr, array('absoluteAge','stage','localStage','biostratigraphy','taxonEnvironment','stratRemarks','element','slideProperties', 'lithology'));
@@ -367,7 +367,6 @@ class DwcArchiverOccurrence extends Manager{
 		if($this->schemaType == 'dwc' || $this->schemaType == 'pensoft'){
 			$this->occurDefArr['fields']['recordedBy'] = 'CONCAT_WS("; ",o.recordedBy,o.associatedCollectors) AS recordedBy';
 			$this->occurDefArr['fields']['occurrenceRemarks'] = 'CONCAT_WS("; ",x.occurrenceRemarks,o.verbatimAttributes) AS occurrenceRemarks';
-			$this->occurDefArr['fields']['habitat'] = 'CONCAT_WS("; ",o.habitat, o.substrate) AS habitat';
 		}
 		return $this->occurDefArr;
 	}
@@ -458,254 +457,6 @@ class DwcArchiverOccurrence extends Manager{
 		return $status;
 	}
 
-	//Set Associations Simple DwC elements (e.g. associatedOccurrences, associatedTaxa) - not implimented within 3.4, but might be reimplimented, thus keeping functions in code
-	public function getAssociationStr($occid, $associationType = null){
-		$occid = filter_var($occid, FILTER_SANITIZE_NUMBER_INT);
-		if($occid){
-
-			// Return symbiotaAssociations JSON for the associatedOccurrences field instead of the text string generated below
-			// TODO: There is room for fine-tuning what conditions will return the JSON
-			// Seems like it should be turned on for schemaType == 'backup', but re-importing that backup currently fails
-			if ($this->schemaType == 'symbiota') return $this->getAssociationJSON($occid);
-
-			$internalAssocOccidArr = array();
-			$assocArr = array();
-			//Get associations defined within omoccurassociations (both subject and object)
-			$assocTypeArr = array('internalOccurrence', 'externalOccurrence');
-			if($associationType) $assocTypeArr = explode(' ', $associationType);
-			$sql = 'SELECT assocID, occid, associationType, occidAssociate, relationship, subType, resourceUrl, identifier, basisOfRecord, verbatimSciname, recordID FROM omoccurassociations
-				WHERE (occid = '.$occid.' OR occidAssociate = '.$occid.') AND associationType IN("'.implode('","', $assocTypeArr).'") ';
-			$rs = $this->conn->query($sql);
-			if($rs){
-				while($r = $rs->fetch_object()){
-					$relOccid = $r->occidAssociate;
-					$relationship = $r->relationship;
-					if($occid == $r->occidAssociate){
-						//Association was defined within secondary occurrence record, thus switch subject/object
-						$relOccid = $r->occid;
-						$relationship = $this->getInverseRelationship($relationship);
-					}
-					if($relOccid){
-						//Is an internally defined association
-						$assocArr[$r->assocID]['occidassoc'] = $relOccid;
-						$internalAssocOccidArr[$relOccid][] = $r->assocID;
-					}
-					elseif($r->resourceUrl){
-						$assocArr[$r->assocID]['resourceUrl'] = $r->resourceUrl;
-						$assocArr[$r->assocID]['identifier'] = $r->identifier;
-					}
-					$assocArr[$r->assocID]['relationship'] = $relationship;
-					$assocArr[$r->assocID]['subtype'] = $r->subType;
-					if($r->basisOfRecord) $assocArr[$r->assocID]['basisOfRecord'] = $r->basisOfRecord;
-					if($r->verbatimSciname) $assocArr[$r->assocID]['scientificName'] = $r->verbatimSciname;
-					if($r->recordID) $assocArr[$r->assocID]['recordID'] = $r->recordID;
-				}
-				$rs->free();
-			}
-
-			//Append resource URLs to each output record
-			if($internalAssocOccidArr){
-				$identifierArr = $this->getInternalResourceIdentifiers($internalAssocOccidArr);
-				foreach($identifierArr as $internalOccid => $idArr){
-					foreach($internalAssocOccidArr[$internalOccid] as $targetAssocID){
-						$assocArr[$targetAssocID] = array_merge($assocArr[$targetAssocID], $idArr);
-					}
-				}
-			}
-			//Create output strings
-			$retStr = '';
-			foreach($assocArr as $assocateArr){
-				if($associationType == 'observational'){
-					$retStr .= ' | ' . $assocateArr['relationship'];
-					if(!empty($assocateArr['scientificName'])) $retStr .= ': '.$assocateArr['scientificName'];
-				}
-				else{
-					$retStr .= ' | relationship: ' . $assocateArr['relationship'];
-					if(!empty($assocateArr['subtype'])) $retStr .= ' (' . $assocateArr['subtype'] . ')';
-					if(!empty($assocateArr['identifier'])) $retStr .= ', identifier: ' . $assocateArr['identifier'];
-					elseif(!empty($assocateArr['recordID'])) $retStr .= ', recordID:  ' . $assocateArr['recordID'];
-					if(!empty($assocateArr['basisOfRecord'])) $retStr .= ', basisOfRecord: ' . $assocateArr['basisOfRecord'];
-					if(!empty($assocateArr['scientificName'])) $retStr .= ', scientificName: ' . $assocateArr['scientificName'];
-					if(!empty($assocateArr['resourceUrl'])) $retStr .= ', resourceUrl:  ' . $assocateArr['resourceUrl'];
-				}
-			}
-		}
-		return trim($retStr,' |');
-	}
-
-	// Function to return any associations as JSON for the associatedOccurrences field
-	private function getAssociationJSON($occid) {
-
-		// Build SQL to find any associations for the occurrence record passed with occid
-		$sql = 'SELECT occid, associationType, occidAssociate, relationship, subType, identifier, basisOfRecord, resourceUrl, verbatimSciname, locationOnHost
-			FROM omoccurassociations
-			WHERE (occid = ' . $occid . ' OR occidAssociate = ' . $occid . ') ';
-		if ($rs = $this->conn->query($sql)) {
-
-			// No associations, so just return an empty string, and quit the function
-			if (!$rs->num_rows) return '';
-
-			// Build verbatimText array
-			// Get any pre-existing contents of the associatedOccurrences field in omoccurrences
-			$verbatimText = $this->getVerbatimTextObject($occid);
-			// Check if the contents of the field already is JSON
-			if ($verbatimText['verbatimText']){
-				if ($assocOccArr = json_decode($verbatimText['verbatimText'], true)) {
-					$verbatimText['verbatimText'] = '';
-					// There's already JSON here
-					// TODO: What should we do? Perform some checks?
-				}
-			}
-
-			// No associatedOccurrences array exists, so build one
-			if (!isset($assocOccArr)) {
-
-				// Build JSON array
-				$assocOccArr = array();
-
-				// Build symbiotaAssociations array
-				$symbiotaAssociations = array();
-				$symbiotaAssociations['type'] = 'symbiotaAssociations';
-				$symbiotaAssociations['version'] = OccurrenceUtil::$assocOccurVersion;
-				$symbiotaAssociations['associations'] = array();
-
-				// Add the symbiotaAssociations array
-				array_push($assocOccArr, $symbiotaAssociations);
-
-				// Add the verbatimText array
-				array_push($assocOccArr, $verbatimText);
-			}
-
-			// Make an array to hold occurrence IDs that need an additional guid (internalOccurrences)
-			$relOccidArr = array();
-
-			// Get each associated occurrence
-			while ($assocArr = $rs->fetch_assoc()) {
-
-				// Filter out any empty fields
-				$assocArr = array_filter($assocArr);
-
-				// Set the association type field
-				if (array_key_exists('occidAssociate', $assocArr)) {
-					$assocArr['type'] = 'internalOccurrence';
-				} else if (array_key_exists('identifier', $assocArr) || array_key_exists('resourceUrl', $assocArr)) {
-					$assocArr['type'] = 'externalOccurrence';
-				} else if (array_key_exists('verbatimSciname', $assocArr)) {
-					$assocArr['type'] = 'genericObservation';
-				} else {
-					// Should not happen, but if so, this seems to be the best fit
-					$assocArr['type'] = 'genericObservation';
-				}
-
-				// Check for cases where the occidAssociate is this occid.
-				// In those cases, we need to switch the occid and occidAssociate and get the inverse relationship
-				if (array_key_exists('occidAssociate', $assocArr) && $assocArr['occidAssociate'] == $occid) {
-					$assocArr['occidAssociate'] = $assocArr['occid'];
-					$assocArr['relationship'] = $this->getInverseRelationship($assocArr['relationship']);
-				}
-
-				// remove occid key, no longer needed
-				unset($assocArr['occid']);
-
-				// Check if the associated occurrence is an internal occurrence
-				// If so, we need to flag this to add the GUID identifier & resource url, in case it gets imported in another portal
-				if (array_key_exists('occidAssociate', $assocArr)) {
-					array_push($relOccidArr, $assocArr['occidAssociate']);
-				}
-
-				// Add associated occurrence array to the full associatedOccurrences array
-				array_push($assocOccArr[0]['associations'], $assocArr);
-
-			}
-
-			// There are some associated occurrences with an internal occidAssociate
-			// For these, we need to get their guids and construct reference URLs, in case they become external references
-			if ($relOccidArr) {
-				$identifierArr = $this->getInternalResourceIdentifiers($relOccidArr);
-				foreach($identifierArr as $internalOccid => $idArr){
-					foreach ($assocOccArr[0]['associations'] as $index => $associateArr) {
-						if (array_key_exists('occidAssociate', $associateArr) && $assocOccArr[0]['associations'][$index]['occidAssociate'] == $internalOccid) {
-							// Add the GUID as the identifier, and the resource URL in case this ends up being treated as an external resource
-							$assocOccArr[0]['associations'][$index] = array_merge($assocOccArr[0]['associations'][$index], $idArr);
-						}
-					}
-				}
-			}
-
-			// Return the full symbiotaAssociations array as JSON
-			// TODO: this is returning "null" for fields that are empty, like verbatimText.
-			return json_encode( $assocOccArr, JSON_UNESCAPED_SLASHES);
-		}
-	}
-
-	private function getVerbatimTextObject($occid){
-		$verbatimText = array('type' => 'verbatimText', 'verbatimText' => '');
-
-		$sql = 'SELECT associatedOccurrences FROM omoccurrences WHERE occid = ' . $occid;
-		$rs = $this->conn->query($sql);
-		if($r = $rs->fetch_object()){
-			if($r->associatedOccurrences) $verbatimText['verbatimText'] = $r->associatedOccurrences;
-		}
-		$rs->free();
-		return $verbatimText;
-	}
-
-	private function getInternalResourceIdentifiers($internalAssocOccidArr){
-		$retArr = array();
-		//Replace GUID identifiers with occurrenceID values
-		$sql = 'SELECT occid, sciname, occurrenceID, recordID FROM omoccurrences WHERE occid IN('.implode(',',array_keys($internalAssocOccidArr)).')';
-		$rs = $this->conn->query($sql);
-		while($r = $rs->fetch_object()){
-			$retArr[$r->occid]['scientificName'] = $r->sciname;
-			$guid = $r->recordID;
-			if($r->occurrenceID) $guid = $r->occurrenceID;
-			$retArr[$r->occid]['identifier'] = $guid;
-			$resourceUrl = $guid;
-			if(substr($resourceUrl, 0, 4) != 'http'){
-				$resourceUrl = $this->serverDomain.$GLOBALS['CLIENT_ROOT'].'/collections/individual/index.php?guid='.$guid;
-			}
-			$retArr[$r->occid]['resourceUrl'] = $resourceUrl;
-		}
-		$rs->free();
-		return $retArr;
-	}
-
-	private function getInverseRelationship($relationship){
-		if(!$this->relationshipArr) $this->setRelationshipArr();
-		if(array_key_exists($relationship, $this->relationshipArr)) return $this->relationshipArr[$relationship];
-		return $relationship;
-	}
-
-	private function setRelationshipArr(){
-		if(!$this->relationshipArr){
-			$sql = 'SELECT t.term, t.inverseRelationship FROM ctcontrolvocabterm t INNER JOIN ctcontrolvocab v  ON t.cvid = v.cvid WHERE v.tableName = "omoccurassociations" AND v.fieldName = "relationship"';
-			if($rs = $this->conn->query($sql)){
-				while($r = $rs->fetch_object()){
-					$this->relationshipArr[$r->term] = $r->inverseRelationship;
-					$this->relationshipArr[$r->inverseRelationship] = $r->term;
-				}
-				$rs->free();
-			}
-		}
-	}
-
-	private function appendSpecimenDuplicateAssociations($occid, &$assocArr, &$internalAssocOccidArr){
-		$sql = 'SELECT s.occid, l.occid as occidAssociate
-			FROM omoccurduplicatelink s INNER JOIN omoccurduplicates d ON s.duplicateid = d.duplicateid
-			INNER JOIN omoccurduplicatelink l ON d.duplicateid = l.duplicateid
-			WHERE s.occid IN('.$occid.') AND s.occid != l.occid ';
-		$rs = $this->conn->query($sql);
-		if($rs){
-			while($r = $rs->fetch_object()){
-				$assocKey = 'sd-'.$r->occidAssociate;
-				$assocArr[$assocKey]['occidassoc'] = $r->occidAssociate;
-				$assocArr[$assocKey]['relationship'] = 'herbariumSpecimenDuplicate';
-				$internalAssocOccidArr[$r->occidAssociate][] = $assocKey;
-			}
-			$rs->free();
-		}
-	}
-
 	//Append Taxonomic data
 	public function setTaxonomy(){
 		$this->setUpperTaxonomy();
@@ -723,7 +474,7 @@ class DwcArchiverOccurrence extends Manager{
 				$sql = 'UPDATE omexportoccurrences x INNER JOIN taxaenumtree e ON x.taxonID = e.tid
 					INNER JOIN taxa t ON e.parentTid = t.tid
 					SET x.' . $fieldName . ' = t.sciname
-					WHERE x.omExportID = ? AND t.rankid = ?';
+					WHERE e.taxAuthID = 1 AND x.omExportID = ? AND t.rankid = ?';
 				if($stmt = $this->conn->prepare($sql)){
 					try{
 						$stmt->bind_param('ii', $this->exportID, $rankID);
@@ -806,7 +557,7 @@ class DwcArchiverOccurrence extends Manager{
 			$sql = 'UPDATE omexportoccurrences x INNER JOIN taxstatus ts ON x.taxonID = ts.tid
 				INNER JOIN taxa t ON ts.tidaccepted = t.tid
 				SET x.acceptedNameUsageID = t.tid, x.acceptedNameUsage = t.sciname, x.acceptedNameUsageAuthorship = t.author
-				WHERE x.omExportID = ?';
+				WHERE ts.taxAuthID = 1 AND x.omExportID = ?';
 			if($stmt = $this->conn->prepare($sql)){
 				try{
 					$stmt->bind_param('i', $this->exportID);

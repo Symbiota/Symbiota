@@ -20,8 +20,11 @@ class MediaException extends Exception {
 	public const UploadStoppedByExtension = 'UPLOAD_STOPPED_BY_EXTENSION';
 	public const UnknownUploadError = 'UNKNOWN_UPLOAD_ERROR';
 
+	public string $case= '';
+
 	function __construct(string $case, string $message = ''){
 		global $LANG, $LANG_TAG, $SERVER_ROOT;
+		$this->case = $case;
 
 		Language::load('classes/Media');
 

@@ -5,9 +5,9 @@ Language: Français (French)
 ------------------
 */
 
+
 $LANG['SPEC_DETAILS'] = 'Détails de l\'Espèce';
 $LANG['OF'] = 'de';
-$LANG['NAME_BLANK'] = 'Le champ du nom scientifique est vide';
 $LANG['GEN_EDIT'] = 'Modification Générale';
 $LANG['VOUCHER_EDIT'] = "Administration d'Échantillons";
 $LANG['EDIT_CHECKLIST'] = 'Modifier Informations de Liste';
@@ -39,9 +39,9 @@ $LANG['RENAME_SCI_NAME'] = 'Renommer le Nom Scientifique';
 $LANG['LINK_ICON'] = 'Icône de Lien';
 
 $LANG['REMOVE_TAXON'] = 'Supprimer le Taxon de la Liste de Contrôle';
-$LANG['UNKNOWN_TAXON'] = 'Taxon Inconnu';
-$LANG['UNKNOWN_COLLECTION'] = 'Collection Inconnue';
+$LANG['SKIP_NAV'] = 'Passer la navigation';
 $LANG['REMOVE'] = 'Retirer';
 $LANG['TO_COLLECTIONS_LINK'] = 'Lien vers les collections et taxons cibles';
 $LANG['SELECT_TAXON'] = 'Veuillez sélectionner un taxon dans la liste';
+$LANG['CANT_MERGE_SELF'] = 'Vous ne pouvez pas fusionner un élément avec lui-même. Veuillez sélectionner un autre taxon.';
 ?>

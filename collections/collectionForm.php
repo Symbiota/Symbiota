@@ -1,9 +1,10 @@
 <?php
 global $SERVER_ROOT, $LANG_TAG, $LANG, $CLIENT_ROOT;
 include_once($SERVER_ROOT.'/classes/Database.php');
+include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
 include_once($SERVER_ROOT.'/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT.'/classes/utilities/Language.php');
-include_once($SERVER_ROOT.'/classes/CollectionFormManager.php');
+include_once($SERVER_ROOT.'/classes/utilities/Sanitize.php');
 
 Language::load('collections/sharedterms');
 
@@ -15,8 +16,8 @@ $checkedCollections = [];
 
 if(array_key_exists('db', $_REQUEST)) {
 	$collIds = is_array($_REQUEST['db'])? $_REQUEST['db']: [$_REQUEST['db']];
-	foreach($collIds as $collId) {
-		$checkedCollections[$collId] = true;
+	foreach($collIds as $localCollId) {
+		$checkedCollections[$localCollId] = true;
 	}
 }
 ?>
@@ -80,7 +81,7 @@ function toggleCategory(categoryId, event=null) {
 		'CATORD' => $requestSuppliedCatOrd ?? $CATORD ?? [],
 		'CATEXPND' =>  $requestSuppliedCatExpnd ?? $CATEXPND ?? [],
 		'CATCHK' => $requestSuppliedCatChk ?? $CATCHK ?? [],
-		'CURRENT_URL' => $_SERVER['REQUEST_URI'],
+		'CURRENT_URL' => Sanitize::outString($_SERVER['REQUEST_URI']),
 	]) ?>'></div>
 <div>
 	<?php
@@ -203,13 +204,13 @@ function toggleCategory(categoryId, event=null) {
 				>
 					<?php foreach($category['collections'] as $collection): ?>
 					<?php
-						$collid = array_key_exists('collid', $collection) ? $collection['collid'] : null;
+						$ariaCollName = array_key_exists('collectionname', $collection) ? $collection['collectionname'] : null;
 						$codeStr = $collectionFormManager->generateCodeStr($collection);
 					?>
 					<div style="display:flex; align-items: center; gap: 0.5rem;">
-						<img width="30px" height="30px" src="<?= $collection['icon'] ?>">
+						<img width="30px" height="30px" src="<?= $collection['icon'] ?>" style="object-fit:contain; min-width: 30px; height: 30px;">
 						<input
-							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $collid ?>" data-role="none"
+							data-chip="Collection: <?= $codeStr ?>" aria-label="select collection <?= $ariaCollName ?>" data-role="none"
 							data-codeStr="<?= $codeStr ?>"
 							style="margin:0;"
 							id="<?= $category['name'] . '_' . $collection['collid'] ?>"

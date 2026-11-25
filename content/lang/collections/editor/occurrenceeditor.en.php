@@ -201,5 +201,7 @@ $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERROR - Archiving material sample info';
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERROR - Creating Archive';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERROR - Failed to delete the source occurrence';
 $LANG['OPENS_NEW_TAB'] = ' (opens in new tab)';
+$LANG['DELETE_VALUE'] = 'Delete Identifier Value and Tag Name pair';
+$LANG['ADD_VALUE'] = 'Add Identifier Value and Tag Name pair';
 
 ?>

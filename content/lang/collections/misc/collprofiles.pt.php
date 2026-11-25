@@ -7,17 +7,19 @@ Translated by: Google Translate (2024-09-16)
 */
 
 include_once($SERVER_ROOT.'/content/lang/collections/misc/sharedterms.pt.php');
-
+$LANG['COLLEC_PROFILE'] = 'Perfil de Colección para';
 $LANG['RSS_FEED'] = 'Feed RSS';
 $LANG['CONTACT'] = 'Contatos';
 $LANG['HOMEPAGE'] = 'Página inicial';
 $LANG['MORE_INFO'] = 'Mais informações';
 $LANG['COLLECTION_SEARCH'] = 'Página de pesquisa de coleção';
 $LANG['UPDATE_STATISTICS'] = 'Atualizando estatísticas relacionadas a esta coleção...';
+$LANG['BATCH_UPDATE_STATS'] = 'Atualizar estatísticas de coleção de todo o portal';
 $LANG['DEACTIVATED'] = 'Desativado';
 $LANG['DEACTIVATED_MESSAGE'] = 'Certas opções de gerenciamento estão disponíveis apenas para conjuntos de dados gerenciados em tempo real. Entre em contato com o administrador do portal se a coleção precisar ser reclassificada.';
 $LANG['TOGGLE_MAN'] = 'Alternar painel de controle do gerenciador';
 $LANG['COLL_PROF_FOR'] = 'Perfil de coleção para';
+$LANG['GBIF_CITATIONS'] = 'Citações do GBIF';
 $LANG['DAT_EDIT'] = 'Painel de controle do editor de dados';
 $LANG['SUBMIT_IMAGE_V'] = 'Envie um Voucher Multimédia (observação apoiada por fotografia)';
 $LANG['ADD_NEW_OCCUR'] = 'Adicionar novo registro de ocorrência';
@@ -65,7 +67,7 @@ $LANG['DATA_AGGREGATE'] = 'Dados coletados de um agregador de dados';
 $LANG['DATA_SNAPSHOT'] = 'Instantâneo de dados do banco de dados de coleção local';
 $LANG['LAST_UPDATE'] = 'Última Carga';
 $LANG['GLOBAL_UNIQUE_ID'] = 'Identificador Único Global';
-$LANG['DWCA_PUB'] = 'Ponto de acesso DwC-Archive';
+$LANG['DWCA_PUB'] = 'Cache de dados';
 $LANG['LIVE_DOWNLOAD'] = 'Download de dados ao vivo';
 $LANG['FULL_DATA'] = 'Arquivo de arquivo DwC';
 $LANG['IPT_SOURCE'] = 'Fonte IPT/DwC-A';
@@ -117,4 +119,7 @@ $LANG['TAXON'] = 'Táxon';
 $LANG['OCCURRENCE_EDITOR'] = 'Editar';
 $LANG['INFO_ALT'] = "Ícone de informação indicando link para informações sobre importação/atualização";
 $LANG['LAST_MODIFIED'] = 'Última modificação';
+$LANG['OPENS_NEW_TAB'] = ' (abre em nova guia)';
+$LANG['SHOW_OPTIONS'] = 'Mostrar mais opções';
+$LANG['HIDE_OPTIONS'] = 'Ocultar opções';
 ?>

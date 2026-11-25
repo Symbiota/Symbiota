@@ -76,6 +76,8 @@ $LANG['LOC_AND_TAX_SECURITY'] = 'Localidad & Seguridad Taxonómica';
 $LANG['FULL_SECURITY'] = 'Seguridad Completa';
 $LANG['SECURITY_SETTINGS'] = 'Configuración de Seguridad';
 $LANG['SECURITY_NOT_APPLIED'] = 'Seguridad no aplicada';
+$LANG['LOCALITY_SECURITY_APPLIED'] = 'Seguridad por localidad aplicada';
+$LANG['FULL_SECURITY_APPLIED'] = 'Seguridad total aplicada';
 $LANG['SECURITY_APPLIED'] = 'Seguridad aplicada';
 $LANG['LOCK_SEC_SETTING'] = 'Configuración de Bloqueo de Seguridad';
 $LANG['EXPLAIN_SEC_STATUS'] = 'Entrar cualquier texto bloqueará o desbloqueará el estado de seguridad; al dejarlo en blanco, se acepta el estado de seguridad por defecto';
@@ -200,5 +202,7 @@ $LANG['ERROR_ARCHIVING_MAT_SAMPLE'] = 'ERROR: Archivar información de muestra d
 $LANG['ERROR_CREATING_ARCHIVE'] = 'ERROR - Creando archivo';
 $LANG['ERROR_DELETING_OCCURRENCE'] = 'ERROR: no se pudo eliminar la aparición de origen';
 $LANG['OPENS_NEW_TAB'] = ' (se abre en una nueva pestaña)';
+$LANG['DELETE_VALUE'] = 'Eliminar el par de valor de identificador y nombre de etiqueta';
+$LANG['ADD_VALUE'] = 'Añadir el par de valor de identificador y nombre de etiqueta';
 
 ?>

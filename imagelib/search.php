@@ -108,12 +108,28 @@ $creators = Media::getCreatorArray();
 	</style>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-3.7.1.min.js" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT; ?>/js/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="../js/symb/collections.index.js?ver=2" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.index.js?ver=2" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/searchform.js?ver=2" type="text/javascript"></script>
 	<script src="<?= $CLIENT_ROOT ?>/js/symb/collections.list.js?ver=20171215>" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1" type="text/javascript"></script>
 	<script type="text/javascript">
-		var clientRoot = "<?= $CLIENT_ROOT; ?>";
+		$(document).ready(function() {
+
+			//Auto-complete for taxon search field
+			const taxaInput = document.querySelector("#taxa");
+			if(taxaInput){
+				taxaInput.addEventListener("focus", (event) => {
+					taxaSuggest.config.clientRoot = "<?= $CLIENT_ROOT ?>";
+					taxaSuggest.config.multipleTermSupport = true;
+					taxaSuggest.config.taxonSearchType = document.getElementById("taxontype").value;
+					taxaSuggest.config.includeAuthor = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_AUTHOR) ? 'false' : 'true') ?>;
+					taxaSuggest.config.includeKingdom = <?= (empty($TAXON_AUTOCOMPLETE_INCLUDE_KINGDOM) ? 'false' : 'true') ?>;
+					taxaSuggest.initiate("taxa");
+				});
+			}
+
+		});
 
 		function validateBatchActionBtn(f){
 			if(f.imgTagAction.value == ""){
@@ -145,8 +161,8 @@ $creators = Media::getCreatorArray();
 			}
 		}
 	</script>
-	<script src="../js/symb/api.taxonomy.taxasuggest.js?ver=4" type="text/javascript"></script>
-	<script src="../js/symb/imagelib.search.js?ver=3b" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/taxa.suggest.js?v=1a" type="text/javascript"></script>
+	<script src="<?= $CLIENT_ROOT ?>/js/symb/imagelib.search.js?ver=3b" type="text/javascript"></script>
 </head>
 <body>
 	<?php
@@ -188,8 +204,10 @@ $creators = Media::getCreatorArray();
 							<div style="float:left;">
 								<select id="taxontype" name="taxontype">
 									<?php
-									for($h=1;$h<6;$h++){
-										echo '<option value="' . $h . '" ' . ($imgLibManager->getTaxonType() == $h ? 'SELECTED' : '') . '>' . $LANG['SELECT_1-'.$h] . '</option>';
+									$taxonTypeRangeEnd = 5;
+									if(!empty($DISPLAY_COMMON_NAMES)) $taxonTypeRangeEnd = 6;
+									for($h=2; $h<$taxonTypeRangeEnd; $h++){
+										echo '<option value="'.$h.'" '.($taxonType==$h?'SELECTED':'').'>'.$LANG['SELECT_1-'.$h].'</option>';
 									}
 									?>
 								</select>:&nbsp;

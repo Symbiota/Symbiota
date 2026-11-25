@@ -204,33 +204,33 @@ $labelFormatArr = $labelManager->getLabelFormatArr(true);
 						<div style="margin:3px;">
 							<div title="<?= $LANG['DEF_SPEC_REC'] ?>">
 								<label for="taxa"> <?= $LANG['SCI_NAME'] ?></label>
-								<input type="text" name="taxa" id="taxa" size="60" value="<?= !empty($_REQUEST['taxa']) ? Sanitize::inString($_REQUEST['taxa']) : '' ?>" />
+								<input type="text" name="taxa" id="taxa" size="60" value="<?= !empty($_REQUEST['taxa']) ? Sanitize::outString($_REQUEST['taxa']) : '' ?>" />
 							</div>
 						</div>
 						<div style="margin:3px;clear:both;">
 							<div style="float:left;" title="<?= $LANG['FULL_NAME'] ?>">
 								<label for="recordedby"><?= $LANG['COLLECTOR'] ?></label>
-								<input type="text" name="recordedby" id="recordedby" style="width:150px;" value="<?= !empty($_REQUEST['recordedby']) ? Sanitize::inString($_REQUEST['recordedby']) : '' ?>" />
+								<input type="text" name="recordedby" id="recordedby" style="width:150px;" value="<?= !empty($_REQUEST['recordedby']) ? Sanitize::outString($_REQUEST['recordedby']) : '' ?>" />
 							</div>
 							<div style="float:left;margin-left:10px;" title="<?= $LANG['SEPARATE_TERMS'] ?>">
 								<label for="recordnumber"><?= $LANG['REC_NUM'] ?></label>
-								<input type="text" name="recordnumber" id="recordnumber" style="width:150px;" value="<?= !empty($_REQUEST['recordnumber']) ? Sanitize::inString($_REQUEST['recordnumber']) : '' ?>" />
+								<input type="text" name="recordnumber" id="recordnumber" style="width:150px;" value="<?= !empty($_REQUEST['recordnumber']) ? Sanitize::outString($_REQUEST['recordnumber']) : '' ?>" />
 							</div>
 							<div style="float:left;margin-left:10px;" title="<?= $LANG['SEPARATE_TERMS'] ?>">
 								<label for="identifier"><?= $LANG['CAT_NUM'] ?></label>
-								<input type="text" name="identifier" id="identifier" style="width:150px;" value="<?= !empty($_REQUEST['identifier']) ? Sanitize::inString($_REQUEST['identifier']) : '' ?>" />
+								<input type="text" name="identifier" id="identifier" style="width:150px;" value="<?= !empty($_REQUEST['identifier']) ? Sanitize::outString($_REQUEST['identifier']) : '' ?>" />
 							</div>
 						</div>
 						<div style="margin:3px;clear:both;">
 							<div style="float:left;">
 								<label for="recordenteredby"> <?= $LANG['ENTER_BY'] ?> </label>
-								<input type="text" name="recordenteredby" id="recordenteredby" value="<?= !empty($_REQUEST['recordenteredby']) ? Sanitize::inString($_REQUEST['recordenteredby']) : '' ?>" style="width:100px;" title="<?= $LANG['LOG_NAME'] ?> " aria-label="<?= $LANG['ENTER_BY'] ?>" />
+								<input type="text" name="recordenteredby" id="recordenteredby" value="<?= !empty($_REQUEST['recordenteredby']) ? Sanitize::outString($_REQUEST['recordenteredby']) : '' ?>" style="width:100px;" title="<?= $LANG['LOG_NAME'] ?> " aria-label="<?= $LANG['ENTER_BY'] ?>" />
 							</div>
 							<div style="margin-left:20px;float:left;">
 								<label for="date1"><?= $LANG['DATE_RANGE'] ?></label>
-								<input type="text" name="date1" id="date1" style="width:100px;" value="<?= !empty($_REQUEST['date1']) ? Sanitize::inString($_REQUEST['date1']) : '' ?>" onchange="validateDateFields(this.form)" />
+								<input type="text" name="date1" id="date1" style="width:100px;" value="<?= !empty($_REQUEST['date1']) ? Sanitize::outString($_REQUEST['date1']) : '' ?>" onchange="validateDateFields(this.form)" />
 								<label for="date2"> <?= $LANG['TO'] ?> </label>
-								<input type="text" name="date2" id="date2" style="width:100px;" value="<?= !empty($_REQUEST['date2']) ? Sanitize::inString($_REQUEST['date2']) : '' ?>" onchange="validateDateFields(this.form)" />
+								<input type="text" name="date2" id="date2" style="width:100px;" value="<?= !empty($_REQUEST['date2']) ? Sanitize::outString($_REQUEST['date2']) : '' ?>" onchange="validateDateFields(this.form)" />
 								<label for="datetarget" style="margin-left:10px"><?= $LANG['TYPE_OF_DATE'] ?>:</label>
 								<select name="datetarget" id="datetarget">
 									<option value="dateentered"><?= $LANG['DATE_ENTERED'] ?></option>

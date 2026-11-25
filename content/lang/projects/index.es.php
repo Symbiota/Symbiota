@@ -1,7 +1,7 @@
 <?php
 /*
 ------------------
-Language: Espa�ol (Spanish)
+Language: Español (Spanish)
 ------------------
 */
 $LANG['VIEW_INVETORY_PROJECTS'] = 'Ver Proyecto de Inventario';
@@ -40,7 +40,6 @@ $LANG['DESCMAXCHAR'] = 'La descripci&oacute;n s&oacute;lo puede tener un m&aacut
 $LANG['CHARLONG'] = 'caracteres';
 $LANG['SELECTCHECKPULL'] = 'Elija un listado de comprobaci&oacute;n desde la lista desplegable';
 $LANG['CHOOSEUSER'] = 'Elija un usuario desde la lista desplegable';
-$LANG['ADDNEWPR'] = 'Ingresar un Proyecto Nuevo';
 $LANG['TOGGLEEDIT'] = 'Intercambia Funciones de Edici&oacute;n';
 $LANG['MAPREP'] = 'Mapea representaci&oacute;n de listados de comprobaci&oacute;n';
 $LANG['PENCIL_ALT'] = 'imagen de un lápiz sobre papel, que indica alternar el modo de edición';

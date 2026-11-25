@@ -249,8 +249,8 @@ class OmCollections extends Manager{
 		}
 		if($postArr['phone']) $modArr['phone'] = $postArr['phone'];
 		if($postArr['orcid']){
-			if(preg_match('/(\d{4}-\d{4}-\d{4}-\d{4})/', $postArr['orcid'], $m)){
-				$modArr['orcid'] = $m[1];
+			if(preg_match('/(\d{4}-\d{4}-\d{4}-\d{3}[\dXx])/', $postArr['orcid'], $m)){
+				$modArr['orcid'] = strtoupper($m[1]);
 			}
 		}
 		$contactIndex = $postArr['contactIndex'];

@@ -9,6 +9,14 @@ $schema = array_key_exists("schema", $_REQUEST) ? $_REQUEST["schema"] : "symbiot
 $cSet = array_key_exists("cset", $_POST) ? $_POST["cset"] : '';
 $isPublicSearch = (empty($_REQUEST['publicsearch'])) ? 0 : 1;		//Value false by default
 
+if(empty($OVERRIDE_DOWNLOAD_LOGIN_REQUIREMENT) && !$SYMB_UID){
+	//Portal is configured to require
+	http_response_code(401);
+	header('Content-Type: application/json');
+	echo json_encode(['error' => 'Unauthorized access']);
+	exit;
+}
+
 $token = $_POST['downloadToken'] ?? null;
 if ($token) {
 	setcookie('downloadToken', $token, [
@@ -18,49 +26,7 @@ if ($token) {
 	]);
 }
 
-if ($schema == 'backup') {
-	$collid = $_POST['collid'];
-	if ($collid && is_numeric($collid)) {
-		//check permissions due to sensitive localities not being redacted
-		if ($IS_ADMIN || (array_key_exists('CollAdmin', $USER_RIGHTS) && in_array($collid, $USER_RIGHTS['CollAdmin']))) {
-			$dwcaHandler = new DwcArchiverCore();
-			$dwcaHandler->setSchemaType('backup');
-			$dwcaHandler->setCharSetOut($cSet);
-			$dwcaHandler->setVerboseMode(0);
-			$dwcaHandler->setIncludeDets(1);
-			$dwcaHandler->setIncludeImgs(1);
-			$dwcaHandler->setIncludeAttributes(1);
-			if ($dwcaHandler->hasMaterialSamples($collid)) $dwcaHandler->setIncludeMaterialSample(1);
-			if ($dwcaHandler->hasIdentifiers($collid)) $dwcaHandler->setIncludeIdentifiers(1);
-			if ($dwcaHandler->hasAssociations($collid)) $dwcaHandler->setIncludeAssociations(1);
-			$dwcaHandler->setRedactLocalities(0);
-			$dwcaHandler->setCollArr($collid);
-
-			$archiveFile = $dwcaHandler->createDwcArchive();
-
-			if ($archiveFile) {
-				ob_start();
-				ob_clean();
-				ob_end_flush();
-				header('Content-Description: Symbiota Occurrence Backup File (DwC-Archive data package)');
-				header('Content-Type: application/zip');
-				header('Content-Disposition: attachment; filename=' . basename($archiveFile));
-				header('Content-Transfer-Encoding: binary');
-				header('Expires: 0');
-				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-				header('Pragma: public');
-				header('Content-Length: ' . filesize($archiveFile));
-				//od_end_clean();
-				readfile($archiveFile);
-				unlink($archiveFile);
-			} else {
-				$errMsg = $dwcaHandler->getErrorMessage();
-				if($errMsg) echo $errMsg;
-				else echo 'ERROR creating output file. Query probably did not include any records.';
-			}
-		}
-	}
-} else {
+if ($schema != 'backup') {
 	$zip = (array_key_exists('zip', $_POST) ? $_POST['zip'] : 0);
 	$allowedFormats = ['csv', 'tab'];
 	$formatFromPost = (array_key_exists('format', $_POST) ? $_POST['format'] : 'csv');
