@@ -24,7 +24,7 @@ if(PHP_SAPI !== 'cli'){
 	exit;
 }
 
-include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
+include_once($SERVER_ROOT . '/classes/GeographicPolygonIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 $startTime = microtime(true);
@@ -39,7 +39,7 @@ if($mode !== 'pending' && isset($argv[2])){
 	$batchSize = (is_numeric($batchSize) && $batchSize > 0 ? (int)$batchSize : 50000);
 }
 
-$indexManager = new OccurrencePolygonIndex(MySQLiConnectionFactory::getCon('write'));
+$indexManager = new GeographicPolygonIndex(MySQLiConnectionFactory::getCon('write'));
 
 if($mode === 'pending'){
 	$count = $indexManager->rebuildPendingPolygons($pendingLimit, $batchSize);

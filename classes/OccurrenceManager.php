@@ -3,7 +3,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceSearchSupport.php');
 include_once($SERVER_ROOT . '/classes/ChecklistVoucherAdmin.php');
 include_once($SERVER_ROOT . '/classes/OccurrenceTaxaManager.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
-include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
+include_once($SERVER_ROOT . '/classes/GeographicPolygonIndex.php');
 include_once($SERVER_ROOT . '/classes/utilities/OccurrenceUtil.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
@@ -633,7 +633,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			$polygonIDs = $this->searchTermArr['polygons'];
 			if($polygonIDs && $this->canUseGeographicPolygonIndex($polygonIDs)){
 				$this->searchTermArr['usePolygonIndex'] = 1;
-				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM occurrencepolygonindex opi WHERE opi.geoThesID IN('.implode(',', $polygonIDs).')) ';
+				$sqlWhere .= 'AND o.occid IN(SELECT opi.occid FROM geographicpolygonindex opi WHERE opi.geoThesID IN('.implode(',', $polygonIDs).')) ';
 			}
 			else{
 				unset($this->searchTermArr['usePolygonIndex']);
@@ -680,7 +680,7 @@ class OccurrenceManager extends OccurrenceTaxaManager {
     }
 
 	private function canUseGeographicPolygonIndex(array $polygonIDs): bool{
-		$polygonIndex = new OccurrencePolygonIndex($this->conn);
+		$polygonIndex = new GeographicPolygonIndex($this->conn);
 		return $polygonIndex->isPolygonReady($polygonIDs);
 	}
 
@@ -1150,12 +1150,12 @@ class OccurrenceManager extends OccurrenceTaxaManager {
 			}
 		}
 		if(array_key_exists('elevlow',$_REQUEST)){
-			$elevLow = filter_var(trim($_REQUEST['elevlow']), FILTER_SANITIZE_NUMBER_INT);
+			$elevLow = Sanitize::int(trim($_REQUEST['elevlow']));
 			if(is_numeric($elevLow)) $this->searchTermArr['elevlow'] = $elevLow;
 			else unset($this->searchTermArr['elevlow']);
 		}
 		if(array_key_exists('elevhigh',$_REQUEST)){
-			$elevHigh = filter_var(trim($_REQUEST['elevhigh']), FILTER_SANITIZE_NUMBER_INT);
+			$elevHigh = Sanitize::int(trim($_REQUEST['elevhigh']));
 			if(is_numeric($elevHigh)) $this->searchTermArr['elevhigh'] = $elevHigh;
 			else unset($this->searchTermArr['elevhigh']);
 		}

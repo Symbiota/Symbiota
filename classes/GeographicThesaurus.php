@@ -1,8 +1,8 @@
 <?php
 include_once($SERVER_ROOT . '/classes/Manager.php');
-include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 include_once($SERVER_ROOT . '/classes/Database.php');
-include_once($SERVER_ROOT . '/classes/OccurrencePolygonIndex.php');
+include_once($SERVER_ROOT . '/classes/GeographicPolygonIndex.php');
+include_once($SERVER_ROOT . '/classes/utilities/QueryUtil.php');
 
 class GeographicThesaurus extends Manager {
 	const US_STATE_LIST = array('AK' => 'Alaska', 'AL' => 'Alabama', 'AZ' => 'Arizona', 'AR' => 'Arkansas', 'CA' => 'California',
@@ -40,7 +40,7 @@ class GeographicThesaurus extends Manager {
 	public function getGeograpicList($conditionTerm = null) {
 		$retArr = array();
 		$sql = 'SELECT t.geoThesID, t.geoTerm, t.abbreviation, t.iso2, t.iso3, t.numCode, t.category, t.geoLevel, t.termStatus, t.acceptedID, a.geoterm as acceptedTerm
-		FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID ';
+			FROM geographicthesaurus t LEFT JOIN geographicthesaurus a ON t.acceptedID = a.geoThesID ';
 		if ($conditionTerm && is_numeric($conditionTerm)) $sql .= 'WHERE (t.parentID = ' . $conditionTerm . ') ';
 		else $sql .= 'WHERE (t.parentID IS NULL) ';
 		$sql .= 'ORDER BY t.geoTerm';
@@ -82,7 +82,8 @@ class GeographicThesaurus extends Manager {
 		}
 
 		$countryStr = '';
-		$rs = QueryUtil::executeQuery($conn, 'SELECT c.geoTerm AS countryName FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID WHERE s.geoTerm = ?', [ $state ]);
+		$sql = 'SELECT c.geoTerm AS countryName FROM geographicthesaurus s INNER JOIN geographicthesaurus c ON s.parentID = c.geoThesID WHERE s.geoTerm = ?';
+		$rs = QueryUtil::executeQuery($conn, $sql, [ $state ]);
 
 		if($r = $rs->fetch_object()) {
 			$countryStr = $r->countryName;
@@ -268,12 +269,12 @@ class GeographicThesaurus extends Manager {
 	private function updatePolygonIndexState($postArr) {
 		if(empty($postArr['geoThesID'])) return;
 
-		$polygonIndex = new OccurrencePolygonIndex($this->conn);
+		$polygonIndex = new GeographicPolygonIndex($this->conn);
 		if(empty($postArr['polygon']) || empty($postArr['isSearchable'])) {
-			$polygonIndex->deleteGeographicPolygonIndex($postArr['geoThesID']);
+			$polygonIndex->deletePolygonIndex($postArr['geoThesID']);
 		}
 		else {
-			$polygonIndex->markGeographicPolygonPending($postArr['geoThesID']);
+			$polygonIndex->markPolygonPending($postArr['geoThesID']);
 		}
 	}
 
