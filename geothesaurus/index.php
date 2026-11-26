@@ -4,11 +4,12 @@ global $SERVER_ROOT, $CLIENT_ROOT, $LANG_TAG, $LANG, $CHARSET, $IS_ADMIN, $DEFAU
 
 include_once ($SERVER_ROOT . '/classes/GeographicThesaurus.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
+include_once($SERVER_ROOT . '/classes/utilities/Sanitize.php');
 
 Language::load('geothesaurus/index');
 
-$geoThesID = array_key_exists('geoThesID', $_REQUEST) ? filter_var($_REQUEST['geoThesID'], FILTER_SANITIZE_NUMBER_INT) : '';
-$parentID = array_key_exists('parentID', $_REQUEST) ? filter_var($_REQUEST['parentID'], FILTER_SANITIZE_NUMBER_INT) : '';
+$geoThesID = array_key_exists('geoThesID', $_REQUEST) ? Sanitize::int($_REQUEST['geoThesID']) : '';
+$parentID = array_key_exists('parentID', $_REQUEST) ? Sanitize::int($_REQUEST['parentID']) : '';
 $submitAction = array_key_exists('submitaction', $_POST) ? $_POST['submitaction'] : '';
 
 $geoManager = new GeographicThesaurus();
@@ -52,7 +53,7 @@ function listGeoUnits($arr) {
 	global $LANG;
 	echo '<ul>';
 	foreach($arr as $geoID => $unitArr){
-		$geoTerm = htmlspecialchars($unitArr['geoTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+		$geoTerm = Sanitize::outString($unitArr['geoTerm']);
 
 		$codeStr = '';
 		if($unitArr['abbreviation']) {
@@ -69,14 +70,14 @@ function listGeoUnits($arr) {
 		if($unitArr['acceptedTerm']) {
 			$geoTerm .= ' &rarr; ';
 			$codeStr = '';
-			$referenceText = '<a href="index.php?geoThesID=' . htmlspecialchars($unitArr['acceptedID']) . '">' . htmlspecialchars($unitArr['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+			$referenceText = '<a href="index.php?geoThesID=' . Sanitize::outString($unitArr['acceptedID']) . '">' . Sanitize::outString($unitArr['acceptedTerm']) . '</a>';
 		} else {
 			$geoTerm = '<a href="index.php?geoThesID=' . $geoID . '">' . $geoTerm . '</a>';
 			if(isset($unitArr['childCnt'])) {
-				$referenceText = '- '. htmlspecialchars($unitArr['childCnt'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . ' ' . $LANG['CHILDREN'];
+				$referenceText = '- '. Sanitize::outString($unitArr['childCnt']) . ' ' . $LANG['CHILDREN'];
 			}
 		}
-		$codeStr = htmlspecialchars($codeStr, ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE);
+		$codeStr = Sanitize::outString($codeStr);
 
 		echo <<<HTML
 		<li>
@@ -113,8 +114,8 @@ function listGeoUnits($arr) {
 			.button-div{ margin: 15px }
 			#status-div{ margin:15px; padding: 15px; color: red; }
 		</style>
-		<script src="<?php echo $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
-		<script src="<?php echo $CLIENT_ROOT?>/js/symb/mapAidUtils.js"></script>
+		<script src="<?= $CLIENT_ROOT?>/js/autocomplete-input.js" type="module"></script>
+		<script src="<?= $CLIENT_ROOT?>/js/symb/mapAidUtils.js"></script>
 		<script type="text/javascript">
 			function toggleEditor(){
 				toggle(".editTerm");
@@ -157,12 +158,12 @@ function listGeoUnits($arr) {
 					map_container.style.display = "block";
 				}
 
-			 let map = new LeafletMap('map_canvas', {
-				center: [0,0],
-				zoom: 1
-			 },
-				JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
-			 );
+				let map = new LeafletMap('map_canvas', {
+					center: [0,0],
+					zoom: 1
+				},
+					JSON.parse(`<?= json_encode($GEO_JSON_LAYERS ?? []) ?>`)
+				);
 
 				map.enableDrawing({
 					polyline: false,
@@ -177,9 +178,9 @@ function listGeoUnits($arr) {
 
 			function init() {
 				try {
-				  window.onbeforeunload = function(e) {
-					  if(window.unsavedChanges) return true;
-				  }
+					window.onbeforeunload = function(e) {
+						if(window.unsavedChanges) return true;
+					}
 					leafletInit();
 				} catch(e) {
 					console.log("Leaflet Map failed to load")
@@ -198,10 +199,10 @@ function listGeoUnits($arr) {
 
 				function updateCheckbox() {
 					if (footprint.value.trim() === '') {
-							searchableBox.checked = false;
-							searchableBox.disabled = true;
+						searchableBox.checked = false;
+						searchableBox.disabled = true;
 					} else {
-							searchableBox.disabled = false;
+						searchableBox.disabled = false;
 					}
 				}
 				updateCheckbox();
@@ -210,11 +211,7 @@ function listGeoUnits($arr) {
 		</script>
 	</head>
 	<body onload="init()">
-		<div
-			id="service-container"
-			data-geo-unit='<?php echo htmlspecialchars(json_encode($geoUnit))?>'
-		>
-		</div>
+		<div id="service-container" data-geo-unit='<?= htmlspecialchars(json_encode($geoUnit))?>'></div>
 		<?php
 		include($SERVER_ROOT.'/includes/header.php');
 		?>
@@ -243,18 +240,17 @@ function listGeoUnits($arr) {
 				</autocomplete-input>
 				<button type="button" style="margin:0.5rem 2rem" onclick="navigateGeothesaursSearch()"><?=$LANG["SEARCH"]?></button>
 			</fieldset>
-
-			<?php if($isEditor): ?>
-			<div>
-				<a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
-			</div>
-			<?php endif ?>
-
 			<?php
+			if($isEditor){
+				?>
+				<div>
+					<a href="harvester.php"><?= $LANG['GOTO_HARVESTER']?></a>
+				</div>
+				<?php
+			}
 			if($statusStr){
 				echo '<div id="status-div">'.$statusStr.'</div>';
 			}
-
 			?>
 			<!-- Add Form  -->
 			<div id="addGeoUnit-div" style="clear:both;margin-bottom:10px;display:none">
@@ -365,15 +361,19 @@ function listGeoUnits($arr) {
 					<form id="unitEditForm" name="unitEditForm" action="index.php<?= $geoThesID? '?geoThesID=' . $geoThesID: '' ?>" method="post">
 						<fieldset id="edit-fieldset">
 							<legend><span id="edit-legend"><?= $LANG['EDIT'] ?></span> <?= $LANG['GEO_UNIT'] ?> </legend>
-							<?php if($isEditor): ?>
-							<div style="float:right">
-								<span class="editIcon" title="<?= $LANG['EDIT_TERM'] ?>"><a href="#" onclick="toggleEditor()"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
-							</div>
-							<?php endif ?>
+							<?php
+							if($isEditor){
+								?>
+								<div style="float:right">
+									<span class="editIcon" title="<?= $LANG['EDIT_TERM'] ?>"><a href="#" onclick="toggleEditor();return false;"><img class="editimg" src="../images/edit.png" alt="<?= $LANG['EDIT']; ?>"></a></span>
+								</div>
+								<?php
+							}
+							?>
 							<div class="field-div">
 								<label for="edit_geoTerm"><?= $LANG['GEO_UNIT_NAME'] ?></label>:
 								<span class="editTerm"><?= $geoUnit['geoTerm']; ?></span>
-								<span class="editFormElem" style="display: none"><input type="text" id="edit_geoTerm" name="geoTerm" value="<?php echo $geoUnit['geoTerm'] ?>" style="width:200px;" required /></span>
+								<span class="editFormElem" style="display: none"><input type="text" id="edit_geoTerm" name="geoTerm" value="<?= $geoUnit['geoTerm'] ?>" style="width:200px;" required /></span>
 							</div>
 							<div class="field-div">
 								<label for="edit_abbreviation"><?= $LANG['ABBR'] ?></label>:
@@ -433,7 +433,7 @@ function listGeoUnits($arr) {
 												<option value=""> <?= $LANG['IS_ROOT_TERM'] ?> </option>
 												<?php
 												foreach($parentList as $id => $term){
-												echo '<option value="'.$id.'" '.($id==$geoUnit['parentID']?'selected':'').'>'.$term.'</option>';
+													echo '<option value="'.$id.'" '.($id==$geoUnit['parentID']?'selected':'').'>'.$term.'</option>';
 												}
 												?>
 											</select>
@@ -443,11 +443,11 @@ function listGeoUnits($arr) {
 								}
 							}
 							if($geoUnit['acceptedTerm']) {
-								$acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . htmlspecialchars($geoUnit['acceptedTerm'], ENT_COMPAT | ENT_HTML401 | ENT_SUBSTITUTE) . '</a>';
+								$acceptedStr = '<a href="index.php?geoThesID=' . $geoUnit['acceptedID'] . '">' . Sanitize::outString($geoUnit['acceptedTerm']) . '</a>';
 								?>
 								<div class="field-div">
 									<label for="edit_acceptedID"> <?= $LANG['ACCEPTED_TERM'] ?></label>:
-									<span class="editTerm"><?php echo $acceptedStr; ?></span>
+									<span class="editTerm"><?= $acceptedStr; ?></span>
 									<span class="editFormElem">
 										<select id="edit_acceptedID" name="acceptedID">
 											<option value=""> <?= $LANG['IS_ACCEPTED'] ?> </option>
@@ -477,16 +477,14 @@ function listGeoUnits($arr) {
 									<label> <?= $LANG['SYNONYMS'] ?></label>:
 									<span class="editTerm"><?= $synonymStr ?></span>
 								</div>
+								<hr>
 								<div class="field-div">
 									<label for="footprintwkt"><?= $LANG['POLYGON']?></label>:
-									<span class="editTerm">
+									<span>
 										<?= $geoUnit['geoJSON'] !== null? $LANG['YES_POLYGON']: $LANG['NO_POLYGON'] ?>
 									</span>
-									<div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
-									<a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt', map_mode_strict: true})">
-										<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
-									</a>
-									<div class="field-div">
+								</div>
+								<div class="field-div">
 									<label for="isSearchable"><?= $LANG['SEARCHABLE'] ?></label>:
 									<span class="editTerm">
 										<?= !empty($geoUnit['isSearchable']) ? $LANG['YES_POLYGON'] : $LANG['NO_POLYGON'] ?>
@@ -498,11 +496,26 @@ function listGeoUnits($arr) {
 										$disabled = $hasPolygon ? '' : 'disabled';
 										?>
 										<input type="checkbox" name="isSearchable" class="editFormElem" id="isSearchable" value="1" <?= $checked ?> <?= $disabled ?>/>
-										<?php if (!$hasPolygon): ?>
+										<?php
+										if (!$hasPolygon){
+											?>
 											<span>(<?= $LANG['POLYGON_REQUIRED'] ?>)</span>
-										<?php endif; ?>
+											<?php
+										}
+										?>
 									</span>
 								</div>
+								<div class="field-div">
+									<a class="editFormElem" onclick="openCoordAid({map_mode: MAP_MODES.POLYGON, polygon_text_type: POLYGON_TEXT_TYPES.GEOJSON, client_root: '<?= $CLIENT_ROOT?>', polygon_input_id: 'footprintwkt', map_mode_strict: true})">
+										<img src='../images/world.png' style='width:10px;border:0' alt='<?= $LANG['IMG_OF_GLOBE'] ?>' /> <?= $LANG['EDIT_POLYGON']?>
+									</a>
+									<?php
+									if($geoUnit['geoJSON']){
+										?>
+										<div id="map_canvas" style="margin: 1rem 0; width:100%; height:20rem"></div>
+										<?php
+									}
+									?>
 									<span class="editFormElem" style="margin-top: 0.5rem">
 										<textarea id="footprintwkt" name="polygon" style="margin-top: 0.5rem; width:98%;height:90px;"><?= isset($geoUnit['geoJSON'])? trim($geoUnit['geoJSON']): null ?></textarea>
 									</span>

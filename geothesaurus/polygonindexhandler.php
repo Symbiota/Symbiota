@@ -1,8 +1,10 @@
 <?php
 /*
  * For Future page:
- * php geothesaurus/polygonindexhandler.php pending 10 10000
- * php geothesaurus/polygonindexhandler.php 123,456 10000
+ * php geothesaurus/polygonindexhandler.php <TARGET_ID> <PENDING_LIMIT> <BATCH_SIZE>
+ * php geothesaurus/polygonindexhandler.php pending <BATCH_SIZE>
+ * Batch run all pending/failed: php geothesaurus/polygonindexhandler.php pending 10 10000
+ * Targeting specific polygons: php geothesaurus/polygonindexhandler.php 123,456 10000
  */
 
 $_SERVER['SERVER_PORT'] = $_SERVER['SERVER_PORT'] ?? 80;

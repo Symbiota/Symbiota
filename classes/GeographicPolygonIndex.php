@@ -98,8 +98,7 @@ class GeographicPolygonIndex extends Manager{
 
 		$sql = 'SELECT gp.geoThesID
 			FROM geographicpolygon gp INNER JOIN geographicthesaurus gth ON gp.geoThesID = gth.geoThesID
-			WHERE gth.isSearchable = 1
-			AND gp.indexStatus IN("pending","failed")
+			WHERE gth.isSearchable = 1 AND gp.indexStatus IN("pending","failed")
 			ORDER BY gp.initialTimestamp
 			LIMIT ' . $limit;
 
