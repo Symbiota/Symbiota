@@ -1,6 +1,4 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', '1');
 include_once(__DIR__ . '/../../config/symbini.php');
 include_once($SERVER_ROOT . '/classes/CollectionMetadata.php');
 include_once($SERVER_ROOT . '/classes/DatasetsMetadata.php');
@@ -9,6 +7,7 @@ include_once($SERVER_ROOT . '/classes/OccurrenceAttributeSearch.php');
 include_once($SERVER_ROOT . '/classes/AssociationManager.php');
 include_once($SERVER_ROOT . '/classes/utilities/Language.php');
 include_once($SERVER_ROOT . '/classes/CollectionFormManager.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceDataset.php');
 
 Language::load('collections/search/index');
 
@@ -507,6 +506,42 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 									</label>
 									<span class="assistive-text"><?php echo $LANG['SEPARATE_MULTIPLE_W_COMMA_DASH'] ?></span>
 								</div>
+								<?php
+								$datasetManager = new OccurrenceDataset();
+								if($datasetList = $datasetManager->getDatasetList()){
+									?>
+									<div class="select-container" style="position: relative; margin-bottom:15px;">
+										<label for="datasetid" class="screen-reader-only"><?= $LANG['DATASET'] ?></label>
+										<select name="datasetid" id="datasetid" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+											<option value="" data-chip="<?= $LANG['DATASET'] ?>">------------------------</option>
+											<?php
+											foreach($datasetList as $dsid => $dsArr){
+												echo '<option value="' . $dsid . '" data-chip="' . $LANG['DATASET'] . '">' . $dsArr['datasetName'] . '</option>';
+											}
+											?>
+										</select>
+										<span class="inset-input-label"><?= $LANG['DATASET'] ?></span>
+									</div>
+									<?php
+								}
+								if ($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()) {
+									?>
+									<div class="select-container" style="position: relative">
+										<label for="materialsampletype" class="screen-reader-only"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
+										<select name="materialsampletype" id="materialsampletype" style="margin-top:0;padding-top:0; margin-bottom: 0.5rem">
+											<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
+											<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
+											<?php
+											foreach ($matSampleTypeArr as $matSampeType) {
+												echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
+											}
+											?>
+										</select>
+										<span class="inset-input-label"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></span>
+									</div>
+									<?php
+								}
+								?>
 							</div>
 							<div>
 								<div>
@@ -534,24 +569,6 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 									<label for="includecult"><?php echo $LANG['INCLUDE_CULTIVATED'] ?></label>
 								</div>
 							</div>
-							<?php
-							if ($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()) {
-							?>
-								<div class="select-container">
-									<label for="materialsampletype"><?= $LANG['MATERIAL_SAMPLE_TYPE'] ?></label>
-									<select name="materialsampletype" id="materialsampletype">
-										<option id="materialsampletype-none" data-chip="<?php echo $LANG['MATERIAL_SAMPLE'] . ': ---' ?>" value="">---------------</option>
-										<option id="materialsampletype-all-ms" data-chip="<?php echo $LANG['MATERIAL_SAMPLE']?>" value="all-ms"><?= $LANG['ALL_MATERIAL_SAMPLE'] ?></option>
-										<?php
-										foreach ($matSampleTypeArr as $matSampeType) {
-											echo '<option id="materialsampletype-' . $matSampeType . '" data-chip="' . $LANG['MATERIAL_SAMPLE'] . '" value="' . $matSampeType . '">' . $matSampeType . '</option>';
-										}
-										?>
-									</select>
-								</div>
-							<?php
-							}
-							?>
 						</div>
 					</div>
 				</section>
@@ -868,66 +885,4 @@ $requestSuppliedCatChk = (array_key_exists('catChk', $_REQUEST) && $collectionFo
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-<script src="<?= $CLIENT_ROOT ?>/js/alerts.js?v=202107" type="text/javascript"></script>
-<script type="text/javascript">
-	$(document).ready(function() {
-		setSessionQueryStr();
-		setSearchForm(document.getElementById("params-form"));
-		toggleAccordionsFromSessionStorage(localStorage?.accordionIds?.split(",") || []);
-		document.getElementById("params-form").addEventListener("submit", function(event) {
-			event.preventDefault();
-			simpleSearch();
-		});
-		document.getElementById("reset-btn").addEventListener("click", function (event) {
-			document.getElementById("params-form").reset();
-			// sessionStorage.clear();
-			// localStorage.clear();
-			clearPageSpecificSessionStorageItems();
-			checkTheCollectionsThatShouldBeCheckedBasedOnConfig();
-			closeAllCategories();
-			expandCategoriesBasedOnConfig();
-			updateChip(event, isInitialConfig=true);
-		});
-	});
-
-	let alerts = [{
-		'alertMsg': '<?php echo $LANG['ALERT_MSG_PREVIOUS_SEARCH_FORM'] ?> <a href="<?php echo $CLIENT_ROOT ?>/collections/index.php" alt="Traditional Sample Search Form"><?= $LANG['PREVIOUS_SAMPLE_SEARCH']; ?></a>.'
-	}];
-	handleAlerts(alerts, 3000);
-
-	// resize the autocomplete window width to match the input width (from https://stackoverflow.com/questions/5643767/jquery-ui-autocomplete-width-not-set-correctly)
-	jQuery.ui.autocomplete.prototype._resizeMenu = function() {
-		var ul = this.menu.element;
-		ul.outerWidth(this.element.outerWidth());
-	}
-	const collectionSource = <?php echo isset($collectionSource) ? json_encode($collectionSource) : 'null'; ?>;
-	const collIdsFromUrl = <?php echo isset($collIdsFromUrl) ? json_encode($collIdsFromUrl) : 'null'; ?>;
-	if (collIdsFromUrl && Array.isArray(collIdsFromUrl) && collIdsFromUrl.length > 0) {
-		uncheckEverythingInCollections();
-		checkTheCollectionsThatShouldBeChecked(collIdsFromUrl);
-		closeAllCategories();
-        expandCategoriesWithSomeCheckedChildren();
-	}
-	const sanitizedCollectionSource = collectionSource.replace('db=', '');
-	if (collectionSource) {
-		uncheckEverythingInCollections();
-		checkTheCollectionsThatShouldBeChecked([sanitizedCollectionSource]);
-		closeAllCategories();
-        expandCategoriesWithSomeCheckedChildren();
-		updateChip();
-	}
-
-	window.initLocalitySuggest({
-		country: {
-			id: 'country',
-		},
-		state_province: {
-			id: 'state',
-		},
-		county: {
-			id: 'county',
-		},
-	})
-</script>
-
 </html>

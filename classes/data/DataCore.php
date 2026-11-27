@@ -26,8 +26,11 @@ class DataCore extends Manager{
 			$this->errorMessage = 'FIELD_MAP_NOT_DEFINED';
 			return false;
 		}
-		$pkName = array_search('pk', $this->fieldMap);
-		if(!$pkName){
+		$pkArr = array();
+		foreach($this->fieldMap as $n => $t){
+			if($t == 'pk' || $t == 'cpk') $pkArr[$n] = '';
+		}
+		if(!$pkArr){
 			$this->errorMessage = 'PRIMARY_KEY_NOT_DEFINED';
 			return false;
 		}
@@ -46,9 +49,12 @@ class DataCore extends Manager{
 			$stmt->execute();
 			$rs = $stmt->get_result();
 			while($r = $rs->fetch_assoc()){
-				$pk = $r[$pkName];
+				foreach($pkArr as $pkName => $v){
+					$pkArr[$pkName] = $r[$pkName];
+				}
+				$key = implode('-', $pkArr);
 				foreach($this->fieldMap as $fieldName => $type){
-					$retArr[$pk][$fieldName] = $r[$fieldName];
+					$retArr[$key][$fieldName] = $r[$fieldName];
 				}
 			}
 			$rs->free();
@@ -68,14 +74,15 @@ class DataCore extends Manager{
 			return false;
 		}
 		$this->setParameterArr($inputArr);
-		$sql = 'INSERT INTO `' . $tableName . '`(`' . implode('`, `', array_keys($this->parameterArr)) . '`) VALUES(' . trim(str_repeat('?,', count($this->parameterArr)), ', ') . ') ';
+		$sql = 'INSERT IGNORE INTO `' . $tableName . '`(`' . implode('`, `', array_keys($this->parameterArr)) . '`) VALUES(' . trim(str_repeat('?,', count($this->parameterArr)), ',') . ') ';
 		$paramArr = array_values($this->parameterArr);
 		if($stmt = $this->conn->prepare($sql)){
 			$stmt->bind_param($this->typeStr, ...$paramArr);
 			if($stmt->execute()){
-				if($stmt->affected_rows || !$stmt->error){
+				if(!$stmt->error){
 					$this->primaryKey = $stmt->insert_id;
 					$status = true;
+					if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_INSERTED';
 				}
 				else $this->errorMessage = $stmt->error;
 			}
@@ -102,14 +109,17 @@ class DataCore extends Manager{
 		}
 		$this->setParameterArr($inputArr);
 		$paramArr = array_values($this->parameterArr);
-		$sql = 'UPDATE `' . $tableName . '` SET ' . implode(' = ?,', array_keys($this->parameterArr)) . ' = ? ';
+		$sql = 'UPDATE IGNORE `' . $tableName . '` SET ' . implode(' = ?,', array_keys($this->parameterArr)) . ' = ? ';
 		if($paramArr){
 			if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $this->typeStr)){
 				$sql .= 'WHERE ' . $sqlWhere;
 				if($stmt = $this->conn->prepare($sql)) {
 					$stmt->bind_param($this->typeStr, ...$paramArr);
 					if($stmt->execute()){
-						if($stmt->affected_rows || !$stmt->error) $status = true;
+						if(!$stmt->error){
+							$status = true;
+							if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_UPDATED';
+						}
 						else $this->errorMessage = $stmt->error;
 					}
 					else $this->errorMessage = $stmt->error;
@@ -136,7 +146,7 @@ class DataCore extends Manager{
 			$pkFieldName = array_search('pk', $this->fieldMap);
 			$pkArr = array($pkFieldName => $pkArr);
 		}
-		$sql = 'DELETE FROM `' . $tableName . '` WHERE ';
+		$sql = 'DELETE IGNORE FROM `' . $tableName . '` WHERE ';
 		$paramArr = array();
 		$typeStr = '';
 		if($sqlWhere = $this->getConditionSql($pkArr, $paramArr, $typeStr)){
@@ -144,8 +154,9 @@ class DataCore extends Manager{
 			if($stmt = $this->conn->prepare($sql)){
 				$stmt->bind_param($typeStr, ...$paramArr);
 				$stmt->execute();
-				if($stmt->affected_rows && !$stmt->error){
+				if(!$stmt->error){
 					$status = true;
+					if(!$stmt->affected_rows) $this->errorMessage = 'RECORD_NOT_DELETED';
 				}
 				else $this->errorMessage = $stmt->error;
 				$stmt->close();
@@ -167,14 +178,15 @@ class DataCore extends Manager{
 		$this->typeStr = '';
 		//Prepare type and value variables used within prepared statement
 		foreach($this->fieldMap as $field => $type){
+			if($type == 'x' || $type == 'pk') continue;
 			$postField = '';
 			if(isset($inputArr[$field])) $postField = $field;
 			elseif(isset($inputArr[strtolower($field)])) $postField = strtolower($field);
 			if($postField){
 				$value = trim($inputArr[$postField]);
-				if(!$value) $value = null;
+				if(trim($value) === '') $value = null;
 				$this->parameterArr[$field] = $value;
-				if($type == 'pk') $type = 'i';
+				if($type == 'cpk') $type = 'i';
 				$this->typeStr .= $type;
 			}
 		}
@@ -188,12 +200,21 @@ class DataCore extends Manager{
 			if(isset($condArr[$fieldName])) $inputField = $fieldName;
 			elseif(isset($condArr[strtolower($fieldName)])) $inputField = strtolower($fieldName);
 			if($inputField){
-				$sqlFrag .= $delimiter . ' `' . $fieldName . '` = ? ';
-				$value = trim($condArr[$inputField]);
-				if($value === '') $value = null;
-				$paramArr[] = $value;
-				if($type == 'pk') $type = 'i';
-				$typeStr .= $type;
+				if($type == 'pk' || $type == 'cpk') $type = 'i';
+				if(is_array($condArr[$inputField])){
+					$inputArr = $condArr[$inputField];
+					$inputItemCount = count($inputArr);
+					$sqlFrag .= $delimiter . ' `' . $fieldName . '` IN(' . trim(str_repeat('?,', $inputItemCount), ',') . ') ';
+					$paramArr = $inputArr;
+					$typeStr .= str_repeat($type, $inputItemCount);
+				}
+				else{
+					$sqlFrag .= $delimiter . ' `' . $fieldName . '` = ? ';
+					$value = trim($condArr[$inputField]);
+					if($value === '') $value = null;
+					$paramArr[] = $value;
+					$typeStr .= $type;
+				}
 				$delimiter = 'AND';
 			}
 		}

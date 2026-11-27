@@ -3,6 +3,7 @@ include_once(__DIR__ . '/../config/symbini.php');
 include_once($SERVER_ROOT.'/content/lang/collections/harvestparams.'.$LANG_TAG.'.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceManager.php');
 include_once($SERVER_ROOT.'/classes/OccurrenceAttributeSearch.php');
+include_once($SERVER_ROOT . '/classes/OccurrenceDataset.php');
 include_once($SERVER_ROOT.'/classes/utilities/Sanitize.php');
 
 header('Content-Type: text/html; charset=' . $CHARSET);
@@ -56,7 +57,7 @@ $searchVar = $collManager->getQueryTermStr();
 		hr{ clear:both; margin: 10px 0px }
 		button{ margin: 2px }
 		select{ margin-bottom: 4px }
-		.catHeaderDiv { font-weight:bold; font-size: 18px }
+		.catHeaderDiv { font-weight:bold; font-size: 18px; margin-bottom: 10px; }
 		.coordBoxDiv { float:left; border:2px solid brown; padding:10px; margin:5px; white-space: nowrap; }
 		.coordBoxDiv .labelDiv { font-weight:bold;float:left }
 		.coordBoxDiv .iconDiv { float: left; margin-left: 5px; }
@@ -161,8 +162,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="upperlat"><?= $LANG['LL_BOUND_NLAT']; ?>:</label>
 							<input type="text" id="upperlat" name="upperlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="upperlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
-							<select id="upperlat_NS" name="upperlat_NS">
+							<select id="upperlat_NS" name="upperlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="ulN" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
 								<option id="ulS" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 							</select>
@@ -170,8 +170,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="bottomlat"><?= $LANG['LL_BOUND_SLAT']; ?>:</label>
 							<input type="text" id="bottomlat" name="bottomlat" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="bottomlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
-							<select id="bottomlat_NS" name="bottomlat_NS">
+							<select id="bottomlat_NS" name="bottomlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="blN" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
 								<option id="blS" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 							</select>
@@ -179,8 +178,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="leftlong"><?= $LANG['LL_BOUND_WLNG']; ?>:</label>
 							<input type="text" id="leftlong" name="leftlong" size="7" value="" onchange="cleanNumericInput(this);">
-							<label for="leftlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
-							<select id="leftlong_EW" name="leftlong_EW">
+							<select id="leftlong_EW" name="leftlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="llW" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
 								<option id="llE" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 							</select>
@@ -188,8 +186,7 @@ $searchVar = $collManager->getQueryTermStr();
 						<div>
 							<label for="rightlong"><?= $LANG['LL_BOUND_ELNG']; ?>:</label>
 							<input type="text" id="rightlong" name="rightlong" size="7" value="" onchange="cleanNumericInput(this);" style="margin-left:3px;">
-							<label for="rightlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
-							<select id="rightlong_EW" name="rightlong_EW">
+							<select id="rightlong_EW" name="rightlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 								<option id="rlW" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
 								<option id="rlE" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 							</select>
@@ -221,8 +218,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<div>
 								<label for="pointlat"><?= $LANG['LL_P-RADIUS_LAT']; ?>:</label>
 								<input type="text" id="pointlat" name="pointlat" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlat_NS"><?= $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlat_NS" name="pointlat_NS">
+								<select id="pointlat_NS" name="pointlat_NS" aria-label="<?= $LANG['DIRECTION'] ?>">
 									<option id="N" value="N"><?= $LANG['LL_N_SYMB']; ?></option>
 									<option id="S" value="S"><?= $LANG['LL_S_SYMB']; ?></option>
 								</select>
@@ -232,8 +228,7 @@ $searchVar = $collManager->getQueryTermStr();
 							<div>
 								<label for="pointlong"><?= $LANG['LL_P-RADIUS_LNG']; ?>:</label>
 								<input type="text" id="pointlong" name="pointlong" size="7" value="" onchange="cleanNumericInput(this);">
-								<label for="pointlong_EW"><?= $LANG['DIRECTION'] ?>:</label>
-								<select id="pointlong_EW" name="pointlong_EW">
+								<select id="pointlong_EW" name="pointlong_EW" aria-label="<?= $LANG['DIRECTION'] ?>">
 									<option id="W" value="W"><?= $LANG['LL_W_SYMB']; ?></option>
 									<option id="E" value="E"><?= $LANG['LL_E_SYMB']; ?></option>
 								</select>
@@ -245,8 +240,7 @@ $searchVar = $collManager->getQueryTermStr();
 								<input type="text" id="radius" name="radius" size="5" value="" onchange="cleanNumericInput(this);">
 							</div>
 							<div>
-								<label for="radiusunits"><?= $LANG['DISTANCE_UNIT'] ?>:</label>
-								<select id="radiusunits" name="radiusunits">
+								<select id="radiusunits" name="radiusunits" aria-label="<?= $LANG['DIRECTION'] ?>">
 									<option value="km"><?= $LANG['LL_P-RADIUS_KM']; ?></option>
 									<option value="mi"><?= $LANG['LL_P-RADIUS_MI']; ?></option>
 								</select>
@@ -287,6 +281,22 @@ $searchVar = $collManager->getQueryTermStr();
 					<label for="includeothercatnum"><?= $LANG['INCLUDE_OTHER_CATNUM']?></label>
 				</div>
 				<?php
+				$datasetManager = new OccurrenceDataset();
+				if($datasetList = $datasetManager->getDatasetList()){
+					?>
+					<div>
+						<label for="datasetid"><?= $LANG['DATASET'] ?>:</label>
+						<select id="datasetid" name="datasetid">
+							<option value="">------------------------</option>
+							<?php
+							foreach($datasetList as $dsid => $dsArr){
+								echo '<option value="' . $dsid . '">' . $dsArr['datasetName'] . '</option>';
+							}
+							?>
+						</select>
+					</div>
+					<?php
+				}
 				if($matSampleTypeArr = $collManager->getMaterialSampleTypeArr()){
 					?>
 					<div>

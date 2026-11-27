@@ -4,6 +4,8 @@
  Language: Français (French)
  ------------------
  */
+include_once('../sharedterms.fr.php');
+
 $LANG['SPCHECKREL'] = "Relations des Listes d'Espèces";
 $LANG['VOUCHEROFFOLLOWING'] = 'Échantillon des listes suivantes';
 $LANG['DELVOUCHER'] = "Supprimer l'échantillon lié";
@@ -19,9 +21,9 @@ $LANG['VIEWABLEEDITORS'] = 'Visible uniquement pour les éditeurs de liste';
 $LANG['ADDVOUCHER'] = 'Ajouter Échantillon';
 $LANG['UNABLETOADD'] = "Impossible d'utiliser ce spécimen comme pièce justificative car le nom scientifique n'a pas pu être vérifié dans le thésaurus taxonomique (mal orthographié?)";
 $LANG['DATASETLINKAGES'] = 'Liens des Ensembles de Données';
+$LANG['ADD_TO_DATASET'] = 'Ajouter une occurrence à un jeu de données existant';
 $LANG['MEMBEROF'] = 'Membre des ensembles de données suivants';
 $LANG['OCCURRENCENOTLINKED'] = "Occurrence n'est liée à aucun ensemble de données";
-$LANG['CREATENEWREL'] = 'Créer Nouvelle Relation de Ensemble de Données';
 $LANG['SELECTEXISTING'] = 'Sélectionnez un Ensemble de Données Existant';
 $LANG['CREATENEWDATASET'] = 'Créer Nouvel Ensemble de Données';
 $LANG['LINKTO'] = 'Lien vers Ensemble de Données';
