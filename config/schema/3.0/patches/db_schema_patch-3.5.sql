@@ -1,5 +1,34 @@
 INSERT INTO `schemaversion` (versionnumber) VALUES ('3.5');
 
+#Add occurrence propoerties table 
+CREATE TABLE `omoccurproperties` (
+  `propertyID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `occid` INT UNSIGNED NOT NULL,
+  `propertyName` VARCHAR(45) NULL,
+  `valueNumeric` DECIMAL(15,6) NULL,
+  `valueText` TEXT NULL,
+  `unit` VARCHAR(45) NULL,
+  `category` VARCHAR(100) NULL,
+  `propertyGroupID` VARCHAR(100) NULL,
+  `guid` VARCHAR(45) NULL,
+  `source` VARCHAR(100) NULL,
+  `remarks` VARCHAR(250) NULL,
+  `recordID` VARCHAR(45) NULL,
+  `modifiedTimestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modifiedUid` INT UNSIGNED NULL,
+  `initialTimestamp` TIMESTAMP NULL DEFAULT current_timestamp,
+  PRIMARY KEY (`propertyID`),
+  INDEX `FK_omoccurprop_occid_idx` (`occid` ASC),
+  INDEX `FK_omoccurprop_uid_idx` (`modifiedUid` ASC),
+  INDEX `IX_omoccurprop_name` (`propertyName` ASC, `valueNumeric` ASC),
+  INDEX `IX_omoccurprop_category` (`category` ASC, `propertyName` ASC),
+  INDEX `IX_omoccurprop_group` (`occid` ASC, `propertyGroupID` ASC),
+  INDEX `IX_omoccurprop_recordID` (`recordID`),
+  INDEX `IX_omoccurprop_guid` (`guid`),
+  CONSTRAINT `FK_omoccurprop_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_omoccurprop_uid` FOREIGN KEY (`modifiedUid`) REFERENCES `users` (`uid`) ON DELETE RESTRICT ON UPDATE CASCADE);
+
+
 
 #Clear year, month, and day fields when eventDate and eventDate2 values conflict
 UPDATE omoccurrences

@@ -62,53 +62,6 @@ CREATE TABLE `adminstats` (
 ) ENGINE=InnoDB;
 
 
---
--- Table structure for table `guidimages`
---
-
-CREATE TABLE `guidimages` (
-  `guid` varchar(45) NOT NULL,
-  `imgid` int(10) unsigned DEFAULT NULL,
-  `archivestatus` int(3) NOT NULL DEFAULT 0,
-  `archiveobj` text DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`guid`),
-  UNIQUE KEY `guidimages_imgid_unique` (`imgid`)
-) ENGINE=InnoDB;
-
-
---
--- Table structure for table `guidoccurdeterminations`
---
-
-CREATE TABLE `guidoccurdeterminations` (
-  `guid` varchar(45) NOT NULL,
-  `detid` int(10) unsigned DEFAULT NULL,
-  `archivestatus` int(3) NOT NULL DEFAULT 0,
-  `archiveobj` text DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`guid`),
-  UNIQUE KEY `guidoccurdet_detid_unique` (`detid`)
-) ENGINE=InnoDB;
-
-
---
--- Table structure for table `guidoccurrences`
---
-
-CREATE TABLE `guidoccurrences` (
-  `guid` varchar(45) NOT NULL,
-  `occid` int(10) unsigned DEFAULT NULL,
-  `archivestatus` int(3) NOT NULL DEFAULT 0,
-  `archiveobj` text DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `initialtimestamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`guid`),
-  UNIQUE KEY `guidoccurrences_occid_unique` (`occid`)
-) ENGINE=InnoDB;
-
 
 --
 -- Table structure for table `imageannotations`
@@ -150,35 +103,6 @@ CREATE TABLE `kmdescrdeletions` (
 ) ENGINE=InnoDB;
 
 
---
--- Table structure for table `media`
---
-
-CREATE TABLE `media` (
-  `mediaid` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `tid` int(10) unsigned DEFAULT NULL,
-  `occid` int(10) unsigned DEFAULT NULL,
-  `url` varchar(250) NOT NULL,
-  `caption` varchar(250) DEFAULT NULL,
-  `authoruid` int(10) unsigned DEFAULT NULL,
-  `author` varchar(45) DEFAULT NULL,
-  `mediatype` varchar(45) DEFAULT NULL,
-  `owner` varchar(250) DEFAULT NULL,
-  `sourceurl` varchar(250) DEFAULT NULL,
-  `locality` varchar(250) DEFAULT NULL,
-  `description` varchar(1000) DEFAULT NULL,
-  `notes` varchar(250) DEFAULT NULL,
-  `mediaMD5` varchar(45) DEFAULT NULL,
-  `sortsequence` int(11) DEFAULT NULL,
-  `initialtimestamp` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`mediaid`),
-  KEY `FK_media_taxa_idx` (`tid`),
-  KEY `FK_media_occid_idx` (`occid`),
-  KEY `FK_media_uid_idx` (`authoruid`),
-  CONSTRAINT `FK_media_occid` FOREIGN KEY (`occid`) REFERENCES `omoccurrences` (`occid`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `FK_media_taxa` FOREIGN KEY (`tid`) REFERENCES `taxa` (`tid`) ON UPDATE CASCADE,
-  CONSTRAINT `FK_media_uid` FOREIGN KEY (`authoruid`) REFERENCES `users` (`uid`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB;
 
 
 --
@@ -304,19 +228,3 @@ CREATE TABLE `unknowns` (
 ) ENGINE=InnoDB;
 
 
---
--- Table structure for table `userlogin`
---
-
-CREATE TABLE `userlogin` (
-  `uid` int(10) unsigned NOT NULL,
-  `username` varchar(45) NOT NULL,
-  `password` varchar(45) NOT NULL,
-  `alias` varchar(45) DEFAULT NULL,
-  `lastlogindate` datetime DEFAULT NULL,
-  `InitialTimeStamp` timestamp NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`username`) USING BTREE,
-  UNIQUE KEY `Index_userlogin_unique` (`alias`),
-  KEY `FK_login_user` (`uid`),
-  CONSTRAINT `FK_login_user` FOREIGN KEY (`uid`) REFERENCES `users` (`uid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
