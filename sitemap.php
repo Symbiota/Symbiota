@@ -385,7 +385,7 @@ if(!$schemaVersion){
 				else{
 					echo $LANG['PLEASE'] . ' <a href="' . $CLIENT_ROOT . '/profile/index.php?refurl=../sitemap.php">' . $LANG['LOGIN'] . '</a> ' . $LANG['TOACCESS'] . '<br/>' . $LANG['CONTACTPORTAL'] . '.';
 				}
-			?>
+				?>
 			</section>
 			<div id="symbiotaschema">
 				<a href="https://github.com/Symbiota/Symbiota/releases/tag/v<?= $CODE_VERSION ?>" target="_blank">

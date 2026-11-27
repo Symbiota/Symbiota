@@ -158,7 +158,7 @@ $_SESSION['citationvar'] = $searchVar;
 					<div style="float:right;">
 						<?php
 						if ($SYMB_UID) {
-						?>
+							?>
 							<span>
 								<button class="icon-button" onclick="displayDatasetTools()" aria-label="<?= $LANG['DATASET_MANAGEMENT'] ?>" title="<?= $LANG['DATASET_MANAGEMENT'] ?>">
 									<svg style="width:1.3em;height:1.3em;" alt="<?php echo $LANG['IMG_DATASET_MANAGEMENT']; ?>" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24">
@@ -166,7 +166,7 @@ $_SESSION['citationvar'] = $searchVar;
 									</svg>
 								</button>
 							</span>
-						<?php
+							<?php
 						}
 						?>
 						<span>
@@ -262,13 +262,13 @@ $_SESSION['citationvar'] = $searchVar;
 												'o.county' => $LANG['COUNTY'],
 												'o.minimumElevationInMeters' => $LANG['ELEVATION']
 											);
-												if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
-													$sortFields = array_merge($sortFields, [
-														'paleo.lateInterval' => $LANG['LATE_INT'],
-														'paleo.earlyInterval' => $LANG['EARLY_INT'],
-														'paleo.formation' => $LANG['FORMATION']
-													]);
-												}
+											if (!empty($GLOBALS['ACTIVATE_PALEO'])) {
+												$sortFields = array_merge($sortFields, [
+													'paleo.lateInterval' => $LANG['LATE_INT'],
+													'paleo.earlyInterval' => $LANG['EARLY_INT'],
+													'paleo.formation' => $LANG['FORMATION']
+												]);
+											}
 											foreach ($sortFields as $k => $v) {
 												echo '<option value="' . $k . '" ' . ($k == $sortField1 ? 'SELECTED' : '') . '>' . $v . '</option>';
 											}
@@ -327,14 +327,14 @@ $_SESSION['citationvar'] = $searchVar;
 					$beginNum = ($pageNumber - 1) * $cntPerPage + 1;
 					$endNum = $beginNum + $cntPerPage - 1;
 					if ($endNum > $collManager->getRecordCnt()) $endNum = $collManager->getRecordCnt();
-					$pageBar .= $LANG['PAGINATION_PAGE'] . ' ' . $pageNumber . ', ' . $LANG['PAGINATION_RECORDS'] . ' ' . $beginNum . '-' . $endNum . ' ' . $LANG['PAGINATION_OF'] . ' ' . $collManager->getRecordCnt();
+					$pageBar .= $LANG['PAGINATION_PAGE'] . ' ' . $pageNumber . ', ' . $beginNum . '-' . $endNum . ' ' . $LANG['PAGINATION_OF'] . ' ' . $collManager->getRecordCnt() . ' ' . $LANG['PAGINATION_RECORDS'];
 					$paginationStr .= $pageBar;
 					$paginationStr .= '</div><div style="clear:both;"><hr/></div></div>';
 					echo $paginationStr;
 
 					//Add search return
 					if ($occurArr) {
-					?>
+						?>
 						<form name="occurListForm" method="post" action="datasets/datasetHandler.php" onsubmit="return validateOccurListForm(this)" target="_blank">
 							<?php include('datasetinclude.php'); ?>
 							<table id="omlisttable">
@@ -398,7 +398,6 @@ $_SESSION['citationvar'] = $searchVar;
 									}
 									echo '<div style="margin:4px;">';
 
-
 									if (isset($fieldArr['sciname'])) {
 										$sciStr = '<span style="font-style:italic;">' . $fieldArr['sciname'] . '</span>';
 										if (isset($fieldArr['author']) && $fieldArr['author']) $sciStr .= ' ' . $fieldArr['author'];
@@ -450,7 +449,7 @@ $_SESSION['citationvar'] = $searchVar;
 								?>
 							</table>
 						</form>
-					<?php
+						<?php
 						echo $paginationStr;
 						echo '<hr/>';
 					} else {
@@ -582,5 +581,4 @@ $_SESSION['citationvar'] = $searchVar;
 	include($SERVER_ROOT . '/includes/footer.php');
 	?>
 </body>
-
 </html>

@@ -37,8 +37,8 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$columnArr['relationshipOfResource'] = 'oa.relationship';
 		$termArr['relationshipAccordingTo'] = 'http://rs.tdwg.org/dwc/terms/relationshipAccordingTo';
 		$columnArr['relationshipAccordingTo'] = 'oa.accordingTo';
- 		$termArr['relationshipEstablishedDate'] = 'http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate';
- 		$columnArr['relationshipEstablishedDate'] = 'oa.establishedDate';
+		$termArr['relationshipEstablishedDate'] = 'http://rs.tdwg.org/dwc/terms/relationshipEstablishedDate';
+		$columnArr['relationshipEstablishedDate'] = 'oa.establishedDate';
 		$termArr['relationshipRemarks'] = 'http://rs.tdwg.org/dwc/terms/relationshipRemarks';
 		$columnArr['relationshipRemarks'] = 'oa.notes';
 		$termArr['scientificName'] = 'http://rs.tdwg.org/dwc/terms/scientificName';
@@ -90,9 +90,9 @@ class DwcArchiverResourceRelationship extends DwcArchiverBaseManager{
 		$trimArr = array();
 		if($this->schemaType == 'dwc'){
 			$trimArr = array('associd', 'associationType', 'subType', 'objectID', 'identifier',
-			 'verbatimSciname', 'tid', 'locationOnHost', 'conditionOfAssociate',
-			  'imageMapJSON', 'sourceIdentifier', 'recordID', 'createdUid',
-			   'modifiedTimestamp', 'modifiedUid', 'initialtimestamp');
+				'verbatimSciname', 'tid', 'locationOnHost', 'conditionOfAssociate',
+				'imageMapJSON', 'sourceIdentifier', 'recordID', 'createdUid',
+				'modifiedTimestamp', 'modifiedUid', 'initialtimestamp');
 		}
 		return array_diff_key($dataArr, array_flip($trimArr));
 	}
