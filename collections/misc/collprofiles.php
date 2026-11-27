@@ -708,11 +708,6 @@ if ($SYMB_UID) {
 										<?= $LANG['UPDATE_STATS'] ?>
 									</a>
 								</li>
-								<li style="margin-left:10px;">
-									<a href="<?= $CLIENT_ROOT ?>/admin/batchupdatestats.php">
-										<?= $LANG['BATCH_UPDATE_STATS'] ?>
-									</a>
-								</li>
 							</ul>
 						</section>
 						<?php
@@ -1035,7 +1030,7 @@ if ($SYMB_UID) {
 				</section>
 			</div>
 			<?php
-			include('collprofilestats.php');
+			include('../stats/collprofilestats.php');
 			$actionPage = $CLIENT_ROOT . '/collections/';
 			if(!empty($SHOULD_USE_HARVESTPARAMS)){
 				$actionPage .= 'harvestparams.php';
