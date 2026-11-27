@@ -20,7 +20,7 @@ $tabIndex = array_key_exists('tabindex', $_REQUEST) ? Sanitize::int($_REQUEST['t
 $action = array_key_exists('action',$_REQUEST)?$_REQUEST['action']:'';
 $mediaPage = Paginator::getPageRequestVar('mediaPage');
 $mediaSortPage = Paginator::getPageRequestVar('mediaSortPage');
-
+$imageCount = Paginator::getPageRequestVar('imageCount');
 if(!is_numeric($tabIndex)) $tabIndex = 0;
 
 $tEditor = null;
@@ -241,8 +241,8 @@ if($isEditor && $action){
 				<div id="tabs" style="margin:10px;">
 					<ul>
 						<li><a href="#commontab"><span><?= $LANG['VERNAC_COMMON'] ?></span></a></li>
-					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
-						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
+					<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&mediaPage=' . $mediaPage . '&mediaSortPage=' . $mediaSortPage . '&imageCount=' . $imageCount  ?>"><span><?= $LANG['IMAGES'] ?></span></a></li>
+						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imagequicksort&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage . '&imageCount=' . $imageCount ?> "><span><?= $LANG['IMAGE_SORT'] ?></span></a></li>
 						<li><a href="tpimageeditor.php?tid=<?= $tEditor->getTid() . '&cat=imageadd' . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['ADD_IMAGE'] ?></span></a></li>
 						<li><a href="tpdesceditor.php?tid=<?= $tEditor->getTid() . '&action=' . Sanitize::outString($action) . '&mediaSortPage=' . $mediaSortPage . '&mediaPage=' . $mediaPage ?>"><span><?= $LANG['DESCRIPTIONS'] ?></span></a></li>
 					</ul>
